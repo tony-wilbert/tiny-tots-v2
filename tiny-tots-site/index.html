@@ -6221,13 +6221,26 @@ function _hideFloatingWidgetButton() {
       background: linear-gradient(135deg, #D4A853, #C4982F) !important;
       color: #1B1B1F !important; border-radius: 50px !important;
       font-weight: 700 !important; font-size: 16px !important;
-      padding: 14px 36px !important; border: none !important;
+      padding: 14px 32px !important; border: none !important;
       box-shadow: 0 6px 24px rgba(212,168,83,0.35) !important;
       letter-spacing: 0.3px !important;
+      white-space: nowrap !important;
+      min-width: fit-content !important;
+    }
+    /* Hide the phone/call icon SVG inside the button */
+    button[class*="_call_"] svg, button[class*="_start_"] svg, [class*="_callButton_"] svg,
+    button[class*="_call_"] [class*="icon"], button[class*="_start_"] [class*="icon"] {
+      display: none !important;
     }
     /* Hide "Need help?" label — Daisy is already named in the modal */
     [class*="_header_"], [class*="_title_"]:not([class*="_callButton_"]) {
       display: none !important;
+    }
+    /* Center the widget content vertically */
+    [class*="_content_"], [class*="_inner_"] {
+      display: flex !important; flex-direction: column !important;
+      align-items: center !important; justify-content: center !important;
+      gap: 16px !important;
     }
   `;
   document.querySelectorAll('elevenlabs-convai').forEach(widget => {
@@ -6270,7 +6283,7 @@ function _replaceCallText(shadow) {
   setTimeout(() => obs.disconnect(), 30000);
 }
 
-/* Open voice modal — widget loads VISIBLE so user can click "Start a call" directly (required for Chrome mic permissions) */
+/* Open voice modal — widget loads VISIBLE so user can tap "Chat with Daisy" directly (required for Chrome mic permissions) */
 function toggleVoice() {
   if (voiceActive) { endVoiceCall(); return; }
   // Dismiss Daisy hint if showing
