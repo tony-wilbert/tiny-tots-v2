@@ -2130,6 +2130,12 @@ body.dark-mode *:focus-visible { box-shadow: 0 0 0 4px rgba(212,168,83,0.25); }
 }
 
 /* ═══ PRINT STYLES ═══ */
+/* View Transitions API */
+@view-transition { navigation: auto; }
+::view-transition-old(root) { animation: fadeSlideOut 0.25s ease; }
+::view-transition-new(root) { animation: fadeSlideIn 0.25s ease; }
+@keyframes fadeSlideOut { to { opacity: 0; transform: translateY(-6px); } }
+@keyframes fadeSlideIn { from { opacity: 0; transform: translateY(6px); } }
 @media print {
   body { background: #fff; padding: 0; font-size: 12pt; }
   .nav, .bottom-bar, .sticky-cta, .voice-modal-overlay, .auth-overlay,
@@ -4855,7 +4861,29 @@ function sendParentInvite() {
 /* ═══ NAVIGATION ═══ */
 function tabNav(sectionId) {
   const el = document.getElementById(sectionId);
-  if (el) el.scrollIntoView({ behavior: 'smooth' });
+  if (!el) return;
+  // App-like transition: brief fade-slide the target section
+  if (!document.startViewTransition) {
+    // Fallback: quick flash effect
+    el.style.transition = 'none';
+    el.style.opacity = '0.3';
+    el.style.transform = 'translateY(8px)';
+    el.scrollIntoView({ behavior: 'smooth' });
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        el.style.transition = 'opacity 0.35s ease, transform 0.35s ease';
+        el.style.opacity = '1';
+        el.style.transform = 'translateY(0)';
+      });
+    });
+  } else {
+    // Use View Transitions API where supported
+    document.startViewTransition(() => {
+      el.scrollIntoView({ behavior: 'instant' });
+    });
+  }
+  // Haptic on supported devices
+  if (navigator.vibrate) navigator.vibrate(5);
 }
 function scrollTo(selector) {
   const el = document.querySelector(selector);
