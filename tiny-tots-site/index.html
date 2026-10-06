@@ -859,6 +859,100 @@ body.dark-mode .book-progress-step.done { color: var(--green); }
 }
 .time-quick-btn:active { transform: scale(0.95); }
 
+/* ═══ VISUAL TIME SLIDER ═══ */
+.time-slider-container {
+  position: relative; height: 80px; margin: 10px 0 6px;
+  touch-action: none; user-select: none; -webkit-user-select: none;
+}
+.time-slider-track {
+  position: absolute; top: 24px; left: 16px; right: 16px; height: 32px;
+  background: rgba(0,0,0,0.04); border-radius: 16px;
+  overflow: visible; box-shadow: inset 0 1px 3px rgba(0,0,0,0.06);
+}
+body.dark-mode .time-slider-track { background: rgba(255,255,255,0.07); box-shadow: inset 0 1px 3px rgba(0,0,0,0.2); }
+.time-slider-avail-zone {
+  position: absolute; top: 0; height: 100%; border-radius: 16px;
+  background: rgba(92,184,92,0.06);
+}
+.time-slider-extend-zone {
+  position: absolute; top: 0; height: 100%; border-radius: 0 16px 16px 0;
+  background: repeating-linear-gradient(-45deg,transparent,transparent 3px,rgba(212,168,83,0.07) 3px,rgba(212,168,83,0.07) 6px);
+  border-left: 1.5px dashed rgba(212,168,83,0.25);
+}
+body.dark-mode .time-slider-extend-zone { background: repeating-linear-gradient(-45deg,transparent,transparent 3px,rgba(212,168,83,0.1) 3px,rgba(212,168,83,0.1) 6px); }
+.time-slider-selection {
+  position: absolute; top: -5px; height: calc(100% + 10px);
+  background: var(--gradient-gold); border-radius: 18px; cursor: grab;
+  min-width: 30px; z-index: 2;
+  box-shadow: 0 4px 18px rgba(212,168,83,0.35), 0 1px 4px rgba(0,0,0,0.1);
+  transition: left 0.25s cubic-bezier(.22,1,.36,1), width 0.25s cubic-bezier(.22,1,.36,1), box-shadow 0.15s;
+}
+.time-slider-selection:active, .time-slider-selection.dragging {
+  cursor: grabbing;
+  box-shadow: 0 6px 28px rgba(212,168,83,0.5), 0 2px 8px rgba(0,0,0,0.15);
+  transition: box-shadow 0.15s;
+}
+.time-slider-sel-extend {
+  position: absolute; top: 0; right: 0; height: 100%;
+  background: rgba(255,140,0,0.3); border-radius: 0 18px 18px 0;
+  pointer-events: none;
+}
+.time-slider-handle {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  width: 30px; height: 50px; border-radius: 15px;
+  background: var(--white); border: 2.5px solid var(--gold);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.12);
+  cursor: col-resize; z-index: 4;
+  display: flex; align-items: center; justify-content: center;
+  touch-action: none;
+  transition: transform 0.12s, box-shadow 0.15s;
+}
+.time-slider-handle:active, .time-slider-handle.active {
+  transform: translateY(-50%) scale(1.12);
+  box-shadow: 0 4px 18px rgba(212,168,83,0.4);
+}
+body.dark-mode .time-slider-handle { background: #3A3A3E; }
+.time-slider-handle-grip {
+  width: 4px; height: 16px;
+  border-left: 2px solid rgba(212,168,83,0.35);
+  border-right: 2px solid rgba(212,168,83,0.35);
+}
+body.dark-mode .time-slider-handle-grip { border-color: rgba(212,168,83,0.5); }
+.time-slider-handle-l { left: -15px; }
+.time-slider-handle-r { right: -15px; }
+.time-slider-tip {
+  position: absolute; top: -22px; font-size: 12px; font-weight: 800;
+  color: var(--gold); white-space: nowrap; pointer-events: none;
+}
+.time-slider-tip-l { left: 0; }
+.time-slider-tip-r { right: 0; }
+.time-slider-dur {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+  font-size: 11px; font-weight: 800; color: white; white-space: nowrap;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.2); pointer-events: none;
+  letter-spacing: 0.3px;
+}
+.time-slider-markers {
+  position: relative; height: 18px; margin: 2px 16px 0;
+}
+.time-slider-marker {
+  position: absolute; transform: translateX(-50%);
+  font-size: 9px; font-weight: 600; color: var(--gray); line-height: 1;
+}
+.time-slider-marker.is-extend { color: rgba(212,168,83,0.5); font-style: italic; }
+body.dark-mode .time-slider-marker { color: #666; }
+.extended-note {
+  display: none; align-items: center; gap: 8px; padding: 10px 14px;
+  border-radius: 12px; margin-top: 10px;
+  background: linear-gradient(135deg,rgba(255,165,0,0.08),rgba(212,168,83,0.05));
+  border: 1px solid rgba(255,165,0,0.18);
+  font-size: 12px; font-weight: 600; color: #B8860B; line-height: 1.4;
+  animation: fadeSlideIn 0.3s ease;
+}
+.extended-note.visible { display: flex; }
+.extended-note-icon { font-size: 16px; flex-shrink: 0; }
+body.dark-mode .extended-note { color: #E8C97A; background: rgba(212,168,83,0.1); border-color: rgba(212,168,83,0.2); }
+
 /* Week labels in date strip */
 .week-label {
   flex-shrink: 0; display: flex; align-items: flex-end; padding-bottom: 8px;
@@ -3178,24 +3272,34 @@ body.dark-mode .scenario-pick:hover, body.dark-mode .scenario-pick.active { bord
         <div class="book-progress-step" id="progStep4"><span class="step-icon">✓</span> Booked!</div>
       </div>
 
-      <!-- Time Range Picker -->
+      <!-- Time Range Picker — Visual Drag Slider -->
       <div class="time-picker" id="timePicker" style="display:none;">
         <div class="time-confirmed-flash" id="timeConfirmedFlash">✓ Locked in</div>
         <div class="time-picker-header">
-          <span class="time-picker-title">Pick your hours</span>
-          <span class="time-picker-hint" id="timePickerHint">Pick a shorter session to save</span>
+          <span class="time-picker-title">Slide to pick hours</span>
+          <span class="time-picker-hint" id="timePickerHint">Drag to adjust</span>
         </div>
-        <div class="time-picker-row">
-          <div class="time-picker-group">
-            <span class="time-picker-label">Drop off</span>
-            <select class="time-select" id="timeStart" onchange="updateTimePrice()" aria-label="Drop-off time"></select>
+        <div class="time-slider-container" id="timeSlider">
+          <div class="time-slider-track" id="timeSliderTrack">
+            <div class="time-slider-avail-zone" id="sliderAvailZone"></div>
+            <div class="time-slider-extend-zone" id="sliderExtendZone" style="display:none;"></div>
+            <div class="time-slider-selection" id="sliderSelection">
+              <div class="time-slider-sel-extend" id="sliderSelExtend" style="display:none;"></div>
+              <div class="time-slider-handle time-slider-handle-l" id="sliderHandleL"><div class="time-slider-handle-grip"></div></div>
+              <div class="time-slider-handle time-slider-handle-r" id="sliderHandleR"><div class="time-slider-handle-grip"></div></div>
+              <div class="time-slider-tip time-slider-tip-l" id="sliderTipL"></div>
+              <div class="time-slider-tip time-slider-tip-r" id="sliderTipR"></div>
+              <div class="time-slider-dur" id="sliderDur"></div>
+            </div>
           </div>
-          <span class="time-picker-dash">–</span>
-          <div class="time-picker-group">
-            <span class="time-picker-label">Pick up</span>
-            <select class="time-select" id="timeEnd" onchange="updateTimePrice()" aria-label="Pick-up time"></select>
-          </div>
+          <div class="time-slider-markers" id="sliderMarkers"></div>
         </div>
+        <div class="extended-note" id="extendedNote">
+          <span class="extended-note-icon">⏰</span>
+          <span>Past Poppy's posted hours — she'll review & confirm</span>
+        </div>
+        <input type="hidden" id="timeStart" value="">
+        <input type="hidden" id="timeEnd" value="">
         <div class="time-quick-btns" id="timeQuickBtns"></div>
         <div class="scenario-picks" id="scenarioPicks"></div>
       </div>
@@ -4555,92 +4659,232 @@ function selectDay(key, pill) {
   if (typeof updateBookBtnState === 'function') updateBookBtnState();
 }
 
-function populateTimePicker(startTime, endTime) {
-  const startSel = document.getElementById('timeStart');
-  const endSel = document.getElementById('timeEnd');
-  const quickBtns = document.getElementById('timeQuickBtns');
-  const fmt = t => { const [h,m] = t.split(':').map(Number); const ap = h>=12?'PM':'AM'; return `${h>12?h-12:h||12}:${String(m).padStart(2,'0')} ${ap}`; };
-  // Generate 15-min slots within window
-  const [sh,sm] = startTime.split(':').map(Number);
-  const [eh,em] = endTime.split(':').map(Number);
-  const startMins = sh * 60 + sm;
-  const endMins = eh * 60 + em;
-  const slots = [];
-  for (let m = startMins; m <= endMins; m += 15) {
-    const hh = Math.floor(m / 60);
-    const mm = m % 60;
-    const val = `${String(hh).padStart(2,'0')}:${String(mm).padStart(2,'0')}`;
-    slots.push({ val, label: fmt(val), mins: m });
-  }
-  // Populate start dropdown (all but last)
-  startSel.innerHTML = '';
-  slots.slice(0, -1).forEach(s => {
-    const opt = document.createElement('option');
-    opt.value = s.val; opt.textContent = s.label;
-    startSel.appendChild(opt);
-  });
-  startSel.value = startTime;
-  // Populate end dropdown
-  updateEndOptions();
-  endSel.value = endTime;
-  // Quick duration buttons
-  const totalHrs = (endMins - startMins) / 60;
-  quickBtns.innerHTML = '';
-  const durations = [1, 2, 3];
-  if (totalHrs >= 4) durations.push(4);
-  durations.push(totalHrs);
-  const uniqueDurations = [...new Set(durations.filter(d => d <= totalHrs))];
-  uniqueDurations.forEach(dur => {
-    const btn = document.createElement('button');
-    btn.className = 'time-quick-btn' + (dur === totalHrs ? ' active' : '');
-    btn.textContent = dur === totalHrs ? 'Full window' : dur + (dur === 1 ? ' hr' : ' hrs');
-    btn.onclick = () => {
-      const sVal = startSel.value;
-      const [sh2,sm2] = sVal.split(':').map(Number);
-      const newEnd = sh2 * 60 + sm2 + dur * 60;
-      const clampEnd = Math.min(newEnd, endMins);
-      const hh = Math.floor(clampEnd / 60);
-      const mm = clampEnd % 60;
-      endSel.value = `${String(hh).padStart(2,'0')}:${String(mm).padStart(2,'0')}`;
-      updateTimePrice();
-      document.querySelectorAll('.time-quick-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-    };
-    quickBtns.appendChild(btn);
-  });
-  // Hint text
-  document.getElementById('timePickerHint').textContent = totalHrs >= 2 ? 'Pick a shorter session to save' : '';
-  // Build scenario quick picks
-  buildScenarioPicks(startTime, endTime);
+/* ── Time Slider State ── */
+const _sl = {
+  trackStart: 0, trackEnd: 0, availStart: 0, availEnd: 0,
+  selStart: 0, selEnd: 0, mode: null, sx: 0, ss: 0, se: 0, bound: false
+};
+
+function _mLabel(m) {
+  const h = Math.floor(m/60), mm = m%60, ap = h>=12?'p':'a';
+  return (h>12?h-12:(h||12)) + (mm?':'+String(mm).padStart(2,'0'):'') + ap;
+}
+function _mVal(m) {
+  return String(Math.floor(m/60)).padStart(2,'0')+':'+String(m%60).padStart(2,'0');
+}
+function _snap(m) { return Math.round(m/15)*15; }
+
+function setSliderRange(s, e) {
+  _sl.selStart = s; _sl.selEnd = e;
+  _renderSlider(); _syncSlider(); updateTimePrice();
 }
 
-function updateEndOptions() {
-  const startSel = document.getElementById('timeStart');
-  const endSel = document.getElementById('timeEnd');
-  const avail = availabilityData[selectedDate];
-  if (!avail) return;
-  const fmt = t => { const [h,m] = t.split(':').map(Number); const ap = h>=12?'PM':'AM'; return `${h>12?h-12:h||12}:${String(m).padStart(2,'0')} ${ap}`; };
-  const [sh,sm] = startSel.value.split(':').map(Number);
-  const startMins = sh * 60 + sm;
-  const [eh,em] = avail.end_time.split(':').map(Number);
-  const endMins = eh * 60 + em;
-  const prevEnd = endSel.value;
-  endSel.innerHTML = '';
-  for (let m = startMins + 60; m <= endMins; m += 15) {
-    const hh = Math.floor(m / 60);
-    const mm = m % 60;
-    const val = `${String(hh).padStart(2,'0')}:${String(mm).padStart(2,'0')}`;
-    const opt = document.createElement('option');
-    opt.value = val; opt.textContent = fmt(val);
-    endSel.appendChild(opt);
+function _renderSlider() {
+  const sel = document.getElementById('sliderSelection');
+  const az = document.getElementById('sliderAvailZone');
+  const ez = document.getElementById('sliderExtendZone');
+  const se = document.getElementById('sliderSelExtend');
+  const tl = document.getElementById('sliderTipL');
+  const tr = document.getElementById('sliderTipR');
+  const dl = document.getElementById('sliderDur');
+  const note = document.getElementById('extendedNote');
+  if (!sel) return;
+  const dur = _sl.trackEnd - _sl.trackStart;
+  if (dur <= 0) return;
+  const pct = v => ((v - _sl.trackStart) / dur * 100);
+  // Available zone
+  az.style.left = pct(_sl.availStart)+'%';
+  az.style.width = ((_sl.availEnd-_sl.availStart)/dur*100)+'%';
+  // Extension zone
+  if (_sl.trackEnd > _sl.availEnd) {
+    ez.style.left = pct(_sl.availEnd)+'%';
+    ez.style.width = ((_sl.trackEnd-_sl.availEnd)/dur*100)+'%';
+    ez.style.display = 'block';
+  } else ez.style.display = 'none';
+  // Selection
+  sel.style.left = pct(_sl.selStart)+'%';
+  sel.style.width = ((_sl.selEnd-_sl.selStart)/dur*100)+'%';
+  // Extended portion of selection
+  if (_sl.selEnd > _sl.availEnd) {
+    const ov = Math.max(_sl.selStart, _sl.availEnd);
+    se.style.left = ((ov-_sl.selStart)/(_sl.selEnd-_sl.selStart)*100)+'%';
+    se.style.width = ((100 - (ov-_sl.selStart)/(_sl.selEnd-_sl.selStart)*100))+'%';
+    se.style.display = 'block';
+    note.classList.add('visible');
+  } else { se.style.display = 'none'; note.classList.remove('visible'); }
+  // Labels
+  tl.textContent = _mLabel(_sl.selStart);
+  tr.textContent = _mLabel(_sl.selEnd);
+  const dm = _sl.selEnd - _sl.selStart, dh = dm/60;
+  dl.textContent = dh===Math.floor(dh) ? dh+(dh===1?' hr':' hrs') : dh.toFixed(1)+' hrs';
+}
+
+function _syncSlider() {
+  const si = document.getElementById('timeStart');
+  const ei = document.getElementById('timeEnd');
+  if (si) si.value = _mVal(_sl.selStart);
+  if (ei) ei.value = _mVal(_sl.selEnd);
+}
+
+function _buildMarkers() {
+  const mk = document.getElementById('sliderMarkers');
+  if (!mk) return; mk.innerHTML = '';
+  const dur = _sl.trackEnd - _sl.trackStart;
+  // Start marker if not on the hour
+  if (_sl.trackStart % 60 !== 0) {
+    const sp = document.createElement('span');
+    sp.className = 'time-slider-marker';
+    sp.style.left = '0%'; sp.textContent = _mLabel(_sl.trackStart);
+    mk.appendChild(sp);
   }
-  // Restore previous selection or default to last
-  if ([...endSel.options].some(o => o.value === prevEnd)) {
-    endSel.value = prevEnd;
-  } else {
-    endSel.value = endSel.options[endSel.options.length - 1]?.value || '';
+  // Hour markers
+  const first = Math.ceil(_sl.trackStart/60)*60;
+  for (let m = first; m <= _sl.trackEnd; m += 60) {
+    const sp = document.createElement('span');
+    sp.className = 'time-slider-marker' + (m > _sl.availEnd ? ' is-extend' : '');
+    sp.style.left = ((m-_sl.trackStart)/dur*100)+'%';
+    sp.textContent = _mLabel(m);
+    mk.appendChild(sp);
   }
 }
+
+function _initSliderEvents() {
+  if (_sl.bound) return; _sl.bound = true;
+  const container = document.getElementById('timeSlider');
+  const sel = document.getElementById('sliderSelection');
+  const hL = document.getElementById('sliderHandleL');
+  const hR = document.getElementById('sliderHandleR');
+  if (!container) return;
+
+  function bounds() {
+    const t = document.getElementById('timeSliderTrack');
+    const r = t.getBoundingClientRect();
+    return { l: r.left, w: r.width };
+  }
+  function xToM(cx) {
+    const b = bounds();
+    const p = Math.max(0, Math.min(1, (cx-b.l)/b.w));
+    return _sl.trackStart + p * (_sl.trackEnd - _sl.trackStart);
+  }
+  function start(e, mode) {
+    e.preventDefault(); e.stopPropagation();
+    const cx = e.touches ? e.touches[0].clientX : e.clientX;
+    _sl.mode = mode; _sl.sx = cx; _sl.ss = _sl.selStart; _sl.se = _sl.selEnd;
+    sel.classList.add('dragging');
+    const h = mode === 'left' ? hL : mode === 'right' ? hR : null;
+    if (h) h.classList.add('active');
+    document.addEventListener('pointermove', drag, {passive:false});
+    document.addEventListener('pointerup', end);
+    document.addEventListener('pointercancel', end);
+    document.addEventListener('touchmove', drag, {passive:false});
+    document.addEventListener('touchend', end);
+    document.addEventListener('touchcancel', end);
+  }
+  function drag(e) {
+    e.preventDefault();
+    const cx = e.touches ? e.touches[0].clientX : e.clientX;
+    const b = bounds();
+    const dm = (cx - _sl.sx) / b.w * (_sl.trackEnd - _sl.trackStart);
+    const MIN = 60;
+    if (_sl.mode === 'left') {
+      let ns = _snap(_sl.ss + dm);
+      ns = Math.max(_sl.availStart, Math.min(_sl.selEnd - MIN, ns));
+      _sl.selStart = ns;
+    } else if (_sl.mode === 'right') {
+      let ne = _snap(_sl.se + dm);
+      ne = Math.max(_sl.selStart + MIN, Math.min(_sl.trackEnd, ne));
+      _sl.selEnd = ne;
+    } else {
+      const d = _sl.se - _sl.ss;
+      let ns = _snap(_sl.ss + dm);
+      ns = Math.max(_sl.availStart, ns);
+      let ne = ns + d;
+      if (ne > _sl.trackEnd) { ne = _sl.trackEnd; ns = ne - d; }
+      _sl.selStart = ns; _sl.selEnd = ne;
+    }
+    _renderSlider(); _syncSlider(); updateTimePrice();
+  }
+  function end() {
+    _sl.mode = null;
+    sel.classList.remove('dragging');
+    hL.classList.remove('active'); hR.classList.remove('active');
+    document.removeEventListener('pointermove', drag);
+    document.removeEventListener('pointerup', end);
+    document.removeEventListener('pointercancel', end);
+    document.removeEventListener('touchmove', drag);
+    document.removeEventListener('touchend', end);
+    document.removeEventListener('touchcancel', end);
+    if (navigator.vibrate) navigator.vibrate(10);
+  }
+  hL.addEventListener('pointerdown', e => start(e,'left'));
+  hR.addEventListener('pointerdown', e => start(e,'right'));
+  sel.addEventListener('pointerdown', e => {
+    if (e.target.closest('.time-slider-handle')) return;
+    start(e,'move');
+  });
+  hL.addEventListener('touchstart', e => start(e,'left'), {passive:false});
+  hR.addEventListener('touchstart', e => start(e,'right'), {passive:false});
+  sel.addEventListener('touchstart', e => {
+    if (e.target.closest('.time-slider-handle')) return;
+    start(e,'move');
+  }, {passive:false});
+  // Tap track to center selection there
+  container.addEventListener('pointerdown', e => {
+    if (e.target.closest('.time-slider-selection')) return;
+    const m = _snap(xToM(e.clientX));
+    const d = _sl.selEnd - _sl.selStart;
+    let ns = _snap(m - d/2);
+    ns = Math.max(_sl.availStart, ns);
+    let ne = ns + d;
+    if (ne > _sl.trackEnd) { ne = _sl.trackEnd; ns = ne - d; }
+    _sl.selStart = ns; _sl.selEnd = ne;
+    _renderSlider(); _syncSlider(); updateTimePrice();
+    if (navigator.vibrate) navigator.vibrate(10);
+  });
+}
+
+function populateTimePicker(startTime, endTime) {
+  const [sh,sm] = startTime.split(':').map(Number);
+  const [eh,em] = endTime.split(':').map(Number);
+  const aS = sh*60+sm, aE = eh*60+em, aDur = aE - aS;
+  // Track = available window + up to 2hr extension (max 11:45pm)
+  const extEnd = Math.min(aE + 120, 23*60+45);
+  _sl.availStart = aS; _sl.availEnd = aE;
+  _sl.trackStart = aS; _sl.trackEnd = extEnd;
+  // Default selection: 2hr block from start (or full window if < 2hr)
+  _sl.selStart = aS;
+  _sl.selEnd = aS + Math.min(120, aDur);
+  _buildMarkers(); _renderSlider(); _syncSlider();
+  // Hint
+  const hint = document.getElementById('timePickerHint');
+  if (hint) hint.textContent = aDur >= 120 ? 'Drag to adjust' : '';
+  // Quick duration buttons
+  const qb = document.getElementById('timeQuickBtns');
+  if (qb) {
+    qb.innerHTML = '';
+    const totalHrs = aDur/60;
+    const durs = [1,2,3];
+    if (totalHrs >= 4) durs.push(4);
+    durs.push(totalHrs);
+    [...new Set(durs.filter(d => d <= totalHrs))].forEach(dur => {
+      const btn = document.createElement('button');
+      btn.className = 'time-quick-btn';
+      btn.textContent = dur === totalHrs ? 'Full window' : dur + (dur===1?' hr':' hrs');
+      btn.onclick = () => {
+        const ne = Math.min(_sl.selStart + dur*60, _sl.trackEnd);
+        setSliderRange(_sl.selStart, ne);
+        document.querySelectorAll('.time-quick-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.querySelectorAll('.scenario-pick').forEach(b => b.classList.remove('active'));
+      };
+      qb.appendChild(btn);
+    });
+  }
+  buildScenarioPicks(startTime, endTime);
+  _initSliderEvents();
+}
+
+function updateEndOptions() { /* slider handles this */ }
 
 function updateTimePrice() {
   const startSel = document.getElementById('timeStart');
@@ -4846,19 +5090,7 @@ function buildScenarioPicks(startTime, endTime) {
     btn.className = 'scenario-pick';
     btn.innerHTML = `<span class="scenario-pick-emoji">${sc.emoji}</span>${sc.label}`;
     btn.onclick = () => {
-      const startSel = document.getElementById('timeStart');
-      const endSel = document.getElementById('timeEnd');
-      // Set start time
-      const sH = Math.floor(sc.startM / 60); const sM = sc.startM % 60;
-      const sVal = `${String(sH).padStart(2,'0')}:${String(sM).padStart(2,'0')}`;
-      if ([...startSel.options].some(o => o.value === sVal)) startSel.value = sVal;
-      updateEndOptions();
-      // Set end time
-      const eH = Math.floor(sc.endM / 60); const eM = sc.endM % 60;
-      const eVal = `${String(eH).padStart(2,'0')}:${String(eM).padStart(2,'0')}`;
-      if ([...endSel.options].some(o => o.value === eVal)) endSel.value = eVal;
-      else endSel.value = endSel.options[endSel.options.length - 1]?.value || '';
-      updateTimePrice();
+      setSliderRange(sc.startM, sc.endM);
       document.querySelectorAll('.scenario-pick').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       document.querySelectorAll('.time-quick-btn').forEach(b => b.classList.remove('active'));
@@ -5286,9 +5518,12 @@ async function submitBooking() {
     }
 
     await db.from('kids').insert({ parent_id: parentId, name: kidName }).select().single();
+    // If time extends past available window, mark as pending for Poppy's approval
+    const isExtended = avail && endTime > avail.end_time;
+    const bookStatus = isExtended ? 'pending_approval' : 'confirmed';
     const { error: bErr } = await db.from('bookings').insert({
       parent_id: parentId, date: selectedDate, start_time: startTime, end_time: endTime,
-      package: 'hourly', price_cents: priceCents, status: 'confirmed'
+      package: 'hourly', price_cents: priceCents, status: bookStatus
     });
     if (bErr) throw bErr;
 
@@ -5302,6 +5537,13 @@ async function submitBooking() {
     document.getElementById('confirmKid').textContent = kidName;
     document.getElementById('confirmTotal').textContent = `$${priceCents/100}`;
     document.getElementById('confirmOverlay').classList.add('active');
+    // Update confirmation text for extended bookings
+    const confirmTitle = document.querySelector('.confirm-title');
+    if (confirmTitle && isExtended) {
+      confirmTitle.textContent = 'Request Sent!';
+      const confirmSub = document.querySelector('.confirm-subtitle');
+      if (confirmSub) confirmSub.textContent = 'Poppy will confirm your extended hours shortly';
+    }
     // Store for share/calendar
     window._lastBooking = { date: selectedDate, startTime, endTime, kidName, priceCents,
       dateLabel: `${dayNames[bDate.getDay()]}, ${monthNames[bDate.getMonth()]} ${bDate.getDate()}`,
@@ -5309,7 +5551,7 @@ async function submitBooking() {
     // Reset share button state
     const shareBtn = document.getElementById('shareBookingBtn');
     if (shareBtn) { shareBtn.classList.remove('copied'); document.getElementById('shareBtnText').textContent = 'Share with partner'; }
-    srAnnounce(`Booking confirmed for ${kidName} on ${dayNames[bDate.getDay()]}, ${monthNames[bDate.getMonth()]} ${bDate.getDate()}, ${fmt12(startTime)} to ${fmt12(endTime)}. Total: $${priceCents/100}.`);
+    srAnnounce(`${isExtended ? 'Booking request sent' : 'Booking confirmed'} for ${kidName} on ${dayNames[bDate.getDay()]}, ${monthNames[bDate.getMonth()]} ${bDate.getDate()}, ${fmt12(startTime)} to ${fmt12(endTime)}. Total: $${priceCents/100}.`);
     // Stagger "What to Expect" steps
     document.querySelectorAll('.confirm-expect-step').forEach((s, i) => {
       s.style.opacity = '0'; s.style.transform = 'translateX(-10px)';
