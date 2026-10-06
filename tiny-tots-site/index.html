@@ -458,6 +458,66 @@ a { text-decoration: none; color: inherit; }
   100% { transform: scale(1); }
 }
 
+/* ═══ TIME RANGE PICKER ═══ */
+.time-picker {
+  background: var(--warm); border-radius: 16px; padding: 16px;
+  margin-bottom: 16px;
+}
+.time-picker-header {
+  display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;
+}
+.time-picker-title {
+  font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px;
+  color: var(--charcoal);
+}
+.time-picker-hint {
+  font-size: 11px; color: var(--gray); font-weight: 600;
+}
+.time-picker-row {
+  display: flex; align-items: center; gap: 10px;
+}
+.time-picker-group {
+  flex: 1; display: flex; flex-direction: column; gap: 4px;
+}
+.time-picker-label {
+  font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+  color: var(--gray);
+}
+.time-select {
+  padding: 12px 14px; border-radius: 12px; border: 2px solid #eee;
+  font-family: var(--font-body); font-size: 15px; font-weight: 700;
+  color: var(--charcoal); background: var(--white); cursor: pointer;
+  appearance: none; -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%23999' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 12px center;
+  transition: border-color 0.2s; outline: none;
+  min-height: 48px;
+}
+.time-select:focus { border-color: var(--gold); }
+.time-picker-dash {
+  font-size: 18px; font-weight: 800; color: var(--gray); padding-top: 18px;
+}
+.time-quick-btns {
+  display: flex; gap: 6px; margin-top: 12px; flex-wrap: wrap;
+}
+.time-quick-btn {
+  padding: 7px 14px; border-radius: 20px; font-size: 12px; font-weight: 700;
+  background: var(--white); color: var(--charcoal); border: 1.5px solid #eee;
+  cursor: pointer; transition: all 0.2s;
+}
+.time-quick-btn:hover, .time-quick-btn.active {
+  border-color: var(--gold); background: rgba(212,168,83,0.1); color: var(--gold);
+}
+.time-quick-btn:active { transform: scale(0.95); }
+
+/* Week labels in date strip */
+.week-label {
+  flex-shrink: 0; display: flex; align-items: flex-end; padding-bottom: 8px;
+  font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px;
+  color: var(--gold); writing-mode: vertical-lr; transform: rotate(180deg);
+  min-height: 60px;
+}
+
 /* Auth-aware booking */
 .book-signed-in { display: none; }
 .book-signed-in .signed-in-greeting {
@@ -1288,6 +1348,26 @@ elevenlabs-convai {
       <p class="book-date-label" id="bookDateLabel"></p>
       <p class="book-rate">&#9733; $12/hr &middot; Apple Pay or cash</p>
 
+      <!-- Time Range Picker -->
+      <div class="time-picker" id="timePicker" style="display:none;">
+        <div class="time-picker-header">
+          <span class="time-picker-title">Pick your hours</span>
+          <span class="time-picker-hint" id="timePickerHint">Drag to adjust</span>
+        </div>
+        <div class="time-picker-row">
+          <div class="time-picker-group">
+            <span class="time-picker-label">Drop off</span>
+            <select class="time-select" id="timeStart" onchange="updateTimePrice()" aria-label="Drop-off time"></select>
+          </div>
+          <span class="time-picker-dash">–</span>
+          <div class="time-picker-group">
+            <span class="time-picker-label">Pick up</span>
+            <select class="time-select" id="timeEnd" onchange="updateTimePrice()" aria-label="Pick-up time"></select>
+          </div>
+        </div>
+        <div class="time-quick-btns" id="timeQuickBtns"></div>
+      </div>
+
       <!-- Dynamic price preview -->
       <div class="price-preview" id="pricePreview" style="display:none;">
         <div class="price-preview-row">
@@ -1964,10 +2044,20 @@ function buildDateStrip() {
   strip.innerHTML = '';
   const today = new Date();
   const dayNames = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
+  let lastWeekNum = -1;
   for (let i = 0; i < 21; i++) {
     const d = new Date(today); d.setDate(today.getDate() + i);
     const key = d.toISOString().split('T')[0];
     const avail = availabilityData[key];
+    // Week separator labels
+    const weekNum = Math.floor(i / 7);
+    if (weekNum !== lastWeekNum && i > 0 && d.getDay() === 0) {
+      const wl = document.createElement('div');
+      wl.className = 'week-label';
+      wl.textContent = weekNum === 1 ? 'Next' : 'Wk ' + (weekNum + 1);
+      strip.appendChild(wl);
+      lastWeekNum = weekNum;
+    }
     const pill = document.createElement('div');
     pill.className = 'day-pill' + (avail ? ' available' : '');
     pill.dataset.date = key;
@@ -1977,7 +2067,7 @@ function buildDateStrip() {
       <span class="day-num">${d.getDate()}</span>
       ${avail ? `<span class="pill-time">${fmtShort(avail.start_time)}–${fmtShort(avail.end_time)}</span>` : '<span class="unavail-dot"></span>'}
     `;
-    pill.addEventListener('click', () => selectDay(key, pill));
+    pill.addEventListener('click', () => { if (avail) selectDay(key, pill); });
     strip.appendChild(pill);
   }
 }
@@ -1991,37 +2081,154 @@ function selectDay(key, pill) {
   const dayNames = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
   const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
   const label = `${dayNames[d.getDay()]}, ${monthNames[d.getMonth()]} ${d.getDate()}`;
-
   const fmt = t => { const [h,m] = t.split(':').map(Number); const ap = h>=12?'PM':'AM'; return `${h>12?h-12:h||12}:${String(m).padStart(2,'0')} ${ap}`; };
 
   if (avail) {
     document.getElementById('bookDateLabel').innerHTML = label +
-      `<span style="display:block;font-family:var(--font-body);font-size:13px;font-weight:600;color:var(--gold);margin-top:4px;">${fmt(avail.start_time)} – ${fmt(avail.end_time)}</span>`;
+      `<span style="display:block;font-family:var(--font-body);font-size:13px;font-weight:600;color:var(--green);margin-top:4px;">Available ${fmt(avail.start_time)} – ${fmt(avail.end_time)}</span>`;
   } else {
     document.getElementById('bookDateLabel').textContent = label;
   }
 
   const sheet = document.getElementById('bookSheet');
   const pricePreview = document.getElementById('pricePreview');
+  const timePicker = document.getElementById('timePicker');
   if (avail) {
     sheet.classList.add('open');
-    // Show dynamic price
-    const [sh,sm] = avail.start_time.split(':').map(Number);
-    const [eh,em] = avail.end_time.split(':').map(Number);
-    const hrs = Math.max(1, Math.round(((eh*60+em)-(sh*60+sm))/60));
-    const total = hrs * 12;
-    document.getElementById('priceHoursLabel').textContent = hrs + (hrs === 1 ? ' hour' : ' hours');
-    document.getElementById('priceCalc').textContent = '× $12/hr';
-    const totalEl = document.getElementById('priceTotalAmount');
-    totalEl.textContent = '$' + total;
-    totalEl.classList.remove('updating');
-    void totalEl.offsetWidth;
-    totalEl.classList.add('updating');
+    // Populate time picker
+    populateTimePicker(avail.start_time, avail.end_time);
+    timePicker.style.display = 'block';
+    // Calculate price from selected times
+    updateTimePrice();
     pricePreview.style.display = 'block';
     sheet.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   } else {
     sheet.classList.remove('open');
     pricePreview.style.display = 'none';
+    timePicker.style.display = 'none';
+  }
+}
+
+function populateTimePicker(startTime, endTime) {
+  const startSel = document.getElementById('timeStart');
+  const endSel = document.getElementById('timeEnd');
+  const quickBtns = document.getElementById('timeQuickBtns');
+  const fmt = t => { const [h,m] = t.split(':').map(Number); const ap = h>=12?'PM':'AM'; return `${h>12?h-12:h||12}:${String(m).padStart(2,'0')} ${ap}`; };
+  // Generate 15-min slots within window
+  const [sh,sm] = startTime.split(':').map(Number);
+  const [eh,em] = endTime.split(':').map(Number);
+  const startMins = sh * 60 + sm;
+  const endMins = eh * 60 + em;
+  const slots = [];
+  for (let m = startMins; m <= endMins; m += 15) {
+    const hh = Math.floor(m / 60);
+    const mm = m % 60;
+    const val = `${String(hh).padStart(2,'0')}:${String(mm).padStart(2,'0')}`;
+    slots.push({ val, label: fmt(val), mins: m });
+  }
+  // Populate start dropdown (all but last)
+  startSel.innerHTML = '';
+  slots.slice(0, -1).forEach(s => {
+    const opt = document.createElement('option');
+    opt.value = s.val; opt.textContent = s.label;
+    startSel.appendChild(opt);
+  });
+  startSel.value = startTime;
+  // Populate end dropdown
+  updateEndOptions();
+  endSel.value = endTime;
+  // Quick duration buttons
+  const totalHrs = (endMins - startMins) / 60;
+  quickBtns.innerHTML = '';
+  const durations = [1, 2, 3];
+  if (totalHrs >= 4) durations.push(4);
+  durations.push(totalHrs);
+  const uniqueDurations = [...new Set(durations.filter(d => d <= totalHrs))];
+  uniqueDurations.forEach(dur => {
+    const btn = document.createElement('button');
+    btn.className = 'time-quick-btn' + (dur === totalHrs ? ' active' : '');
+    btn.textContent = dur === totalHrs ? 'Full window' : dur + (dur === 1 ? ' hr' : ' hrs');
+    btn.onclick = () => {
+      const sVal = startSel.value;
+      const [sh2,sm2] = sVal.split(':').map(Number);
+      const newEnd = sh2 * 60 + sm2 + dur * 60;
+      const clampEnd = Math.min(newEnd, endMins);
+      const hh = Math.floor(clampEnd / 60);
+      const mm = clampEnd % 60;
+      endSel.value = `${String(hh).padStart(2,'0')}:${String(mm).padStart(2,'0')}`;
+      updateTimePrice();
+      document.querySelectorAll('.time-quick-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    };
+    quickBtns.appendChild(btn);
+  });
+  // Hint text
+  document.getElementById('timePickerHint').textContent = totalHrs >= 2 ? 'Pick a shorter session to save' : '';
+}
+
+function updateEndOptions() {
+  const startSel = document.getElementById('timeStart');
+  const endSel = document.getElementById('timeEnd');
+  const avail = availabilityData[selectedDate];
+  if (!avail) return;
+  const fmt = t => { const [h,m] = t.split(':').map(Number); const ap = h>=12?'PM':'AM'; return `${h>12?h-12:h||12}:${String(m).padStart(2,'0')} ${ap}`; };
+  const [sh,sm] = startSel.value.split(':').map(Number);
+  const startMins = sh * 60 + sm;
+  const [eh,em] = avail.end_time.split(':').map(Number);
+  const endMins = eh * 60 + em;
+  const prevEnd = endSel.value;
+  endSel.innerHTML = '';
+  for (let m = startMins + 60; m <= endMins; m += 15) {
+    const hh = Math.floor(m / 60);
+    const mm = m % 60;
+    const val = `${String(hh).padStart(2,'0')}:${String(mm).padStart(2,'0')}`;
+    const opt = document.createElement('option');
+    opt.value = val; opt.textContent = fmt(val);
+    endSel.appendChild(opt);
+  }
+  // Restore previous selection or default to last
+  if ([...endSel.options].some(o => o.value === prevEnd)) {
+    endSel.value = prevEnd;
+  } else {
+    endSel.value = endSel.options[endSel.options.length - 1]?.value || '';
+  }
+}
+
+function updateTimePrice() {
+  const startSel = document.getElementById('timeStart');
+  const endSel = document.getElementById('timeEnd');
+  updateEndOptions();
+  const [sh,sm] = startSel.value.split(':').map(Number);
+  const [eh,em] = endSel.value.split(':').map(Number);
+  const totalMins = (eh * 60 + em) - (sh * 60 + sm);
+  const hrs = Math.max(1, Math.round(totalMins / 60 * 4) / 4); // quarter-hour precision
+  const displayHrs = totalMins >= 60 ? (totalMins / 60).toFixed(totalMins % 60 === 0 ? 0 : 1) : (totalMins / 60).toFixed(1);
+  const total = Math.round(hrs * 12);
+  document.getElementById('priceHoursLabel').textContent = displayHrs + (parseFloat(displayHrs) === 1 ? ' hour' : ' hours');
+  document.getElementById('priceCalc').textContent = '× $12/hr';
+  const totalEl = document.getElementById('priceTotalAmount');
+  totalEl.textContent = '$' + total;
+  totalEl.classList.remove('updating');
+  void totalEl.offsetWidth;
+  totalEl.classList.add('updating');
+  // Update quick btn active state
+  const avail = availabilityData[selectedDate];
+  if (avail) {
+    const [ash,asm] = avail.start_time.split(':').map(Number);
+    const [aeh,aem] = avail.end_time.split(':').map(Number);
+    const fullMins = (aeh*60+aem) - (ash*60+asm);
+    document.querySelectorAll('.time-quick-btn').forEach(b => {
+      b.classList.remove('active');
+      if (b.textContent === 'Full window' && totalMins === fullMins) b.classList.add('active');
+      const match = b.textContent.match(/^(\d+) hrs?$/);
+      if (match && parseInt(match[1]) * 60 === totalMins) b.classList.add('active');
+    });
+  }
+  // Update sticky CTA
+  const stickyDetail = document.querySelector('.sticky-cta-detail');
+  if (stickyDetail) {
+    const fmtShort = t => { const [h,m] = t.split(':').map(Number); const ap = h>=12?'p':'a'; return `${h>12?h-12:h||12}${m?':'+String(m).padStart(2,'0'):''}${ap}`; };
+    stickyDetail.textContent = `Today ${fmtShort(startSel.value)}–${fmtShort(endSel.value)} · $${total}`;
   }
 }
 
@@ -2143,12 +2350,16 @@ async function submitBooking() {
   btns.forEach(b => { b.disabled = true; b.textContent = 'Booking...'; });
 
   const avail = availabilityData[selectedDate];
-  const startTime = avail ? avail.start_time : '15:00';
-  const endTime = avail ? avail.end_time : '21:00';
+  // Use selected time range from picker, not full availability window
+  const timeStartEl = document.getElementById('timeStart');
+  const timeEndEl = document.getElementById('timeEnd');
+  const startTime = (timeStartEl && timeStartEl.value) ? timeStartEl.value : (avail ? avail.start_time : '15:00');
+  const endTime = (timeEndEl && timeEndEl.value) ? timeEndEl.value : (avail ? avail.end_time : '21:00');
   const [sh,sm] = startTime.split(':').map(Number);
   const [eh,em] = endTime.split(':').map(Number);
-  const hours = Math.max(1, Math.round(((eh*60+em)-(sh*60+sm))/60));
-  const priceCents = hours * 1200;
+  const totalMins = (eh*60+em) - (sh*60+sm);
+  const hours = Math.max(1, Math.round(totalMins / 60 * 4) / 4);
+  const priceCents = Math.round(hours * 1200);
 
   try {
     const { data: existing } = await db.from('parents').select('id').eq('phone', parentPhone).limit(1);
