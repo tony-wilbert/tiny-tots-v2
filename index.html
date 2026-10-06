@@ -1661,12 +1661,100 @@ elevenlabs-convai {
 .error-toast {
   background: #fce4ec !important; color: #c62828 !important;
 }
+
+/* ═══ PRINT STYLES ═══ */
+@media print {
+  body { background: #fff; padding: 0; font-size: 12pt; }
+  .nav, .bottom-bar, .sticky-cta, .voice-modal-overlay, .auth-overlay,
+  .hero-blob, .activity-ticker, .share-section, .footer,
+  .social-proof-strip, .tip-share, .voice-end-btn, .tab-btn { display: none !important; }
+  .hero { min-height: auto; padding: 20px; }
+  .avatar-wrap { width: 80px; height: 80px; }
+  section { break-inside: avoid; page-break-inside: avoid; padding: 16px 0; }
+  .review-card, .meet-card, .next-avail-inner { box-shadow: none; border: 1px solid #ddd; }
+  .book-card { box-shadow: none; border: 1px solid #ccc; }
+  .action-btn, .book-btn, .sticky-cta-btn { display: none; }
+  a[href]::after { content: " (" attr(href) ")"; font-size: 9pt; color: #666; }
+  .confirm-overlay.active { position: relative; display: block; background: #fff; }
+  .confirm-overlay .action-btn { display: none; }
+}
+
+/* ═══ NOSCRIPT STYLES ═══ */
+.noscript-notice {
+  text-align: center; padding: 40px 20px; margin-top: 80px;
+  font-family: var(--font-body); color: var(--charcoal);
+}
+.noscript-notice h2 { font-family: var(--font-display); margin-bottom: 12px; }
+.noscript-notice p { color: var(--gray); }
 </style>
+
+<!-- ═══ STRUCTURED DATA (JSON-LD) ═══ -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "name": "Tiny Tots — Poppy's Babysitting",
+  "description": "Red Cross certified babysitting by Poppy Wilbert. $12/hr, instant online booking, activity reports, and an AI voice assistant for parenting tips.",
+  "url": "https://tinytots-v2.netlify.app",
+  "telephone": "",
+  "priceRange": "$12/hr",
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "Local neighborhood",
+    "addressCountry": "US"
+  },
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "4.9",
+    "reviewCount": "12",
+    "bestRating": "5"
+  },
+  "openingHoursSpecification": [
+    {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": ["Tuesday", "Thursday"],
+      "opens": "15:45",
+      "closes": "20:00"
+    },
+    {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": "Saturday",
+      "opens": "16:00",
+      "closes": "23:00"
+    }
+  ],
+  "makesOffer": {
+    "@type": "Offer",
+    "itemOffered": {
+      "@type": "Service",
+      "name": "Babysitting",
+      "description": "In-home babysitting with activity reports, Red Cross certified"
+    },
+    "price": "12.00",
+    "priceCurrency": "USD",
+    "priceSpecification": {
+      "@type": "UnitPriceSpecification",
+      "price": "12.00",
+      "priceCurrency": "USD",
+      "unitCode": "HUR"
+    }
+  }
+}
+</script>
 </head>
 <body>
 
 <!-- Skip to main content for keyboard users -->
 <a href="#hero" class="skip-link">Skip to content</a>
+
+<!-- Noscript fallback -->
+<noscript>
+  <div class="noscript-notice">
+    <h2>&#9733; Tiny Tots</h2>
+    <p>Poppy's babysitting site needs JavaScript to show the calendar and booking system.</p>
+    <p>Please enable JavaScript, or call/text to book directly.</p>
+  </div>
+</noscript>
 
 <!-- ═══ TOP NAV ═══ -->
 <nav class="nav" id="nav" role="navigation" aria-label="Site navigation">
@@ -2069,7 +2157,7 @@ elevenlabs-convai {
 
 <!-- ═══ STICKY CTA BAR ═══ -->
 <!-- Booking Confirmation Overlay -->
-<div class="confirm-overlay" id="confirmOverlay">
+<div class="confirm-overlay" id="confirmOverlay" role="dialog" aria-modal="true" aria-label="Booking confirmed">
   <div class="confirm-card">
     <div class="confirm-emoji">🎉</div>
     <h2 class="confirm-title">You're All Set!</h2>
@@ -2118,7 +2206,7 @@ elevenlabs-convai {
 </nav>
 
 <!-- ═══ AUTH MODAL ═══ -->
-<div class="auth-overlay" id="authOverlay" onclick="if(event.target===this)closeAuthModal()">
+<div class="auth-overlay" id="authOverlay" role="dialog" aria-modal="true" aria-label="Sign in to Tiny Tots" onclick="if(event.target===this)closeAuthModal()">
   <div class="auth-sheet">
     <h2>Join Poppy's Network</h2>
     <p>Sign in once and book with one tap every time. Your info stays on file so you never fill forms again.</p>
@@ -2464,10 +2552,29 @@ async function signInWithGoogle() {
 
 function openAuthModal() {
   if (currentUser) return; // Already signed in
-  document.getElementById('authOverlay').classList.add('show');
+  const overlay = document.getElementById('authOverlay');
+  overlay.classList.add('show');
+  // Focus trap: focus first input
+  requestAnimationFrame(() => {
+    const first = overlay.querySelector('input, button');
+    if (first) first.focus();
+  });
+  // Trap focus inside modal
+  overlay._trapHandler = (e) => {
+    if (e.key === 'Escape') { closeAuthModal(); return; }
+    if (e.key !== 'Tab') return;
+    const focusable = overlay.querySelectorAll('input, button, select, [tabindex]:not([tabindex="-1"])');
+    if (!focusable.length) return;
+    const first = focusable[0], last = focusable[focusable.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  };
+  document.addEventListener('keydown', overlay._trapHandler);
 }
 function closeAuthModal() {
-  document.getElementById('authOverlay').classList.remove('show');
+  const overlay = document.getElementById('authOverlay');
+  overlay.classList.remove('show');
+  if (overlay._trapHandler) { document.removeEventListener('keydown', overlay._trapHandler); overlay._trapHandler = null; }
 }
 
 /* ═══ RENDER FEED ═══ */
@@ -2812,13 +2919,23 @@ function applyDefaultAvailability() {
   }
 }
 
-async function loadAvailability() {
+async function loadAvailability(retries = 2) {
   showDateStripSkeleton();
   const today = new Date().toISOString().split('T')[0];
-  const { data, error } = await db.from('availability').select('*').gte('date', today).order('date');
+  let data, error;
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    try {
+      const res = await db.from('availability').select('*').gte('date', today).order('date');
+      data = res.data; error = res.error;
+      if (!error) break;
+    } catch (e) { error = e; }
+    if (attempt < retries) await new Promise(r => setTimeout(r, 1000 * (attempt + 1)));
+  }
   availabilityData = {};
   if (!error && data) {
     data.forEach(r => { availabilityData[r.date] = { start_time: r.start_time, end_time: r.end_time, id: r.id }; });
+  } else if (error) {
+    console.warn('Availability load failed, using defaults:', error);
   }
   applyDefaultAvailability();
   buildDateStrip();
@@ -3035,10 +3152,16 @@ function toggleVoice() {
   const modal = document.getElementById('voiceModal');
   const statusEl = document.getElementById('voiceModalStatus');
   modal.classList.add('active');
+  modal.setAttribute('aria-hidden', 'false');
   modal.classList.remove('speaking');
   statusEl.textContent = 'Connecting...';
   statusEl.className = 'voice-modal-status';
   document.body.style.overflow = 'hidden';
+  // Escape key to close
+  modal._escHandler = (e) => { if (e.key === 'Escape') endVoiceCall(); };
+  document.addEventListener('keydown', modal._escHandler);
+  // Focus the close button
+  requestAnimationFrame(() => { const cb = modal.querySelector('.voice-modal-close'); if (cb) cb.focus(); });
 
   // Trigger ElevenLabs widget
   const widget = document.querySelector('elevenlabs-convai');
@@ -3060,7 +3183,9 @@ function endVoiceCall() {
   // Close modal
   const modal = document.getElementById('voiceModal');
   modal.classList.remove('active', 'speaking');
+  modal.setAttribute('aria-hidden', 'true');
   document.body.style.overflow = '';
+  if (modal._escHandler) { document.removeEventListener('keydown', modal._escHandler); modal._escHandler = null; }
 
   // Stop ElevenLabs
   const widget = document.querySelector('elevenlabs-convai');
@@ -3583,9 +3708,9 @@ requestAnimationFrame(() => {
 </script>
 
 <!-- ═══ VOICE MODAL ═══ -->
-<div class="voice-modal-overlay" id="voiceModal">
+<div class="voice-modal-overlay" id="voiceModal" role="dialog" aria-modal="true" aria-label="Voice call with Poppy" aria-hidden="true">
   <div class="voice-modal">
-    <button class="voice-modal-close" onclick="endVoiceCall()">&times;</button>
+    <button class="voice-modal-close" onclick="endVoiceCall()" aria-label="End call">&times;</button>
     <div class="voice-avatar-container">
       <div class="voice-pulse"></div>
       <div class="voice-avatar-ring">
