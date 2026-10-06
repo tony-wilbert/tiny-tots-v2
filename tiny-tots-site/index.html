@@ -867,6 +867,26 @@ body.dark-mode .book-progress-step.done { color: var(--green); }
   min-height: 60px;
 }
 
+/* ═══ FIRST-VISIT NUDGE ═══ */
+.first-visit-nudge {
+  display: none; position: relative; width: fit-content; margin: 0 auto 10px;
+  padding: 8px 16px; border-radius: 14px;
+  background: linear-gradient(135deg, rgba(212,168,83,0.1), rgba(245,224,220,0.3));
+  border: 1px solid rgba(212,168,83,0.15);
+  font-size: 12px; font-weight: 600; color: var(--charcoal);
+  text-align: center; line-height: 1.4;
+  animation: fadeSlideIn 0.8s ease-out 1.2s both;
+}
+.first-visit-nudge.visible { display: block; }
+.first-visit-nudge .nudge-arrow {
+  display: block; margin: 4px auto 0; font-size: 14px; color: var(--gold);
+  animation: nudge-bounce 1.5s ease-in-out 2s infinite;
+}
+@keyframes nudge-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(4px); }
+}
+
 /* ═══ RETURNING VISITOR ═══ */
 .welcome-back-badge {
   display: none; align-items: center; gap: 6px; justify-content: center;
@@ -2915,6 +2935,10 @@ body.dark-mode .scenario-pick:hover, body.dark-mode .scenario-pick.active { bord
     <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
     <span id="welcomeBackText">Welcome back!</span>
   </div>
+  <div class="first-visit-nudge hero-enter" id="firstVisitNudge">
+    ✨ First time here? Pick a gold day below — booking takes 60 seconds
+    <span class="nudge-arrow">↓</span>
+  </div>
   <div class="hero-greeting hero-enter" id="heroGreeting"></div>
   <h1 class="profile-name hero-enter" id="heroTitle">Ask <em>Poppy</em></h1>
   <!-- Quick rebook for returning visitors -->
@@ -3889,6 +3913,24 @@ function applySmartContext() {
 
   // Returning visitor recognition
   const savedParent = getSavedParent();
+  if (!savedParent || !savedParent.name) {
+    // First-time visitor — show welcome nudge
+    const nudge = document.getElementById('firstVisitNudge');
+    if (nudge) {
+      nudge.classList.add('visible');
+      // Auto-hide after they scroll past hero
+      const heroEl = document.getElementById('hero');
+      if (heroEl) {
+        const hideObs = new IntersectionObserver(entries => {
+          if (!entries[0].isIntersecting) {
+            nudge.classList.remove('visible');
+            hideObs.disconnect();
+          }
+        }, { threshold: 0 });
+        hideObs.observe(heroEl);
+      }
+    }
+  }
   if (savedParent && savedParent.name) {
     const firstName = savedParent.name.split(' ')[0];
     const badge = document.getElementById('welcomeBackBadge');
