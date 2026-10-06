@@ -4134,13 +4134,17 @@ function updateSessionPlan(startMins, endMins) {
   const durationMins = endMins - startMins;
   if (durationMins < 60) { planEl.classList.remove('visible'); return; }
 
-  // Activity library with time-of-day awareness
+  // Seasonal awareness for activity suggestions
+  const mo = new Date().getMonth();
+  const sn = mo >= 2 && mo <= 4 ? 'spring' : mo >= 5 && mo <= 7 ? 'summer' : mo >= 8 && mo <= 10 ? 'fall' : 'winter';
+
+  // Activity library with time-of-day + seasonal awareness
   const activities = {
     earlyAfternoon: [ // 3-5pm
       { emoji: '🍎', label: 'Snack time & settle in' },
       { emoji: '📚', label: 'Homework help' },
-      { emoji: season === 'fall' ? '🍂' : season === 'winter' ? '⛄' : '🏃', label: season === 'fall' ? 'Leaf collecting & nature walk' : season === 'winter' ? 'Snow play & hot cocoa' : 'Outdoor play & games' },
-      { emoji: season === 'fall' ? '🎃' : '🎨', label: season === 'fall' ? 'Fall crafts & pumpkin art' : 'Creative time' }
+      { emoji: sn === 'fall' ? '🍂' : sn === 'winter' ? '⛄' : '🏃', label: sn === 'fall' ? 'Leaf collecting & nature walk' : sn === 'winter' ? 'Snow play & hot cocoa' : 'Outdoor play & games' },
+      { emoji: sn === 'fall' ? '🎃' : '🎨', label: sn === 'fall' ? 'Fall crafts & pumpkin art' : 'Creative time' }
     ],
     lateAfternoon: [ // 5-7pm
       { emoji: '🍳', label: 'Dinner prep together' },
