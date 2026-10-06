@@ -683,6 +683,42 @@ a { text-decoration: none; color: inherit; }
 }
 .quick-rebook-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(212,168,83,0.45); }
 .quick-rebook-btn:active { transform: scale(0.96); }
+
+/* My Sessions (returning visitors) */
+.my-sessions {
+  width: 100%; max-width: 340px; margin: 8px auto 4px;
+  background: var(--white); border-radius: 16px; padding: 0;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06); overflow: hidden;
+  animation: fadeSlideIn 0.5s ease-out 0.4s both;
+}
+.my-sessions-header {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 12px 16px; cursor: pointer;
+}
+.my-sessions-title {
+  font-size: 12px; font-weight: 800; text-transform: uppercase;
+  letter-spacing: 1px; color: var(--gold);
+}
+.my-sessions-toggle {
+  font-size: 14px; color: var(--gray); transition: transform 0.2s; cursor: pointer;
+}
+.my-sessions-toggle.open { transform: rotate(180deg); }
+.my-sessions-list { padding: 0 12px 12px; }
+.my-session-item {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 10px 12px; border-radius: 10px; margin-bottom: 4px;
+  background: #fafaf8; font-size: 12px;
+}
+.my-session-item.upcoming { background: linear-gradient(135deg, rgba(212,168,83,0.08), rgba(212,168,83,0.03)); border: 1px solid rgba(212,168,83,0.15); }
+.my-session-date { font-weight: 700; color: var(--charcoal); }
+.my-session-detail { color: var(--gray); font-size: 11px; }
+.my-session-status {
+  font-size: 9px; font-weight: 800; padding: 3px 8px; border-radius: 10px;
+  text-transform: uppercase; letter-spacing: 0.5px;
+}
+.my-session-status.upcoming { background: #e8f5e9; color: #2e7d32; }
+.my-session-status.completed { background: #f5f5f5; color: #999; }
+.my-session-status.today { background: #fff3e0; color: #e65100; }
 .prefilled-indicator {
   font-size: 10px; font-weight: 700; color: var(--green);
   text-transform: uppercase; letter-spacing: 0.5px;
@@ -1862,6 +1898,14 @@ elevenlabs-convai {
       <span id="rebookLabel">Book again</span>
     </button>
   </div>
+  <!-- My Sessions (returning visitors) -->
+  <div class="my-sessions hero-enter" id="mySessions" style="display:none;">
+    <div class="my-sessions-header">
+      <span class="my-sessions-title">My Sessions</span>
+      <span class="my-sessions-toggle" id="mySessionsToggle" onclick="toggleMySessions()">▾</span>
+    </div>
+    <div class="my-sessions-list" id="mySessionsList"></div>
+  </div>
   <div class="profile-verified hero-enter">
     <svg viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
     Red Cross Certified · Age 12
@@ -2579,6 +2623,9 @@ function applySmartContext() {
         ? `Book again for ${kidDisplay}` : 'Book again';
     }
 
+    // Load session history for returning visitor
+    loadMySessions();
+
     // Pre-fill guest booking form
     setTimeout(() => {
       const nameEl = document.getElementById('parentName');
@@ -3226,6 +3273,56 @@ function quickRebook() {
   // Fallback: just scroll to availability
   const availSection = document.getElementById('avail');
   if (availSection) availSection.scrollIntoView({ behavior: 'smooth' });
+}
+
+/* ═══ MY SESSIONS (returning visitors) ═══ */
+async function loadMySessions() {
+  const saved = getSavedParent();
+  if (!saved || !saved.phone) return;
+  const container = document.getElementById('mySessions');
+  const list = document.getElementById('mySessionsList');
+  if (!container || !list) return;
+
+  // Find parent by phone
+  const { data: parents } = await db.from('parents').select('id').eq('phone', saved.phone).limit(1);
+  if (!parents || parents.length === 0) return;
+  const parentId = parents[0].id;
+
+  // Fetch bookings
+  const { data: bookings } = await db.from('bookings').select('*').eq('parent_id', parentId).order('date', { ascending: false }).limit(8);
+  if (!bookings || bookings.length === 0) return;
+
+  container.style.display = 'block';
+  const now = new Date();
+  const today = now.toISOString().split('T')[0];
+  const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+  list.innerHTML = bookings.map(b => {
+    const d = new Date(b.date + 'T00:00:00');
+    const dayStr = dayNames[d.getDay()] + ', ' + monthNames[d.getMonth()] + ' ' + d.getDate();
+    const hours = calcHours(b.start_time, b.end_time);
+    const isToday = b.date === today;
+    const isUpcoming = b.date > today;
+    const statusClass = isToday ? 'today' : isUpcoming ? 'upcoming' : 'completed';
+    const statusText = isToday ? 'Today' : isUpcoming ? 'Upcoming' : 'Done';
+    return `<div class="my-session-item ${isUpcoming || isToday ? 'upcoming' : ''}">
+      <div>
+        <div class="my-session-date">${dayStr}</div>
+        <div class="my-session-detail">${b.start_time}–${b.end_time} · ${hours.toFixed(1)}h · $${(hours * 12).toFixed(0)}</div>
+      </div>
+      <span class="my-session-status ${statusClass}">${statusText}</span>
+    </div>`;
+  }).join('');
+}
+
+function toggleMySessions() {
+  const list = document.getElementById('mySessionsList');
+  const toggle = document.getElementById('mySessionsToggle');
+  if (!list) return;
+  const isOpen = list.style.display !== 'none';
+  list.style.display = isOpen ? 'none' : 'block';
+  toggle.classList.toggle('open', !isOpen);
 }
 
 /* ═══ BOOKING ═══ */
