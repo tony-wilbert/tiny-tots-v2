@@ -5912,22 +5912,30 @@ function loadElevenLabs() {
   });
 }
 
-/* Hide any floating button the ElevenLabs widget creates in its shadow DOM */
+/* Hide the ElevenLabs widget's floating minimize/trigger button — we show the full interface inline */
 function _hideFloatingWidgetButton() {
   const widget = document.querySelector('elevenlabs-convai');
   if (!widget || !widget.shadowRoot) return;
   const shadow = widget.shadowRoot;
-  // Inject a style into the shadow DOM to contain fixed-position elements
-  const style = document.createElement('style');
-  style.textContent = `
-    /* Force any fixed-position floating button to stay within widget bounds */
-    :host { contain: layout paint !important; transform: translateZ(0) !important; }
-    /* Hide default floating trigger — we show the full widget inside our modal */
-    [style*="position: fixed"], [style*="position:fixed"] {
-      position: relative !important; bottom: auto !important; right: auto !important;
+  // Inject style into shadow DOM to hide the floating minimize/avatar button
+  if (!shadow.querySelector('#tt-custom-style')) {
+    const style = document.createElement('style');
+    style.id = 'tt-custom-style';
+    style.textContent = `
+      /* Hide the floating minimize/trigger orb button — we embed the full interface inside our modal */
+      [class*="minimize"], [class*="avatarButton"] { display: none !important; }
+      /* Ensure the main box is centered and visible */
+      [class*="_box_"] { margin: 0 auto; }
+    `;
+    shadow.appendChild(style);
+  }
+  // Also try direct element hiding as fallback
+  const btns = shadow.querySelectorAll('button');
+  btns.forEach(btn => {
+    if (btn.className.includes('minimize') || btn.className.includes('avatarButton')) {
+      btn.style.display = 'none';
     }
-  `;
-  shadow.appendChild(style);
+  });
 }
 
 /* Open voice modal — widget loads VISIBLE so user can click "Start a call" directly (required for Chrome mic permissions) */
