@@ -621,7 +621,7 @@ body.dark-mode .wave-divider.hero-wave { color: #1B1B1F; }
   padding: 3px 10px; border-radius: 20px; letter-spacing: 0.3px;
 }
 /* Dark mode */
-body.dark-mode .how-section-title { color: var(--white); }
+body.dark-mode .how-section-title { color: #F0EDE8; }
 body.dark-mode .how-card {
   background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.08);
   box-shadow: 0 4px 20px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.04);
@@ -1237,7 +1237,16 @@ body.dark-mode .how-steps::before { opacity: 0.2; }
 }
 .review-dot.active {
   width: 18px; border-radius: 3px; background: var(--gold);
+  position: relative; overflow: hidden;
 }
+@keyframes dotTimer { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+.review-dot.active::after {
+  content: ''; position: absolute; inset: 0;
+  background: rgba(255,255,255,0.4);
+  transform-origin: left; transform: scaleX(0);
+  animation: dotTimer 5s linear forwards;
+}
+.review-dots.paused .review-dot.active::after { animation-play-state: paused; }
 
 /* ═══ SITTERS NETWORK ═══ */
 .sitters-section { background: var(--warm); }
@@ -4015,6 +4024,46 @@ function renderReviews() {
   }
 }
 
+/* ═══ AUTO-SCROLL REVIEWS CAROUSEL ═══ */
+function initReviewAutoScroll() {
+  const scroll = document.getElementById('reviewsScroll');
+  const dotsEl = document.getElementById('reviewDots');
+  if (!scroll || !dotsEl) return;
+  let timer = null, paused = false;
+  const INTERVAL = 5000;
+
+  function advance() {
+    const cards = scroll.querySelectorAll('.review-card');
+    if (!cards.length) return;
+    const cardW = cards[0].offsetWidth + 14;
+    const cur = Math.round(scroll.scrollLeft / cardW);
+    const next = (cur + 1) % cards.length;
+    if (next === 0) scroll.scrollTo({ left: 0, behavior: 'smooth' });
+    else cards[next].scrollIntoView({ behavior: 'smooth', inline: 'start', block: 'nearest' });
+  }
+
+  function start() { clearInterval(timer); timer = setInterval(() => { if (!paused) advance(); }, INTERVAL); }
+  function pause() { paused = true; dotsEl.classList.add('paused'); }
+  function resume() { paused = false; dotsEl.classList.remove('paused'); }
+
+  scroll.addEventListener('mouseenter', pause);
+  scroll.addEventListener('mouseleave', () => { resume(); start(); });
+  scroll.addEventListener('touchstart', pause, { passive: true });
+  let touchT;
+  scroll.addEventListener('touchend', () => {
+    clearTimeout(touchT);
+    touchT = setTimeout(() => { resume(); start(); }, 3000);
+  }, { passive: true });
+
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { resume(); start(); }
+      else { pause(); clearInterval(timer); }
+    });
+  }, { threshold: 0.3 });
+  obs.observe(scroll);
+}
+
 /* ═══ RENDER SITTERS ═══ */
 function renderSitters() {
   const el = document.getElementById('sittersList');
@@ -6229,6 +6278,7 @@ requestAnimationFrame(() => {
     initRotatingProof();
     initSocialProofNotifs();
     initHowItWorks();
+    initReviewAutoScroll();
     initSessionUpdates();
   });
   setTimeout(initChatLogging, 3000);
