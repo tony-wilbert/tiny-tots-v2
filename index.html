@@ -1462,7 +1462,7 @@ elevenlabs-convai {
   <div class="avail-header reveal">
     <p class="section-label">Schedule</p>
     <h2 class="section-title">Pick a Day</h2>
-    <p class="section-sub">Gold days = Poppy's available. Tap one to book.</p>
+    <p class="section-sub">Gold days = Poppy's free. Tap any to book in under 30 seconds.</p>
   </div>
   <div class="date-strip" id="dateStrip"></div>
   <div style="padding: 0 20px;">
@@ -1547,7 +1547,7 @@ elevenlabs-convai {
   <div class="feed-header reveal">
     <p class="section-label">Poppy's World</p>
     <h2 class="section-title">Tips & Tricks</h2>
-    <p class="section-sub">Parenting hacks from Poppy (and friends). Share your favorites.</p>
+    <p class="section-sub">Real tips from real babysitting sessions. Tried, tested, parent-approved.</p>
   </div>
   <div class="feed-scroll" id="feedScroll">
     <!-- Tip cards rendered by JS -->
@@ -1674,6 +1674,13 @@ elevenlabs-convai {
       </button>
       <div class="faq-a">Life happens! Cancel anytime before the booking starts — no fees, no questions. Poppy just asks for a quick text so she knows. Rebook whenever you're ready.</div>
     </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        How does Poppy communicate during sessions?
+        <svg class="faq-chevron" viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg>
+      </button>
+      <div class="faq-a">Poppy sends photo updates throughout the session so you always know your kids are having a blast. She responds to texts within minutes and will call immediately if anything comes up.</div>
+    </div>
   </div>
 </section>
 
@@ -1685,10 +1692,10 @@ elevenlabs-convai {
   </div>
   <div class="price-spotlight reveal reveal-delay-1">
     <div class="price-amount">$12</div>
-    <div class="price-note">per hour (my age!)</div>
+    <div class="price-note">per hour — yep, same as my age!</div>
     <div class="price-details">
-      Apple Pay via text or cash<br>
-      Tips always appreciated if she's great
+      Pay with Apple Pay (via text) or cash at pickup<br>
+      No hidden fees. Tips always make her smile.
     </div>
     <button class="action-btn primary" style="display:inline-flex;margin-top:20px;" onclick="scrollTo('#avail')">Book Poppy</button>
   </div>
@@ -1699,7 +1706,7 @@ elevenlabs-convai {
   <div class="section-header reveal">
     <p class="section-label">The Network</p>
     <h2 class="section-title">Tiny Tots Sitters</h2>
-    <p class="section-sub">Trusted, certified sitters you can count on.</p>
+    <p class="section-sub">Every sitter is trained, certified, and parent-vetted before joining.</p>
   </div>
   <div id="sittersList">
     <!-- Rendered by JS -->
@@ -1711,7 +1718,7 @@ elevenlabs-convai {
   <div class="section-header reveal">
     <p class="section-label">Spread the Word</p>
     <h2 class="section-title">Know a Family<br>That Needs Poppy?</h2>
-    <p class="section-sub">Share her link. Their kids will thank you.</p>
+    <p class="section-sub">One text is all it takes. They'll wonder how they booked sitters before.</p>
   </div>
   <div class="invite-preview reveal reveal-delay-1">
     <div class="invite-emoji">&#128150;</div>
@@ -1729,7 +1736,7 @@ elevenlabs-convai {
 <footer class="footer" id="footer">
   <div class="footer-inner">
     <div class="footer-brand"><span class="footer-brand-star">&#9733;</span> Tiny Tots</div>
-    <div class="footer-tagline">Babysitting made simple — by kids, for families</div>
+    <div class="footer-tagline">Babysitting made simple — by kids who care, for families who do too</div>
     <div class="footer-links">
       <a href="#hero" class="footer-link" onclick="tabNav('hero')">Home</a>
       <a href="#avail" class="footer-link" onclick="tabNav('avail')">Book</a>
