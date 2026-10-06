@@ -41,12 +41,14 @@
   --nav-h: 60px;
   --bottom-h: 72px;
 }
-html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; overscroll-behavior-y: contain; }
 body {
   font-family: var(--font-body); color: var(--charcoal);
   background: var(--warm); overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   padding-bottom: calc(var(--bottom-h) + var(--safe-bottom) + 8px);
+  padding-top: env(safe-area-inset-top, 0px);
+  -webkit-tap-highlight-color: transparent;
 }
 button { font-family: var(--font-body); cursor: pointer; border: none; }
 input, select { font-family: var(--font-body); }
@@ -1347,14 +1349,38 @@ elevenlabs-convai {
 }
 
 /* ═══ RESPONSIVE ═══ */
+/* ═══ TABLET / iPAD (600–1024px) ═══ */
+@media (min-width: 600px) {
+  .section { max-width: 680px; padding: 56px 28px; }
+  .feed-header, .avail-header { max-width: 680px; }
+  .profile-name { font-size: 40px; }
+  .avatar-ring { width: 180px; height: 180px; }
+  .avatar-wave { width: 180px; height: 180px; }
+  .meet-card { padding: 36px 32px; }
+  .safety-items { gap: 12px; }
+  .book-sheet.open { padding: 28px 32px; }
+  .price-spotlight { padding: 44px 40px; }
+  .faq-q { font-size: 15px; padding: 20px 0; }
+  .share-btn { padding: 16px 28px; font-size: 15px; }
+  .tip-card { width: 290px; }
+  .review-card { width: 300px; }
+}
 @media (min-width: 768px) {
   .profile-name { font-size: 44px; }
   .avatar-ring { width: 200px; height: 200px; }
   .avatar-wave { width: 200px; height: 200px; }
   .date-strip { justify-content: center; }
-  .feed-scroll { padding: 0 calc((100% - 600px) / 2) 16px; }
-  .reviews-scroll { padding: 0 calc((100% - 600px) / 2) 16px; }
+  .feed-scroll { padding: 0 calc((100% - 680px) / 2) 16px; }
+  .reviews-scroll { padding: 0 calc((100% - 680px) / 2) 16px; }
   .bottom-bar { max-width: 480px; left: 50%; transform: translateX(-50%); border-radius: 20px 20px 0 0; }
+  .sticky-cta { max-width: 480px; left: 50%; transform: translateX(-50%) translateY(100%); border-radius: 16px 16px 0 0; }
+  .sticky-cta.visible { transform: translateX(-50%) translateY(0); }
+  .section { max-width: 720px; }
+  .how-steps { gap: 24px; }
+  .how-step { max-width: 160px; }
+  .meet-card { max-width: 600px; }
+  .safety-promise { max-width: 520px; }
+  .trust-bar { max-width: 480px; }
 }
 /* ═══ MOBILE OPTIMIZATIONS ═══ */
 @media (max-width: 480px) {
@@ -1377,6 +1403,64 @@ elevenlabs-convai {
   .confirm-card { padding: 28px 20px 24px; }
   .confirm-emoji { font-size: 44px; }
   .confirm-title { font-size: 22px; }
+}
+/* Ultra-compact screens (iPhone SE, small Androids) */
+@media (max-width: 374px) {
+  .hero { padding: calc(var(--nav-h) + 4px) 12px 16px; }
+  .profile-name { font-size: 24px; }
+  .avatar-ring { width: 90px; height: 90px; }
+  .avatar-wave { width: 90px; height: 90px; }
+  .action-btn { padding: 12px 20px; font-size: 13px; gap: 6px; }
+  .hero-actions { gap: 8px; }
+  .day-pill { width: 60px; padding: 10px 2px; }
+  .day-num { font-size: 16px; }
+  .pill-time { font-size: 8px; }
+  .stat-num { font-size: 20px; }
+  .stats-row { gap: 16px; }
+  .sticky-cta { padding: 8px 12px; }
+  .sticky-cta-detail { font-size: 13px; }
+  .sticky-cta-btn { padding: 10px 18px; font-size: 13px; }
+  .section { padding: 36px 14px; }
+  .section-title { font-size: 20px; }
+  .tip-card { width: 230px; padding: 20px 16px; }
+  .review-card { width: 230px; padding: 18px 16px; }
+  .share-actions { flex-direction: column; }
+  .share-btn { justify-content: center; }
+}
+/* ═══ LANDSCAPE MODE ═══ */
+@media (orientation: landscape) and (max-height: 500px) {
+  .hero { min-height: auto; padding: calc(var(--nav-h) + 4px) 24px 16px; flex-direction: row; gap: 24px; }
+  .avatar-ring { width: 100px; height: 100px; }
+  .avatar-wave { width: 100px; height: 100px; }
+  .profile-name { font-size: 26px; }
+  .hero-actions { margin-top: 12px; }
+  body { padding-left: env(safe-area-inset-left); padding-right: env(safe-area-inset-right); }
+  .nav { padding-left: max(20px, env(safe-area-inset-left)); padding-right: max(20px, env(safe-area-inset-right)); }
+  .bottom-bar { padding-left: env(safe-area-inset-left); padding-right: env(safe-area-inset-right); }
+  .sticky-cta { padding-left: max(16px, env(safe-area-inset-left)); padding-right: max(16px, env(safe-area-inset-right)); }
+}
+/* ═══ TOUCH DEVICE REFINEMENTS ═══ */
+@media (hover: none) and (pointer: coarse) {
+  /* Remove hover effects that stick on touch */
+  .tip-card:hover, .review-card:hover, .next-avail-inner:hover,
+  .add-sitter-card:hover, .day-pill:hover { transform: none; box-shadow: inherit; border-color: inherit; }
+  /* Better active/press states for touch */
+  .tip-card:active { transform: scale(0.97); transition: transform 0.1s; }
+  .review-card:active { transform: scale(0.97); transition: transform 0.1s; }
+  .next-avail-inner:active { transform: scale(0.96); }
+  .share-btn:active { transform: scale(0.95); opacity: 0.85; }
+  .meet-badge:active { transform: scale(0.92); }
+  .google-btn:active { transform: scale(0.96); border-color: var(--gold); }
+  .faq-q:active { opacity: 0.6; }
+  .add-sitter-card:active { transform: scale(0.97); border-color: var(--gold); }
+  /* Larger touch targets */
+  .faq-q { min-height: 48px; }
+  .tab-btn { min-width: 48px; min-height: 48px; padding: 8px 12px; }
+  .nav-btn { min-height: 44px; display: flex; align-items: center; }
+  .time-quick-btn { min-height: 44px; display: flex; align-items: center; }
+  .tip-share { min-height: 44px; }
+  .share-btn { min-height: 48px; }
+  .day-pill { min-height: 72px; }
 }
 /* ═══ ACCESSIBILITY ═══ */
 @media (prefers-reduced-motion: reduce) {
@@ -1414,19 +1498,23 @@ elevenlabs-convai {
 </head>
 <body>
 
+<!-- Skip to main content for keyboard users -->
+<a href="#hero" class="sr-only" style="position:fixed;top:0;left:0;z-index:9999;background:var(--gold);color:var(--charcoal);padding:12px 24px;font-weight:700;clip:auto;width:auto;height:auto;" onfocus="this.style.clip='auto';this.style.width='auto';this.style.height='auto'">Skip to content</a>
+
 <!-- ═══ TOP NAV ═══ -->
-<nav class="nav" id="nav">
-  <a href="#" class="nav-logo"><span>&#9733;</span> Tiny Tots</a>
+<nav class="nav" id="nav" role="navigation" aria-label="Site navigation">
+  <a href="#" class="nav-logo" aria-label="Tiny Tots home"><span>&#9733;</span> Tiny Tots</a>
   <div class="nav-right">
-    <img class="nav-user" id="navUserPic" onclick="openAuthModal()">
+    <img class="nav-user" id="navUserPic" onclick="openAuthModal()" alt="Your profile" role="button" tabindex="0">
     <button class="nav-btn" onclick="scrollTo('#avail')">Book</button>
     <button class="nav-btn primary" id="navAuthBtn" onclick="openAuthModal()">Sign In</button>
   </div>
 </nav>
 
 <!-- ═══ PROFILE HERO ═══ -->
-<section class="hero" id="hero">
-  <div class="avatar-wrap hero-enter" id="avatarWrap" onclick="toggleVoice()">
+<main>
+<section class="hero" id="hero" aria-label="Meet Poppy">
+  <div class="avatar-wrap hero-enter" id="avatarWrap" onclick="toggleVoice()" role="button" tabindex="0" aria-label="Talk to Poppy — tap to start voice chat">
     <div class="avatar-wave"></div>
     <div class="avatar-ring">
       <img src="poppy-photo.jpg" alt="Poppy Wilbert" fetchpriority="high"
@@ -1682,39 +1770,39 @@ elevenlabs-convai {
 </section>
 
 <!-- ═══ FAQ ═══ -->
-<section class="faq-section" id="faq">
+<section class="faq-section" id="faq" aria-label="Frequently asked questions">
   <h2 class="section-title">Parents Ask</h2>
-  <div class="faq-list">
-    <div class="faq-item">
-      <button class="faq-q" onclick="toggleFaq(this)">
+  <div class="faq-list" role="list">
+    <div class="faq-item" role="listitem">
+      <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">
         Is Poppy certified in first aid & safety?
         <svg class="faq-chevron" viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg>
       </button>
       <div class="faq-a">Yes! Poppy holds a current American Red Cross babysitting certification, which covers first aid, child safety, and emergency response. She re-certifies every year.</div>
     </div>
     <div class="faq-item">
-      <button class="faq-q" onclick="toggleFaq(this)">
+      <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">
         What ages does Poppy sit for?
         <svg class="faq-chevron" viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg>
       </button>
       <div class="faq-a">Poppy is great with kids ages 2–10. She brings age-appropriate activities, books, and games for every session. For toddlers, she's extra attentive about safety.</div>
     </div>
     <div class="faq-item">
-      <button class="faq-q" onclick="toggleFaq(this)">
+      <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">
         What does Poppy bring to each session?
         <svg class="faq-chevron" viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg>
       </button>
       <div class="faq-a">Poppy arrives with her "fun bag" — art supplies, stickers, coloring books, small games, and a playlist of kid-friendly music. Every visit is an adventure, not just supervision.</div>
     </div>
     <div class="faq-item">
-      <button class="faq-q" onclick="toggleFaq(this)">
+      <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">
         What's the cancellation policy?
         <svg class="faq-chevron" viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg>
       </button>
       <div class="faq-a">Life happens! Cancel anytime before the booking starts — no fees, no questions. Poppy just asks for a quick text so she knows. Rebook whenever you're ready.</div>
     </div>
     <div class="faq-item">
-      <button class="faq-q" onclick="toggleFaq(this)">
+      <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">
         How does Poppy communicate during sessions?
         <svg class="faq-chevron" viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg>
       </button>
@@ -1770,9 +1858,10 @@ elevenlabs-convai {
     <button class="share-btn copy-share" onclick="copyInviteLink()">&#128203; Copy Link</button>
   </div>
 </section>
+</main>
 
 <!-- ═══ FOOTER ═══ -->
-<footer class="footer" id="footer">
+<footer class="footer" id="footer" role="contentinfo">
   <div class="footer-inner">
     <div class="footer-brand"><span class="footer-brand-star">&#9733;</span> Tiny Tots</div>
     <div class="footer-tagline">Babysitting made simple — by kids who care, for families who do too</div>
@@ -2733,10 +2822,16 @@ function closeConfirmation() {
 function toggleFaq(btn) {
   const item = btn.parentElement;
   const wasOpen = item.classList.contains('open');
-  // Close all
-  document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+  // Close all and update ARIA
+  document.querySelectorAll('.faq-item').forEach(i => {
+    i.classList.remove('open');
+    i.querySelector('.faq-q')?.setAttribute('aria-expanded', 'false');
+  });
   // Open clicked if it was closed
-  if (!wasOpen) item.classList.add('open');
+  if (!wasOpen) {
+    item.classList.add('open');
+    btn.setAttribute('aria-expanded', 'true');
+  }
 }
 
 function toggleVoice() {
