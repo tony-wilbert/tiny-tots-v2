@@ -2100,38 +2100,46 @@ body.dark-mode .meet-quote { background: rgba(212,168,83,0.08); border-color: rg
 body.dark-mode .social-proof-notif { background: #2A2A2E; color: var(--white); box-shadow: 0 4px 24px rgba(0,0,0,0.3); }
 body.dark-mode .social-proof-notif .sp-time { color: rgba(255,255,255,0.4); }
 
-/* ═══ ElevenLabs widget — hidden until voice modal ═══ */
+/* ═══ ElevenLabs widget — hidden off-screen by default, shown inside voice modal ═══ */
 elevenlabs-convai {
   position: fixed !important; bottom: -9999px !important; right: -9999px !important;
   z-index: -1 !important; opacity: 0 !important; pointer-events: none !important;
   width: 0 !important; height: 0 !important; overflow: hidden !important;
 }
+/* When voice modal is active, show the widget VISIBLE so users can click Start directly (mic permissions require real user gesture) */
+.voice-modal-overlay.active elevenlabs-convai {
+  position: relative !important; bottom: auto !important; right: auto !important;
+  z-index: 10 !important; opacity: 1 !important; pointer-events: auto !important;
+  width: 100% !important; height: auto !important; overflow: visible !important;
+  display: block !important; max-width: 400px !important; margin: 0 auto !important;
+}
 
 /* ═══ VOICE MODAL ═══ */
 .voice-modal-overlay {
   position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0,0,0,0.6); backdrop-filter: blur(12px);
+  background: rgba(0,0,0,0.7); backdrop-filter: blur(16px);
   z-index: 9000; opacity: 0; visibility: hidden; transition: all 0.3s ease;
   display: flex; align-items: center; justify-content: center;
+  padding: 20px;
 }
 .voice-modal-overlay.active { opacity: 1; visibility: visible; }
 .voice-modal {
-  width: 92%; max-width: 380px; background: linear-gradient(160deg, #2a2a2a, #1a1a1a);
-  border-radius: 28px; padding: 36px 24px 28px; text-align: center;
+  width: 100%; max-width: 400px; background: linear-gradient(160deg, #2a2a2a, #1a1a1a);
+  border-radius: 28px; padding: 32px 24px 24px; text-align: center;
   transform: scale(0.9) translateY(20px); transition: transform 0.4s cubic-bezier(.22,1,.36,1);
-  box-shadow: 0 20px 60px rgba(0,0,0,0.4); position: relative;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5); position: relative;
 }
 .voice-modal-overlay.active .voice-modal { transform: scale(1) translateY(0); }
 
 .voice-modal-close {
   position: absolute; top: 12px; right: 16px; background: none;
   color: rgba(255,255,255,0.4); font-size: 28px; line-height: 1; padding: 4px;
-  transition: color 0.2s;
+  transition: color 0.2s; z-index: 20;
 }
 .voice-modal-close:hover { color: #fff; }
 
 .voice-avatar-container {
-  width: 160px; height: 160px; margin: 0 auto 20px;
+  width: 140px; height: 140px; margin: 0 auto 16px;
   position: relative; border-radius: 50%;
 }
 .voice-avatar-ring {
@@ -2144,7 +2152,7 @@ elevenlabs-convai {
 }
 .voice-pulse {
   position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
-  width: 160px; height: 160px; border-radius: 50%; z-index: 1;
+  width: 140px; height: 140px; border-radius: 50%; z-index: 1;
   opacity: 0;
 }
 .voice-modal-overlay.active.speaking .voice-pulse {
@@ -2161,15 +2169,33 @@ elevenlabs-convai {
   color: #fff; margin-bottom: 4px;
 }
 .voice-modal-status {
-  font-size: 13px; color: rgba(255,255,255,0.5); margin-bottom: 24px;
+  font-size: 14px; color: rgba(255,255,255,0.5); margin-bottom: 20px;
+  transition: color 0.3s;
 }
-.voice-modal-status.connected { color: var(--gold); }
+.voice-modal-status.connected { color: var(--gold); font-weight: 600; }
+.voice-modal-status.ready { color: #34C759; }
+/* Avatar glows when connected */
+.voice-modal-overlay.active.speaking .voice-avatar-ring {
+  box-shadow: 0 0 24px rgba(212,168,83,0.5), 0 0 48px rgba(212,168,83,0.2);
+  animation: avatarGlow 2s ease-in-out infinite;
+}
+@keyframes avatarGlow {
+  0%, 100% { box-shadow: 0 0 24px rgba(212,168,83,0.5), 0 0 48px rgba(212,168,83,0.2); }
+  50% { box-shadow: 0 0 32px rgba(212,168,83,0.7), 0 0 64px rgba(212,168,83,0.3); }
+}
 
-/* Waveform bars */
-.voice-waveform {
-  display: flex; align-items: center; justify-content: center; gap: 3px;
-  height: 40px; margin-bottom: 24px;
+/* ElevenLabs widget container — visible inside modal so user can click Start directly (required for mic permissions) */
+.voice-widget-container {
+  margin: 12px 0 0; width: 100%; min-height: 60px;
+  display: flex; justify-content: center; align-items: center;
 }
+
+/* Waveform bars — shown when connected */
+.voice-waveform {
+  display: none; align-items: center; justify-content: center; gap: 3px;
+  height: 40px; margin-bottom: 16px;
+}
+.voice-modal-overlay.active.speaking .voice-waveform { display: flex; }
 .voice-bar {
   width: 4px; background: var(--gold); border-radius: 4px;
   height: 8px; transition: height 0.1s ease;
@@ -2191,16 +2217,35 @@ elevenlabs-convai {
   100% { height: 32px; opacity: 1; }
 }
 
+/* Start call button — prominent branded CTA */
+.voice-start-btn {
+  padding: 18px 44px; border-radius: 50px; font-size: 17px; font-weight: 700;
+  background: linear-gradient(135deg, var(--gold), #C4982F); color: #1B1B1F;
+  box-shadow: 0 6px 24px rgba(212,168,83,0.35), 0 0 0 0 rgba(212,168,83,0.4);
+  transition: all 0.25s; cursor: pointer; border: none;
+  display: inline-flex; align-items: center; gap: 10px;
+  animation: startPulse 2s ease-in-out infinite;
+  letter-spacing: 0.3px;
+}
+.voice-start-btn:hover { transform: scale(1.06); box-shadow: 0 8px 32px rgba(212,168,83,0.5); }
+.voice-start-btn:active { transform: scale(0.97); }
+@keyframes startPulse {
+  0%, 100% { box-shadow: 0 6px 24px rgba(212,168,83,0.35), 0 0 0 0 rgba(212,168,83,0.4); }
+  50% { box-shadow: 0 6px 32px rgba(212,168,83,0.55), 0 0 0 8px rgba(212,168,83,0); }
+}
+
 .voice-end-btn {
   padding: 14px 32px; border-radius: 50px; font-size: 15px; font-weight: 700;
   background: linear-gradient(135deg, #E88B8B, #c0392b); color: #fff;
   box-shadow: 0 4px 16px rgba(192,57,43,0.3); transition: all 0.2s;
-  display: inline-flex; align-items: center; gap: 8px;
+  display: none; align-items: center; gap: 8px;
 }
+.voice-modal-overlay.active.speaking .voice-end-btn { display: inline-flex; }
+.voice-modal-overlay.active.speaking .voice-start-btn { display: none; }
 .voice-end-btn:hover { transform: scale(1.05); box-shadow: 0 6px 24px rgba(192,57,43,0.4); }
 
 .voice-modal-hint {
-  font-size: 11px; color: rgba(255,255,255,0.3); margin-top: 16px;
+  font-size: 12px; color: rgba(255,255,255,0.35); margin-top: 12px; line-height: 1.4;
 }
 
 /* ═══ BIO TYPING ═══ */
@@ -3247,7 +3292,7 @@ body.dark-mode .scenario-pick:hover, body.dark-mode .scenario-pick.active { bord
   <div class="hero-blob hero-blob-1"></div>
   <div class="hero-blob hero-blob-2"></div>
   <div class="hero-blob hero-blob-3"></div>
-  <div class="avatar-wrap hero-enter" id="avatarWrap" onclick="toggleVoice()" role="button" tabindex="0" aria-label="Talk to Poppy — tap to start voice chat">
+  <div class="avatar-wrap hero-enter" id="avatarWrap" onclick="toggleVoice()" role="button" tabindex="0" aria-label="Talk to Daisy — tap to start voice chat">
     <div class="avatar-wave"></div>
     <div class="avatar-ring">
       <img src="poppy-photo.jpg" alt="Poppy Wilbert" fetchpriority="high" width="154" height="154"
@@ -3297,7 +3342,7 @@ body.dark-mode .scenario-pick:hover, body.dark-mode .scenario-pick.active { bord
   <div class="hero-actions hero-enter">
     <button class="action-btn primary pulse" onclick="toggleVoice()">
       <span class="mic-dot"></span>
-      <span id="voiceBtnText">Talk to Poppy</span>
+      <span id="voiceBtnText">Talk to Daisy</span>
     </button>
     <button class="action-btn secondary" id="heroBookBtn" onclick="bookNextAvailable()">Book Today</button>
   </div>
@@ -3603,7 +3648,7 @@ body.dark-mode .scenario-pick:hover, body.dark-mode .scenario-pick.active { bord
     </div>
   </div>
   <div class="adventures-cta reveal">
-    <p class="adventures-cta-text">Ask Poppy what she'd plan for <span>your kids</span> →  tap "Talk to Poppy" above</p>
+    <p class="adventures-cta-text">Ask Daisy what Poppy would plan for <span>your kids</span> →  tap "Talk to Daisy" above</p>
   </div>
 </section>
 
@@ -3941,7 +3986,7 @@ body.dark-mode .scenario-pick:hover, body.dark-mode .scenario-pick.active { bord
     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-2 .9-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm0 16H5V8h14v11z"/></svg>
     Book
   </button>
-  <button class="tab-btn" onclick="toggleVoice()" aria-label="Talk to Poppy">
+  <button class="tab-btn" onclick="toggleVoice()" aria-label="Talk to Daisy">
     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.91-3c-.49 0-.9.36-.96.84C16.6 14.59 14.53 16.5 12 16.5s-4.6-1.91-4.95-4.66A.96.96 0 006.09 11c-.61 0-1.09.54-1 1.14.49 3 2.89 5.35 5.91 5.78V21h2v-3.08c3.02-.43 5.42-2.78 5.91-5.78.1-.6-.39-1.14-1-1.14z"/></svg>
     Ask
   </button>
@@ -4501,7 +4546,7 @@ function renderFeed() {
       <div class="tip-title">Got a Kid Question?</div>
       <div class="tip-body">Bedtime struggles? Picky eaters? Activity ideas? Tap here and ask Poppy — she'll talk you through it.</div>
       <button class="tip-share" onclick="toggleVoice()">
-        &#127908; Talk to Poppy
+        &#127908; Talk to Daisy
       </button>
     </div>
   `;
@@ -5828,77 +5873,74 @@ let _elevenLabsLoaded = false;
 function loadElevenLabs() {
   if (_elevenLabsLoaded) return Promise.resolve();
   return new Promise(resolve => {
-    const slot = document.getElementById('elevenLabsSlot');
+    const container = document.getElementById('voiceWidgetContainer');
     const el = document.createElement('elevenlabs-convai');
     el.setAttribute('agent-id', 'agent_9201m47wf1t0e7wt6djfassmqy6t');
-    slot.appendChild(el);
+    el.setAttribute('avatar-id', '06ylnnHRpk6DfMBKs8U2');
+    container.appendChild(el);
     const sc = document.createElement('script');
     sc.src = 'https://elevenlabs.io/convai-widget/index.js';
     sc.async = true;
-    sc.onload = () => { _elevenLabsLoaded = true; setTimeout(() => { initChatLogging(); resolve(); }, 500); };
+    sc.onload = () => {
+      _elevenLabsLoaded = true;
+      setTimeout(() => {
+        _setupWidgetListeners();
+        initChatLogging();
+        resolve();
+      }, 800);
+    };
     sc.onerror = () => { _elevenLabsLoaded = true; resolve(); };
     document.body.appendChild(sc);
   });
 }
 
+/* Open voice modal — widget loads VISIBLE so user can click "Start a call" directly (required for Chrome mic permissions) */
 function toggleVoice() {
   if (voiceActive) { endVoiceCall(); return; }
-  // Open voice modal
   const modal = document.getElementById('voiceModal');
   const statusEl = document.getElementById('voiceModalStatus');
   modal.classList.add('active');
   modal.setAttribute('aria-hidden', 'false');
   modal.classList.remove('speaking');
-  statusEl.textContent = 'Connecting...';
-  statusEl.className = 'voice-modal-status';
   document.body.style.overflow = 'hidden';
   // Escape key to close
-  modal._escHandler = (e) => { if (e.key === 'Escape') endVoiceCall(); };
+  modal._escHandler = (e) => { if (e.key === 'Escape') closeVoiceModal(); };
   document.addEventListener('keydown', modal._escHandler);
-  // Focus the close button
-  requestAnimationFrame(() => { const cb = modal.querySelector('.voice-modal-close'); if (cb) cb.focus(); });
 
-  // Lazy-load ElevenLabs on first use
-  loadElevenLabs().then(() => {
-    const widget = document.querySelector('elevenlabs-convai');
-    if (!widget) return;
-    _initWidgetAfterLoad(widget);
-  });
+  // Hide end button until call connects
+  const endBtn = document.getElementById('voiceEndBtn');
+  if (endBtn) endBtn.style.display = 'none';
+  statusEl.textContent = "Poppy's AI assistant — tap Start below to chat";
+  statusEl.className = 'voice-modal-status';
+
+  // Lazy-load widget into the modal container — widget is VISIBLE so user clicks it directly
+  loadElevenLabs();
 }
-function _initWidgetAfterLoad(widget) {
-  widget.style.cssText = 'position:fixed!important;bottom:-200px!important;right:-200px!important;z-index:-1!important;opacity:0!important;pointer-events:auto!important;width:auto!important;height:auto!important;overflow:visible!important;';
-  setTimeout(() => {
-    const shadow = widget.shadowRoot;
-    if (shadow) {
-      const btn = shadow.querySelector('button');
-      if (btn) btn.click();
-    } else { widget.click(); }
-    setTimeout(() => { widget.style.cssText = ''; }, 100);
-    voiceActive = true;
-    updateVoiceUI();
-  }, 50);
+
+/* Close modal without necessarily ending a call */
+function closeVoiceModal() {
+  endVoiceCall();
 }
 
 function endVoiceCall() {
-  // Close modal
   const modal = document.getElementById('voiceModal');
   modal.classList.remove('active', 'speaking');
   modal.setAttribute('aria-hidden', 'true');
   document.body.style.overflow = '';
   if (modal._escHandler) { document.removeEventListener('keydown', modal._escHandler); modal._escHandler = null; }
 
-  // Stop ElevenLabs
+  // Try to end the ElevenLabs call via shadow DOM
   const widget = document.querySelector('elevenlabs-convai');
-  if (widget) {
-    widget.style.cssText = 'position:fixed!important;bottom:-200px!important;right:-200px!important;z-index:-1!important;opacity:0!important;pointer-events:auto!important;width:auto!important;height:auto!important;overflow:visible!important;';
-    setTimeout(() => {
-      const shadow = widget.shadowRoot;
-      if (shadow) {
-        const btn = shadow.querySelector('button');
-        if (btn) btn.click();
+  if (widget && widget.shadowRoot) {
+    const shadow = widget.shadowRoot;
+    const buttons = shadow.querySelectorAll('button');
+    // Look for end/stop/disconnect button
+    buttons.forEach(b => {
+      const text = (b.textContent || '').trim().toLowerCase();
+      if (text.includes('end') || text.includes('stop') || text.includes('disconnect') || text.includes('cancel')) {
+        b.click();
       }
-      setTimeout(() => { widget.style.cssText = ''; }, 100);
-    }, 50);
+    });
   }
   voiceActive = false;
   updateVoiceUI();
@@ -5915,12 +5957,12 @@ function updateVoiceUI() {
   } else {
     wrap.classList.remove('voice-active');
     status.textContent = 'Tap to talk';
-    btnText.textContent = 'Talk to Poppy';
+    btnText.textContent = 'Talk to Daisy';
   }
 }
 
-// Watch widget state for real-time updates
-setTimeout(() => {
+/* Listen for ElevenLabs widget events to update modal UI */
+function _setupWidgetListeners() {
   const widget = document.querySelector('elevenlabs-convai');
   if (!widget) return;
   const modal = document.getElementById('voiceModal');
@@ -5929,16 +5971,21 @@ setTimeout(() => {
   widget.addEventListener('elevenlabs-convai:call', e => {
     if (e.detail?.status === 'connected') {
       voiceActive = true;
-      statusEl.textContent = 'Connected — say hi!';
+      statusEl.textContent = 'Connected — say hi to Daisy!';
       statusEl.className = 'voice-modal-status connected';
       modal.classList.add('speaking');
+      const endBtn = document.getElementById('voiceEndBtn');
+      if (endBtn) endBtn.style.display = 'flex';
       updateVoiceUI();
     }
   });
   widget.addEventListener('elevenlabs-convai:call-end', () => {
     voiceActive = false;
-    modal.classList.remove('active', 'speaking');
-    document.body.style.overflow = '';
+    modal.classList.remove('speaking');
+    const statusEl2 = document.getElementById('voiceModalStatus');
+    statusEl2.textContent = 'Call ended. Tap Start below to call again.';
+    const endBtn = document.getElementById('voiceEndBtn');
+    if (endBtn) endBtn.style.display = 'none';
     updateVoiceUI();
   });
 
@@ -5948,21 +5995,19 @@ setTimeout(() => {
     const obs = new MutationObserver(() => {
       const shadow = widget.shadowRoot;
       if (!shadow || !modal.classList.contains('active')) return;
-      // Check for various speaking indicators in shadow DOM
       const isSpeaking = shadow.querySelector('[data-state="speaking"]') ||
-                         shadow.querySelector('.speaking') ||
-                         shadow.innerHTML?.includes('speaking');
+                         shadow.querySelector('.speaking');
       if (isSpeaking) {
         modal.classList.add('speaking');
         statusEl.textContent = 'Poppy is talking...';
-      } else if (modal.classList.contains('active')) {
+      } else if (voiceActive && modal.classList.contains('active')) {
         statusEl.textContent = 'Listening...';
       }
     });
     obs.observe(widget.shadowRoot, { subtree: true, childList: true, attributes: true });
   };
-  setTimeout(checkSpeaking, 3000);
-}, 2000);
+  setTimeout(checkSpeaking, 1000);
+}
 
 /* ═══ SHARING / VIRAL ═══ */
 function generateInviteCode() {
@@ -7138,9 +7183,9 @@ requestAnimationFrame(() => {
 </script>
 
 <!-- ═══ VOICE MODAL ═══ -->
-<div class="voice-modal-overlay" id="voiceModal" role="dialog" aria-modal="true" aria-label="Voice call with Poppy" aria-hidden="true">
+<div class="voice-modal-overlay" id="voiceModal" role="dialog" aria-modal="true" aria-label="Voice call with Daisy" aria-hidden="true">
   <div class="voice-modal">
-    <button class="voice-modal-close" onclick="endVoiceCall()" aria-label="End call">&times;</button>
+    <button class="voice-modal-close" onclick="closeVoiceModal()" aria-label="Close">&times;</button>
     <div class="voice-avatar-container">
       <div class="voice-pulse"></div>
       <div class="voice-avatar-ring">
@@ -7148,18 +7193,21 @@ requestAnimationFrame(() => {
              onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 200 200%22><circle cx=%22100%22 cy=%22100%22 r=%22100%22 fill=%22%23F5E0DC%22/><text x=%2250%25%22 y=%2255%25%22 text-anchor=%22middle%22 font-size=%2272%22>P</text></svg>'">
       </div>
     </div>
-    <div class="voice-modal-name">Poppy</div>
-    <div class="voice-modal-status" id="voiceModalStatus">Connecting...</div>
+    <div class="voice-modal-name">Daisy</div>
+    <div class="voice-modal-status" id="voiceModalStatus">Poppy's AI assistant — tap Start below to chat</div>
     <div class="voice-waveform" id="voiceWaveform">
       <div class="voice-bar"></div><div class="voice-bar"></div><div class="voice-bar"></div>
       <div class="voice-bar"></div><div class="voice-bar"></div><div class="voice-bar"></div>
       <div class="voice-bar"></div><div class="voice-bar"></div><div class="voice-bar"></div>
     </div>
-    <button class="voice-end-btn" onclick="endVoiceCall()">
+    <div class="voice-widget-container" id="voiceWidgetContainer">
+      <!-- ElevenLabs widget — visible so user can click "Start a call" directly (required for mic permissions in Chrome) -->
+    </div>
+    <button class="voice-end-btn" id="voiceEndBtn" onclick="endVoiceCall()" style="display:none">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 9c-1.6 0-3.15.25-4.6.72v3.1c0 .39-.23.74-.56.9-.98.49-1.87 1.12-2.66 1.85-.18.18-.43.28-.7.28-.28 0-.53-.11-.71-.29L.29 13.08c-.18-.17-.29-.42-.29-.7 0-.28.11-.53.29-.71C3.34 8.78 7.46 7 12 7s8.66 1.78 11.71 4.67c.18.18.29.43.29.71 0 .28-.11.53-.29.71l-2.48 2.48c-.18.18-.43.29-.71.29-.27 0-.52-.11-.7-.28-.79-.74-1.69-1.36-2.67-1.85-.33-.16-.56-.5-.56-.9v-3.1C15.15 9.25 13.6 9 12 9z"/></svg>
       End Call
     </button>
-    <div class="voice-modal-hint">Poppy can answer questions about babysitting, parenting tips, and booking</div>
+    <div class="voice-modal-hint">Daisy is Poppy's AI assistant — ask about babysitting, scheduling, rates & more</div>
   </div>
 </div>
 
