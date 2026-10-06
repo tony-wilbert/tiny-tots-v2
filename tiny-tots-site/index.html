@@ -3041,12 +3041,12 @@ body.dark-mode .scenario-pick:hover, body.dark-mode .scenario-pick.active { bord
           <span class="or-divider">or</span>
         </div>
         <div class="form-row">
-          <input type="text" id="parentName" placeholder="Your first name" required>
-          <input type="tel" id="parentPhone" placeholder="Best number for updates" required>
+          <input type="text" id="parentName" placeholder="Your first name" required autocomplete="given-name" enterkeyhint="next">
+          <input type="tel" id="parentPhone" placeholder="Best number for updates" required autocomplete="tel" inputmode="tel" enterkeyhint="next">
         </div>
         <div class="form-row">
-          <input type="text" id="kidName" placeholder="Your kiddo's name" required>
-          <input type="email" id="parentEmail" placeholder="Email (optional)" style="font-size:13px;">
+          <input type="text" id="kidName" placeholder="Your kiddo's name" required enterkeyhint="next">
+          <input type="email" id="parentEmail" placeholder="Email (optional)" style="font-size:13px;" autocomplete="email" inputmode="email" enterkeyhint="done">
         </div>
         <button class="book-btn" onclick="submitBooking()"><span class="btn-spinner"></span><span class="btn-text">Book Poppy</span></button>
         <div class="book-reassurance">Poppy responds in under 5 minutes</div>
@@ -4877,6 +4877,30 @@ function toggleMySessions() {
   list.style.display = isOpen ? 'none' : 'block';
   toggle.classList.toggle('open', !isOpen);
 }
+
+/* ═══ FORM FIELD NAVIGATION & SCROLL ═══ */
+(function() {
+  const fieldOrder = ['parentName','parentPhone','kidName','parentEmail'];
+  fieldOrder.forEach((id, i) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener('keydown', e => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        const next = fieldOrder[i + 1] ? document.getElementById(fieldOrder[i + 1]) : null;
+        if (next) next.focus(); else document.querySelector('.book-btn')?.click();
+      }
+    });
+    el.addEventListener('focus', () => {
+      setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'center' }), 300);
+    });
+  });
+  const kidSigned = document.getElementById('kidNameSigned');
+  if (kidSigned) {
+    kidSigned.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); document.querySelector('.book-btn')?.click(); }});
+    kidSigned.addEventListener('focus', () => { setTimeout(() => kidSigned.scrollIntoView({ behavior: 'smooth', block: 'center' }), 300); });
+  }
+})();
 
 /* ═══ BOOKING ═══ */
 async function submitBooking() {
