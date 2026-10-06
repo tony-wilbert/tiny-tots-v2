@@ -2909,6 +2909,23 @@ body.dark-mode .watch-caption strong { color: #66BB6A; }
 body.dark-mode .review-neighborhood { color: #9E9A92; }
 body.dark-mode .review-neighborhood svg { fill: #9E9A92; }
 body.dark-mode .comm-promise { background: rgba(42,42,46,0.9); border-color: rgba(212,168,83,0.15); }
+/* Dark mode: fix CTA button contrast (Loop 70) */
+body.dark-mode .action-btn.primary {
+  background: linear-gradient(135deg, var(--gold) 0%, #C4982F 100%);
+  color: #1B1B1F; box-shadow: 0 6px 24px rgba(212,168,83,0.3);
+}
+body.dark-mode .action-btn.primary:hover {
+  box-shadow: 0 12px 36px rgba(212,168,83,0.4);
+}
+body.dark-mode .share-channel-btn.ch-copy,
+body.dark-mode .share-channel-btn.ch-email {
+  color: #F0EDE8; border-color: rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.08);
+}
+body.dark-mode .share-channel-btn.ch-copy:hover,
+body.dark-mode .share-channel-btn.ch-email:hover {
+  background: rgba(255,255,255,0.15);
+}
 /* TODAY pill badge */
 .day-pill .today-badge {
   position: absolute; top: -4px; left: 50%; transform: translateX(-50%);
