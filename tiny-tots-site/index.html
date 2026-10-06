@@ -551,7 +551,17 @@ a { text-decoration: none; color: inherit; }
 }
 .wave-divider.hero-wave { color: var(--warm); margin-top: -60px; position: relative; z-index: 2; }
 .wave-divider.section-wave { color: #222226; }
+/* Wave variant: transition into warm/pink section */
+.wave-divider.wave-to-warm { color: var(--warm); margin-top: -2px; }
+/* Wave variant: transition into white section */
+.wave-divider.wave-to-white { color: var(--white); margin-top: -2px; }
+/* Wave variant: transition into dark share section */
+.wave-divider.wave-to-dark { color: var(--charcoal); margin-top: -2px; }
+.wave-divider.wave-to-dark svg { height: 56px; }
 body.dark-mode .wave-divider.hero-wave { color: #1B1B1F; }
+body.dark-mode .wave-divider.wave-to-warm { color: #1B1B1F; }
+body.dark-mode .wave-divider.wave-to-white { color: #222226; }
+body.dark-mode .wave-divider.wave-to-dark { color: #1B1B1F; }
 
 /* How It Works — 3 steps (premium) */
 .how-section {
@@ -1467,11 +1477,16 @@ body.dark-mode .how-steps::before { opacity: 0.2; }
   transition: transform 0.3s ease;
 }
 .faq-item.open .faq-chevron { transform: rotate(180deg); }
-.faq-a {
-  max-height: 0; overflow: hidden; transition: max-height 0.35s ease, padding 0.35s ease;
-  font-size: 13px; color: #666; line-height: 1.6; padding: 0 0 0 0;
+.faq-a-wrap {
+  display: grid; grid-template-rows: 0fr;
+  transition: grid-template-rows 0.35s cubic-bezier(.22,1,.36,1);
 }
-.faq-item.open .faq-a { max-height: 200px; padding: 0 0 16px 0; }
+.faq-item.open .faq-a-wrap { grid-template-rows: 1fr; }
+.faq-a {
+  overflow: hidden;
+  font-size: 13px; color: #666; line-height: 1.6;
+}
+.faq-item.open .faq-a { padding-bottom: 16px; }
 
 /* ═══ PERFORMANCE ═══ */
 /* Skeleton loading animation */
@@ -3074,6 +3089,12 @@ body.dark-mode .scenario-pick:hover, body.dark-mode .scenario-pick.active { bord
   <div class="swipe-hint">swipe for more ›</div>
 </section>
 
+<div class="wave-divider wave-to-warm">
+  <svg viewBox="0 0 1440 48" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0,20 C180,44 360,4 540,28 C720,52 900,8 1080,32 C1260,52 1380,16 1440,24 L1440,48 L0,48 Z" fill="currentColor"/>
+  </svg>
+</div>
+
 <!-- ═══ ADVENTURES WITH POPPY ═══ -->
 <section class="adventures-section" id="adventures">
   <div class="adventures-header reveal">
@@ -3122,6 +3143,12 @@ body.dark-mode .scenario-pick:hover, body.dark-mode .scenario-pick.active { bord
     <p class="adventures-cta-text">Ask Poppy what she'd plan for <span>your kids</span> →  tap "Talk to Poppy" above</p>
   </div>
 </section>
+
+<div class="wave-divider wave-to-white">
+  <svg viewBox="0 0 1440 48" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0,36 C320,8 480,44 720,20 C960,0 1120,40 1440,16 L1440,48 L0,48 Z" fill="currentColor"/>
+  </svg>
+</div>
 
 <!-- ═══ REVIEWS ═══ -->
 <section class="section reviews-section" id="reviews">
@@ -3221,35 +3248,35 @@ body.dark-mode .scenario-pick:hover, body.dark-mode .scenario-pick.active { bord
         Is Poppy certified in first aid & safety?
         <svg class="faq-chevron" viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg>
       </button>
-      <div class="faq-a">Absolutely! Poppy holds a current American Red Cross babysitting certification covering first aid, child safety, and emergency response — and she re-certifies every year because your kids' safety is her #1 priority. 💛</div>
+      <div class="faq-a-wrap"><div class="faq-a">Absolutely! Poppy holds a current American Red Cross babysitting certification covering first aid, child safety, and emergency response — and she re-certifies every year because your kids' safety is her #1 priority. 💛</div></div>
     </div>
     <div class="faq-item">
       <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">
         What ages does Poppy sit for?
         <svg class="faq-chevron" viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg>
       </button>
-      <div class="faq-a">Poppy loves hanging out with kids ages 2–10! She matches activities to each age — puzzles and building blocks for the little ones, art projects and outdoor games for the bigger kids. Every session is tailored, never one-size-fits-all.</div>
+      <div class="faq-a-wrap"><div class="faq-a">Poppy loves hanging out with kids ages 2–10! She matches activities to each age — puzzles and building blocks for the little ones, art projects and outdoor games for the bigger kids. Every session is tailored, never one-size-fits-all.</div></div>
     </div>
     <div class="faq-item">
       <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">
         What does Poppy bring to each session?
         <svg class="faq-chevron" viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg>
       </button>
-      <div class="faq-a">Poppy never shows up empty-handed! Her "fun bag" is packed with art supplies, stickers, coloring books, mini games, and a kid-approved music playlist. Your kids will be asking when Poppy's coming back before you even get home. 🎨</div>
+      <div class="faq-a-wrap"><div class="faq-a">Poppy never shows up empty-handed! Her "fun bag" is packed with art supplies, stickers, coloring books, mini games, and a kid-approved music playlist. Your kids will be asking when Poppy's coming back before you even get home. 🎨</div></div>
     </div>
     <div class="faq-item">
       <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">
         What's the cancellation policy?
         <svg class="faq-chevron" viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg>
       </button>
-      <div class="faq-a">Totally flexible! Cancel anytime before the session starts — zero fees, zero guilt. Just send Poppy a quick text so she knows. You can rebook in literally 30 seconds whenever you're ready.</div>
+      <div class="faq-a-wrap"><div class="faq-a">Totally flexible! Cancel anytime before the session starts — zero fees, zero guilt. Just send Poppy a quick text so she knows. You can rebook in literally 30 seconds whenever you're ready.</div></div>
     </div>
     <div class="faq-item">
       <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">
         How does Poppy communicate during sessions?
         <svg class="faq-chevron" viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg>
       </button>
-      <div class="faq-a">You'll never wonder what's going on! Poppy sends photo updates throughout every session so you can see your kids having the best time. She responds to texts within minutes and will call right away if anything comes up — your peace of mind matters most. 📸</div>
+      <div class="faq-a-wrap"><div class="faq-a">You'll never wonder what's going on! Poppy sends photo updates throughout every session so you can see your kids having the best time. She responds to texts within minutes and will call right away if anything comes up — your peace of mind matters most. 📸</div></div>
     </div>
   </div>
 </section>
@@ -3282,6 +3309,12 @@ body.dark-mode .scenario-pick:hover, body.dark-mode .scenario-pick.active { bord
     <!-- Rendered by JS -->
   </div>
 </section>
+
+<div class="wave-divider wave-to-dark">
+  <svg viewBox="0 0 1440 56" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0,28 C200,52 400,4 600,32 C800,56 1000,12 1200,36 C1350,48 1420,20 1440,28 L1440,56 L0,56 Z" fill="currentColor"/>
+  </svg>
+</div>
 
 <!-- ═══ SHARE / INVITE ═══ -->
 <section class="section share-section" id="share">
