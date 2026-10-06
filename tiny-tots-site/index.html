@@ -322,6 +322,57 @@ a { text-decoration: none; color: inherit; }
 .day-pill:not(.available) { opacity: 0.35; }
 .day-pill:not(.available):hover { border-color: transparent; cursor: default; }
 
+/* Sticky CTA Bar — appears when scrolling past hero */
+.sticky-cta {
+  position: fixed; bottom: calc(var(--bottom-h) + var(--safe-bottom)); left: 0; right: 0;
+  z-index: 99; padding: 10px 16px;
+  background: rgba(58,58,58,0.95); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+  display: flex; align-items: center; justify-content: space-between;
+  transform: translateY(100%); transition: transform 0.35s cubic-bezier(.22,1,.36,1);
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.15);
+}
+.sticky-cta.visible { transform: translateY(0); }
+.sticky-cta-info {
+  display: flex; flex-direction: column; gap: 1px;
+}
+.sticky-cta-label {
+  font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.6);
+  text-transform: uppercase; letter-spacing: 0.5px;
+}
+.sticky-cta-detail {
+  font-size: 15px; font-weight: 800; color: var(--white);
+}
+.sticky-cta-btn {
+  background: var(--gold); color: var(--charcoal); border: none;
+  padding: 12px 24px; border-radius: 50px; font-size: 14px; font-weight: 800;
+  cursor: pointer; transition: all 0.2s; white-space: nowrap;
+}
+.sticky-cta-btn:active { transform: scale(0.95); }
+
+/* How It Works — 3 steps */
+.how-section {
+  padding: 32px 20px 12px; max-width: 600px; margin: 0 auto;
+}
+.how-steps {
+  display: flex; gap: 12px; justify-content: center;
+}
+.how-step {
+  text-align: center; flex: 1; max-width: 140px;
+}
+.how-icon {
+  width: 44px; height: 44px; border-radius: 50%;
+  background: var(--white); display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 8px; font-size: 20px;
+  box-shadow: var(--shadow-sm); border: 1.5px solid rgba(212,168,83,0.15);
+}
+.how-label {
+  font-size: 11px; font-weight: 700; color: var(--charcoal); line-height: 1.3;
+}
+.how-connector {
+  display: flex; align-items: center; color: var(--gold); font-size: 16px; font-weight: 700;
+  padding-bottom: 16px;
+}
+
 /* Next Available Card (hero) */
 .next-avail-card {
   z-index: 2; position: relative; margin-top: 20px; width: 100%; max-width: 340px;
@@ -1029,7 +1080,27 @@ elevenlabs-convai {
   </div>
 </section>
 
-<!-- ═══ CALENDAR / BOOKING (moved above Tips for booking-first UX) ═══ -->
+<!-- ═══ HOW IT WORKS ═══ -->
+<div class="how-section reveal">
+  <div class="how-steps">
+    <div class="how-step">
+      <div class="how-icon">📅</div>
+      <div class="how-label">Pick a day</div>
+    </div>
+    <div class="how-connector">→</div>
+    <div class="how-step">
+      <div class="how-icon">✨</div>
+      <div class="how-label">Book instantly</div>
+    </div>
+    <div class="how-connector">→</div>
+    <div class="how-step">
+      <div class="how-icon">🎉</div>
+      <div class="how-label">Poppy arrives</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ CALENDAR / BOOKING ═══ -->
 <section class="avail-section" id="avail">
   <div class="avail-header reveal">
     <p class="section-label">Schedule</p>
@@ -1184,6 +1255,15 @@ elevenlabs-convai {
   <p>&copy; 2026 Tiny Tots Babysitting &middot; Made with &#10084; by Poppy</p>
   <p style="margin-top:6px;"><a href="#/dashboard">Dashboard</a></p>
 </footer>
+
+<!-- ═══ STICKY CTA BAR ═══ -->
+<div class="sticky-cta" id="stickyCta">
+  <div class="sticky-cta-info">
+    <span class="sticky-cta-label">Next available</span>
+    <span class="sticky-cta-detail" id="stickyCtaDetail"></span>
+  </div>
+  <button class="sticky-cta-btn" onclick="bookNextAvailable()">Book Now</button>
+</div>
 
 <!-- ═══ BOTTOM TAB BAR ═══ -->
 <div class="bottom-bar">
@@ -1417,9 +1497,16 @@ function init() {
   renderSitters();
   loadAvailability();
 
-  // Nav scroll effect
+  // Nav scroll effect + sticky CTA
   window.addEventListener('scroll', () => {
     document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 20);
+    // Show sticky CTA when hero is out of view
+    const hero = document.getElementById('hero');
+    const cta = document.getElementById('stickyCta');
+    if (hero && cta) {
+      const heroBottom = hero.getBoundingClientRect().bottom;
+      cta.classList.toggle('visible', heroBottom < -50);
+    }
   });
 
   // Bottom tab active state
@@ -1692,6 +1779,13 @@ function showNextAvailable() {
     }
     const badge = document.getElementById('availCountBadge');
     if (badge) badge.textContent = availCount + ' days open this week';
+    // Populate sticky CTA
+    const [sh,sm] = availabilityData[nextKey].start_time.split(':').map(Number);
+    const [eh,em] = availabilityData[nextKey].end_time.split(':').map(Number);
+    const hrs = Math.max(1, Math.round(((eh*60+em)-(sh*60+sm))/60));
+    const total = hrs * 12;
+    const stickyDetail = document.getElementById('stickyCtaDetail');
+    if (stickyDetail) stickyDetail.textContent = `${dayLabel} ${fmt(availabilityData[nextKey].start_time)}–${fmt(availabilityData[nextKey].end_time)} · $${total}`;
   }
 }
 
