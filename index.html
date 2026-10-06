@@ -1227,7 +1227,7 @@ body.dark-mode .extended-note { color: #E8C97A; background: rgba(212,168,83,0.1)
 /* ═══ BOOKING CONFIRMATION OVERLAY ═══ */
 .confirm-overlay {
   position: fixed; inset: 0; z-index: 9999;
-  background: rgba(255,248,245,0.97); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  background: rgba(255,248,245,1); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   opacity: 0; pointer-events: none; transition: opacity 0.4s ease;
   padding: 24px;
@@ -2872,7 +2872,7 @@ body.dark-mode .confirm-expect-step { color: #F0EDE8; }
 body.dark-mode .confirm-expect-step::after { background: rgba(212,168,83,0.2); }
 body.dark-mode .confirm-action-btn { background: rgba(212,168,83,0.12); color: #F0EDE8; border-color: rgba(212,168,83,0.5); }
 body.dark-mode .confirm-action-btn:hover { background: rgba(212,168,83,0.22); }
-body.dark-mode .confirm-overlay { background: rgba(30,30,32,0.97); }
+body.dark-mode .confirm-overlay { background: rgba(30,30,32,1); }
 body.dark-mode .confirm-card { background: #2A2A2E; }
 body.dark-mode .confirm-title { color: #F0EDE8; }
 body.dark-mode .confirm-sub { color: #9E9A92; }
@@ -3431,7 +3431,7 @@ body.dark-mode .scenario-pick:hover, body.dark-mode .scenario-pick.active { bord
         <div class="form-row" style="display:flex;gap:8px;margin-bottom:10px;">
           <input type="text" id="kidNameSigned" placeholder="Your kiddo's name" style="flex:1;padding:13px 16px;border-radius:12px;border:2px solid #eee;font-size:14px;outline:none;">
         </div>
-        <button class="book-btn" onclick="submitBooking()"><span class="btn-spinner"></span><span class="btn-text">Book Poppy</span></button>
+        <button type="button" class="book-btn" onclick="submitBooking()"><span class="btn-spinner"></span><span class="btn-text">Book Poppy</span></button>
       </div>
 
       <!-- Guest booking -->
@@ -3451,7 +3451,7 @@ body.dark-mode .scenario-pick:hover, body.dark-mode .scenario-pick.active { bord
           <input type="text" id="kidName" placeholder="Your kiddo's name" required enterkeyhint="next">
           <input type="email" id="parentEmail" placeholder="Email (optional)" style="font-size:13px;" autocomplete="email" inputmode="email" enterkeyhint="done">
         </div>
-        <button class="book-btn" onclick="submitBooking()"><span class="btn-spinner"></span><span class="btn-text">Book Poppy</span></button>
+        <button type="button" class="book-btn" onclick="submitBooking()"><span class="btn-spinner"></span><span class="btn-text">Book Poppy</span></button>
         <div class="book-reassurance">Poppy responds in under 5 minutes</div>
       </div>
 
