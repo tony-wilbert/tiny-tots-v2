@@ -349,6 +349,49 @@ a { text-decoration: none; color: inherit; }
 }
 .tip-card.ask-card .tip-share:hover { background: var(--gold); color: var(--charcoal); }
 
+/* ═══ ADVENTURES WITH POPPY ═══ */
+.adventures-section { padding: 48px 0; background: var(--warm); }
+.adventures-header { padding: 0 20px 16px; max-width: 600px; margin: 0 auto; }
+.adventures-scroll {
+  display: flex; gap: 14px; overflow-x: auto; scroll-snap-type: x mandatory;
+  padding: 0 20px 16px; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+}
+.adventures-scroll::-webkit-scrollbar { display: none; }
+.adventure-card {
+  scroll-snap-align: start; flex-shrink: 0; width: 180px;
+  border-radius: 22px; padding: 22px 18px 18px;
+  position: relative; overflow: hidden;
+  transition: transform 0.3s cubic-bezier(.22,1,.36,1), box-shadow 0.3s;
+  cursor: pointer; border: 1px solid rgba(255,255,255,0.5);
+  box-shadow: var(--shadow-sm);
+}
+.adventure-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); }
+.adventure-card:active { transform: scale(0.96); }
+.adventure-card.c1 { background: linear-gradient(150deg, #FFF0E5 0%, #FFE4D4 100%); }
+.adventure-card.c2 { background: linear-gradient(150deg, #E8F4FD 0%, #D4ECFA 100%); }
+.adventure-card.c3 { background: linear-gradient(150deg, #F3E8FF 0%, #E9D5FF 100%); }
+.adventure-card.c4 { background: linear-gradient(150deg, #E2F9E8 0%, #D1F2DA 100%); }
+.adventure-card.c5 { background: linear-gradient(150deg, #FFF8E1 0%, #FFECB3 100%); }
+.adventure-card.c6 { background: linear-gradient(150deg, #FFE8EC 0%, #FFD4DB 100%); }
+.adventure-emoji-big { font-size: 38px; margin-bottom: 10px; display: block; line-height: 1; }
+.adventure-name { font-family: var(--font-display); font-size: 16px; font-weight: 700; color: var(--charcoal); margin-bottom: 6px; line-height: 1.2; }
+.adventure-desc { font-size: 11px; color: #666; line-height: 1.5; }
+.adventure-tag {
+  position: absolute; top: 12px; right: 12px;
+  font-size: 8px; font-weight: 800; text-transform: uppercase;
+  letter-spacing: 0.8px; padding: 3px 8px; border-radius: 8px;
+}
+.adventure-tag.popular { background: rgba(212,168,83,0.15); color: var(--gold); }
+.adventure-tag.new { background: rgba(92,184,92,0.15); color: var(--green); }
+.adventure-tag.fave { background: rgba(232,139,139,0.15); color: var(--red-soft); }
+.adventures-cta {
+  text-align: center; padding: 8px 20px 0;
+}
+.adventures-cta-text {
+  font-size: 12px; color: var(--gray); font-weight: 600;
+}
+.adventures-cta-text span { color: var(--gold); font-weight: 700; }
+
 /* ═══ CALENDAR / BOOKING ═══ */
 .avail-section { padding: 36px 0 48px; background: var(--warm); }
 .avail-header { padding: 0 20px 20px; max-width: 600px; margin: 0 auto; }
@@ -1224,7 +1267,7 @@ a { text-decoration: none; color: inherit; }
   flex-shrink: 0;
 }
 /* content-visibility for below-fold sections */
-.feed-section, .reviews-section, .meet-section, .faq-section,
+.feed-section, .adventures-section, .reviews-section, .meet-section, .faq-section,
 .pricing-section, .sitters-section, .share-section {
   content-visibility: auto;
   contain-intrinsic-size: auto 400px;
@@ -2139,6 +2182,55 @@ elevenlabs-convai {
   </div>
   <div class="feed-scroll" id="feedScroll">
     <!-- Tip cards rendered by JS -->
+  </div>
+</section>
+
+<!-- ═══ ADVENTURES WITH POPPY ═══ -->
+<section class="adventures-section" id="adventures">
+  <div class="adventures-header reveal">
+    <p class="section-label">The Fun Stuff</p>
+    <h2 class="section-title">Adventures with Poppy</h2>
+    <p class="section-sub">Every session is different. Here's a taste of what your kids will love.</p>
+  </div>
+  <div class="adventures-scroll">
+    <div class="adventure-card c1 reveal">
+      <span class="adventure-tag popular">Popular</span>
+      <span class="adventure-emoji-big">🎨</span>
+      <div class="adventure-name">Arts & Crafts</div>
+      <div class="adventure-desc">Glitter, glue, and gigantic imaginations. Every session ends with a masterpiece for the fridge.</div>
+    </div>
+    <div class="adventure-card c2 reveal">
+      <span class="adventure-tag new">New</span>
+      <span class="adventure-emoji-big">🔬</span>
+      <div class="adventure-name">Science Fun</div>
+      <div class="adventure-desc">Volcanoes, slime, and stuff that fizzes. Kids learn without even realizing it.</div>
+    </div>
+    <div class="adventure-card c3 reveal">
+      <span class="adventure-tag fave">Kid Fave</span>
+      <span class="adventure-emoji-big">💃</span>
+      <div class="adventure-name">Dance Party</div>
+      <div class="adventure-desc">Bluetooth speaker + favorite songs = living room turned dance floor. Energy guaranteed.</div>
+    </div>
+    <div class="adventure-card c4 reveal">
+      <span class="adventure-tag popular">Popular</span>
+      <span class="adventure-emoji-big">🏔️</span>
+      <div class="adventure-name">Outdoor Play</div>
+      <div class="adventure-desc">Tag, scavenger hunts, and exploring. Tahoe backyards are the best playground.</div>
+    </div>
+    <div class="adventure-card c5 reveal">
+      <span class="adventure-tag fave">Kid Fave</span>
+      <span class="adventure-emoji-big">🏗️</span>
+      <div class="adventure-name">Fort Building</div>
+      <div class="adventure-desc">Blankets, pillows, and flashlights. The coziest forts in the neighborhood.</div>
+    </div>
+    <div class="adventure-card c6 reveal">
+      <span class="adventure-emoji-big">🎬</span>
+      <div class="adventure-name">Movie Night</div>
+      <div class="adventure-desc">Popcorn, cozy blankets, and a great movie pick. The perfect wind-down after a big day.</div>
+    </div>
+  </div>
+  <div class="adventures-cta reveal">
+    <p class="adventures-cta-text">Ask Poppy what she'd plan for <span>your kids</span> →  tap "Talk to Poppy" above</p>
   </div>
 </section>
 
