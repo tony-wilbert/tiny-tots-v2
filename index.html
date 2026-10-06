@@ -1530,6 +1530,25 @@ body.dark-mode .book-progress-step.done { color: var(--green); }
 }
 .meet-fun-emoji { font-size: 22px; margin-bottom: 4px; }
 .meet-fun-label { font-size: 10px; font-weight: 700; color: var(--charcoal); line-height: 1.2; }
+/* Poppy's quote */
+.meet-quote {
+  margin-top: 16px; padding: 14px 18px; border-radius: 16px;
+  background: linear-gradient(135deg, rgba(212,168,83,0.06), rgba(245,224,220,0.2));
+  border: 1px solid rgba(212,168,83,0.12);
+  font-size: 13px; font-style: italic; color: var(--charcoal);
+  line-height: 1.5; text-align: center;
+  position: relative;
+}
+.meet-quote::before {
+  content: '"'; position: absolute; top: -4px; left: 14px;
+  font-size: 32px; font-style: normal; color: var(--gold); opacity: 0.4;
+  font-family: Georgia, serif; line-height: 1;
+}
+.meet-quote-attr {
+  display: block; margin-top: 6px; font-size: 11px;
+  font-style: normal; font-weight: 700; color: var(--gold);
+}
+body.dark-mode .meet-quote { background: rgba(212,168,83,0.08); border-color: rgba(212,168,83,0.15); color: #F0EDE8; }
 
 /* ═══ PRICING ═══ */
 .pricing-section { background: var(--white); }
@@ -2651,6 +2670,8 @@ body.dark-mode .meet-badge { background: #333338; color: #F0EDE8; }
 body.dark-mode .faq-section { background: #222226; }
 body.dark-mode .faq-item { background: #2A2A2E; border-color: rgba(255,255,255,0.06); }
 body.dark-mode .share-section { background: #1B1B1F; }
+body.dark-mode .share-section .section-title { color: #F0EDE8; }
+body.dark-mode .share-section .section-sub { color: rgba(240,237,232,0.6); }
 body.dark-mode .footer { background: #151517; color: #9E9A92; }
 body.dark-mode .sticky-cta { background: rgba(27,27,31,0.95); border-top-color: rgba(255,255,255,0.06); }
 body.dark-mode .bottom-bar { background: rgba(27,27,31,0.95); border-top-color: rgba(255,255,255,0.06); }
@@ -3438,6 +3459,10 @@ body.dark-mode .scenario-pick:hover, body.dark-mode .scenario-pick.active { bord
         <div class="meet-fun-emoji">🧩</div>
         <div class="meet-fun-label">Games &<br>Puzzles</div>
       </div>
+    </div>
+    <div class="meet-quote">
+      My favorite part of babysitting? When a shy kid finally laughs so hard they can't stop. That's when I know we're having the best night ever.
+      <span class="meet-quote-attr">— Poppy</span>
     </div>
   </div>
 </section>
