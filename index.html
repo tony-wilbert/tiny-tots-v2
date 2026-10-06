@@ -1310,6 +1310,22 @@ body.dark-mode .extended-note { color: #E8C97A; background: rgba(212,168,83,0.1)
 }
 .book-msg.success { display: block; background: #e8f5e9; color: #2e7d32; text-align: center; }
 .book-msg.error { display: block; background: #fce4ec; color: #c62828; }
+.book-msg .retry-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  margin-top: 10px; padding: 10px 22px; border: none; border-radius: 24px;
+  background: var(--gold); color: var(--charcoal); font-size: 13px; font-weight: 700;
+  cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.book-msg .retry-btn:hover { transform: scale(1.04); box-shadow: 0 4px 16px rgba(212,168,83,0.4); }
+.book-msg .retry-btn:active { transform: scale(0.97); }
+.book-msg .retry-btn .retry-icon {
+  display: inline-block; width: 14px; height: 14px;
+  border: 2px solid var(--charcoal); border-top-color: transparent;
+  border-radius: 50%; animation: retrySpin 0.8s linear infinite;
+  animation-play-state: paused;
+}
+.book-msg .retry-btn.retrying .retry-icon { animation-play-state: running; }
+@keyframes retrySpin { to { transform: rotate(360deg); } }
 .success-check { width: 52px; height: 52px; margin: 0 auto 8px; }
 .success-check svg circle {
   stroke-dasharray: 166; stroke-dashoffset: 166;
@@ -6093,11 +6109,22 @@ async function submitBooking() {
     });
     document.querySelectorAll('.book-btn').forEach(b => b.classList.remove('form-ready'));
   } catch (err) {
-    msgEl.textContent = 'Oops, something hiccupped! Give it another try — Poppy\'s still here.';
+    msgEl.innerHTML = 'Oops, something hiccupped!<br><button class="retry-btn" onclick="retryBooking(this)"><span class="retry-icon" style="animation-play-state:paused"></span> Try again</button>';
     msgEl.className = 'book-msg error'; msgEl.style.display = 'block';
+    showToast('Booking didn\'t go through — tap retry!', 'error');
     console.error(err);
   }
   btns.forEach(b => { b.disabled = false; b.classList.remove('loading', 'morphing', 'morph-done'); });
+}
+
+/* ═══ RETRY BOOKING ═══ */
+async function retryBooking(btn) {
+  if (btn) { btn.classList.add('retrying'); btn.querySelector('.retry-icon').style.animationPlayState = 'running'; }
+  const msgEl = document.querySelector('.book-msg');
+  // Brief delay for visual feedback
+  await new Promise(r => setTimeout(r, 400));
+  if (msgEl) { msgEl.style.display = 'none'; msgEl.className = 'book-msg'; }
+  submitBooking();
 }
 
 /* ═══ SHARE & CALENDAR ═══ */
