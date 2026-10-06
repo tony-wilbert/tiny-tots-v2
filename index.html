@@ -19,6 +19,9 @@
 <meta name="twitter:description" content="Red Cross certified, $12/hr, AI-powered parenting tips. The babysitting service parents actually share.">
 <meta name="twitter:image" content="https://tinytots-v2.netlify.app/poppy-photo.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://udhgdtiezzzudczckaaw.supabase.co">
+<link rel="dns-prefetch" href="https://elevenlabs.io">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 /* ═══ VARIABLES & RESET ═══ */
@@ -1158,6 +1161,20 @@ elevenlabs-convai {
   .confirm-emoji { font-size: 44px; }
   .confirm-title { font-size: 22px; }
 }
+/* ═══ ACCESSIBILITY ═══ */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+}
+*:focus-visible {
+  outline: 2px solid var(--gold); outline-offset: 2px; border-radius: 4px;
+}
+.tab-btn:focus-visible, .action-btn:focus-visible, .faq-q:focus-visible {
+  outline: 2px solid var(--gold); outline-offset: 2px;
+}
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+}
 /* ═══ SKELETON LOADING ═══ */
 @keyframes shimmer {
   0% { background-position: -200% 0; }
@@ -1536,24 +1553,24 @@ elevenlabs-convai {
 </div>
 
 <!-- ═══ BOTTOM TAB BAR ═══ -->
-<div class="bottom-bar">
-  <button class="tab-btn active" onclick="tabNav('hero')">
-    <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+<nav class="bottom-bar" aria-label="Main navigation">
+  <button class="tab-btn active" onclick="tabNav('hero')" aria-label="Home">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
     Home
   </button>
-  <button class="tab-btn" onclick="tabNav('avail')">
-    <svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-2 .9-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm0 16H5V8h14v11z"/></svg>
+  <button class="tab-btn" onclick="tabNav('avail')" aria-label="Book a session">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-2 .9-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm0 16H5V8h14v11z"/></svg>
     Book
   </button>
-  <button class="tab-btn" onclick="toggleVoice()">
-    <svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.91-3c-.49 0-.9.36-.96.84C16.6 14.59 14.53 16.5 12 16.5s-4.6-1.91-4.95-4.66A.96.96 0 006.09 11c-.61 0-1.09.54-1 1.14.49 3 2.89 5.35 5.91 5.78V21h2v-3.08c3.02-.43 5.42-2.78 5.91-5.78.1-.6-.39-1.14-1-1.14z"/></svg>
+  <button class="tab-btn" onclick="toggleVoice()" aria-label="Talk to Poppy">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.91-3c-.49 0-.9.36-.96.84C16.6 14.59 14.53 16.5 12 16.5s-4.6-1.91-4.95-4.66A.96.96 0 006.09 11c-.61 0-1.09.54-1 1.14.49 3 2.89 5.35 5.91 5.78V21h2v-3.08c3.02-.43 5.42-2.78 5.91-5.78.1-.6-.39-1.14-1-1.14z"/></svg>
     Ask
   </button>
-  <button class="tab-btn" onclick="tabNav('share')">
-    <svg viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/></svg>
+  <button class="tab-btn" onclick="tabNav('share')" aria-label="Invite friends">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/></svg>
     Invite
   </button>
-</div>
+</nav>
 
 <!-- ═══ AUTH MODAL ═══ -->
 <div class="auth-overlay" id="authOverlay" onclick="if(event.target===this)closeAuthModal()">
