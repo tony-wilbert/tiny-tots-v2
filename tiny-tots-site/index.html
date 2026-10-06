@@ -449,8 +449,14 @@ a { text-decoration: none; color: inherit; }
 .day-pill:not(.available) { opacity: 0.35; }
 .day-pill:not(.available):hover { border-color: transparent; cursor: default; }
 .day-pill.available:active { transform: scale(0.93); }
-.day-pill.available { transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), border-color 0.2s; }
-.day-pill.selected { animation: day-select 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
+.day-pill.available { transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), border-color 0.2s; box-shadow: 0 0 0 0 rgba(212,168,83,0); animation: pill-glow 3s ease-in-out infinite; }
+.day-pill.available:nth-child(odd) { animation-delay: 0.5s; }
+.day-pill.available:nth-child(3n) { animation-delay: 1s; }
+@keyframes pill-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(212,168,83,0), 0 2px 8px rgba(212,168,83,0); }
+  50% { box-shadow: 0 0 0 3px rgba(212,168,83,0.08), 0 2px 12px rgba(212,168,83,0.12); }
+}
+.day-pill.selected { animation: day-select 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) !important; box-shadow: 0 4px 16px rgba(0,0,0,0.15) !important; }
 @keyframes day-select {
   0% { transform: scale(0.9); }
   60% { transform: scale(1.05); }
@@ -682,7 +688,7 @@ body.dark-mode .how-steps::before { opacity: 0.2; }
   box-shadow: var(--shadow-lg), inset 0 1px 0 rgba(255,255,255,0.7), 0 0 0 1px rgba(255,255,255,0.3);
   border: 1px solid rgba(255,255,255,0.5);
 }
-.book-sheet.open { max-height: 1100px; padding: 24px; margin-top: 16px; }
+.book-sheet.open { max-height: 1200px; padding: 24px; margin-top: 16px; }
 .book-date-label {
   font-family: var(--font-display); font-size: 18px; font-weight: 700; margin-bottom: 16px;
 }
@@ -690,6 +696,31 @@ body.dark-mode .how-steps::before { opacity: 0.2; }
   font-size: 13px; color: var(--gold); font-weight: 700; margin-bottom: 16px;
   display: flex; align-items: center; gap: 6px;
 }
+
+/* Booking progress breadcrumb */
+.book-progress {
+  display: flex; align-items: center; gap: 0; margin-bottom: 20px;
+  padding: 10px 12px; border-radius: 12px;
+  background: linear-gradient(135deg, rgba(212,168,83,0.06), rgba(212,168,83,0.02));
+  border: 1px solid rgba(212,168,83,0.1);
+}
+.book-progress-step {
+  display: flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 700;
+  color: var(--gray); opacity: 0.45; transition: all 0.3s ease; white-space: nowrap;
+}
+.book-progress-step.active { color: var(--gold); opacity: 1; }
+.book-progress-step.done { color: var(--green); opacity: 0.8; }
+.book-progress-step .step-icon {
+  width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-size: 9px; font-weight: 900; border: 1.5px solid currentColor; transition: all 0.3s ease;
+}
+.book-progress-step.active .step-icon { background: var(--gold); color: var(--white); border-color: var(--gold); }
+.book-progress-step.done .step-icon { background: var(--green); color: white; border-color: var(--green); }
+.book-progress-arrow { color: var(--gray); opacity: 0.25; font-size: 10px; margin: 0 6px; flex-shrink: 0; }
+body.dark-mode .book-progress { background: rgba(212,168,83,0.05); border-color: rgba(212,168,83,0.1); }
+body.dark-mode .book-progress-step { color: #9E9A92; }
+body.dark-mode .book-progress-step.active { color: var(--gold); }
+body.dark-mode .book-progress-step.done { color: var(--green); }
 
 /* Dynamic price preview */
 .price-preview {
@@ -2974,6 +3005,17 @@ body.dark-mode .scenario-pick:hover, body.dark-mode .scenario-pick.active { bord
       <p class="book-date-label" id="bookDateLabel"></p>
       <p class="book-rate">&#9733; $12/hr &middot; Apple Pay or cash</p>
 
+      <!-- Booking Progress -->
+      <div class="book-progress" id="bookProgress">
+        <div class="book-progress-step done" id="progStep1"><span class="step-icon">✓</span> Date</div>
+        <span class="book-progress-arrow">›</span>
+        <div class="book-progress-step active" id="progStep2"><span class="step-icon">2</span> Time</div>
+        <span class="book-progress-arrow">›</span>
+        <div class="book-progress-step" id="progStep3"><span class="step-icon">3</span> Info</div>
+        <span class="book-progress-arrow">›</span>
+        <div class="book-progress-step" id="progStep4"><span class="step-icon">✓</span> Booked!</div>
+      </div>
+
       <!-- Time Range Picker -->
       <div class="time-picker" id="timePicker" style="display:none;">
         <div class="time-picker-header">
@@ -4407,6 +4449,8 @@ function updateTimePrice() {
   }
   // Update session plan preview
   updateSessionPlan(sh * 60 + sm, eh * 60 + em);
+  // Advance progress breadcrumb — time is selected
+  if (typeof updateBookProgress === 'function') updateBookProgress(1);
 }
 
 /* ═══ SESSION PLAN PREVIEW ═══ */
@@ -4878,6 +4922,27 @@ function toggleMySessions() {
   toggle.classList.toggle('open', !isOpen);
 }
 
+/* ═══ BOOKING PROGRESS BREADCRUMB ═══ */
+function updateBookProgress(step) {
+  const steps = ['progStep1','progStep2','progStep3','progStep4'];
+  steps.forEach((id, i) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.classList.remove('done','active');
+    if (i < step) el.classList.add('done');
+    else if (i === step) el.classList.add('active');
+  });
+  // Update step icons
+  const icons = [
+    {done:'✓', num:'1'}, {done:'✓', num:'2'},
+    {done:'✓', num:'3'}, {done:'✓', num:'✓'}
+  ];
+  steps.forEach((id, i) => {
+    const icon = document.getElementById(id)?.querySelector('.step-icon');
+    if (icon) icon.textContent = i < step ? icons[i].done : icons[i].num;
+  });
+}
+
 /* ═══ FORM FIELD NAVIGATION & SCROLL ═══ */
 (function() {
   const fieldOrder = ['parentName','parentPhone','kidName','parentEmail'];
@@ -4893,12 +4958,16 @@ function toggleMySessions() {
     });
     el.addEventListener('focus', () => {
       setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'center' }), 300);
+      updateBookProgress(2); // Step 3: filling info
     });
   });
   const kidSigned = document.getElementById('kidNameSigned');
   if (kidSigned) {
     kidSigned.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); document.querySelector('.book-btn')?.click(); }});
-    kidSigned.addEventListener('focus', () => { setTimeout(() => kidSigned.scrollIntoView({ behavior: 'smooth', block: 'center' }), 300); });
+    kidSigned.addEventListener('focus', () => {
+      setTimeout(() => kidSigned.scrollIntoView({ behavior: 'smooth', block: 'center' }), 300);
+      updateBookProgress(2);
+    });
   }
 })();
 
