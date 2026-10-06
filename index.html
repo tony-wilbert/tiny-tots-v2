@@ -389,7 +389,7 @@ elevenlabs-convai {
     <div class="badge"><span class="dot"></span> Red Cross Certified</div>
     <div class="badge">&#9733; $12/hr</div>
     <div class="badge">Ages 0–12</div>
-    <div class="badge">&#63743; Apple Pay or Cash</div>
+    <div class="badge">Apple Pay or Cash</div>
   </div>
 </section>
 
@@ -406,24 +406,7 @@ elevenlabs-convai {
     <div class="book-sheet-inner">
       <p class="book-date-label" id="bookDateLabel"></p>
 
-      <p style="font-size:13px;font-weight:700;color:var(--gray);margin-bottom:8px;text-transform:uppercase;letter-spacing:1px;">Package</p>
-      <div class="pkg-cards" id="pkgCards">
-        <div class="pkg-card" data-pkg="quick" onclick="selectPkg('quick')">
-          <div class="pkg-name">Quick</div>
-          <div class="pkg-hours">1–2 hrs</div>
-          <div class="pkg-price">$24</div>
-        </div>
-        <div class="pkg-card selected" data-pkg="halfday" onclick="selectPkg('halfday')">
-          <div class="pkg-name">Half Day</div>
-          <div class="pkg-hours">3–4 hrs</div>
-          <div class="pkg-price">$48</div>
-        </div>
-        <div class="pkg-card" data-pkg="fullday" onclick="selectPkg('fullday')">
-          <div class="pkg-name">Full Day</div>
-          <div class="pkg-hours">5–6 hrs</div>
-          <div class="pkg-price">$72</div>
-        </div>
-      </div>
+      <p style="font-size:14px;color:var(--gold);font-weight:700;margin-bottom:16px;">$12/hr &middot; Apple Pay or cash</p>
 
       <div class="form-row">
         <input type="text" id="parentName" placeholder="Your name" required>
@@ -479,31 +462,13 @@ elevenlabs-convai {
 <section class="section pricing-section" id="pricing">
   <p class="section-label">Pricing</p>
   <h2 class="section-title">Simple & Fair</h2>
-  <p style="font-size:14px;color:#888;margin-top:8px;">Apple Pay via text or cash at time of visit</p>
-  <div class="pricing-scroll">
-    <div class="price-card" onclick="scrollToBook('quick')">
-      <div class="price-icon">&#9203;</div>
-      <div class="price-name">Quick Visit</div>
-      <div class="price-range">1–2 hours</div>
-      <div class="price-amount">$24</div>
-      <div class="price-rate">$12/hr</div>
-      <a class="price-book" href="#avail">Book</a>
-    </div>
-    <div class="price-card featured" onclick="scrollToBook('halfday')">
-      <div class="price-icon">&#9728;&#65039;</div>
-      <div class="price-name">Half Day</div>
-      <div class="price-range">3–4 hours</div>
-      <div class="price-amount">$48</div>
-      <div class="price-rate">$12/hr</div>
-      <a class="price-book" href="#avail">Book</a>
-    </div>
-    <div class="price-card" onclick="scrollToBook('fullday')">
-      <div class="price-icon">&#127775;</div>
-      <div class="price-name">Full Day</div>
-      <div class="price-range">5–6 hours</div>
-      <div class="price-amount">$72</div>
-      <div class="price-rate">$12/hr</div>
-      <a class="price-book" href="#avail">Book</a>
+  <div style="text-align:center;margin-top:24px;">
+    <div style="display:inline-block;background:var(--white);border-radius:24px;padding:32px 48px;box-shadow:0 4px 20px rgba(0,0,0,0.04);">
+      <p style="font-size:48px;font-family:var(--font-display);font-weight:800;color:var(--charcoal);line-height:1;">$12</p>
+      <p style="font-size:14px;font-weight:700;color:var(--gold);margin-top:4px;">per hour (my age!)</p>
+      <p style="font-size:13px;color:var(--gray);margin-top:16px;">Apple Pay via text or cash</p>
+      <p style="font-size:12px;color:var(--gray);margin-top:4px;">Tips always appreciated if she's great</p>
+      <a href="#avail" style="display:inline-block;margin-top:20px;padding:12px 32px;background:var(--charcoal);color:var(--white);border-radius:14px;font-size:14px;font-weight:700;text-decoration:none;transition:background 0.2s;">Book Poppy</a>
     </div>
   </div>
 </section>
