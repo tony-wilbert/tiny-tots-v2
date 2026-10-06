@@ -753,10 +753,24 @@ a { text-decoration: none; color: inherit; }
 
 /* ═══ FOOTER ═══ */
 .footer {
-  text-align: center; padding: 32px 20px 16px; font-size: 12px; color: var(--gray);
-  background: var(--warm);
+  background: var(--charcoal); color: rgba(255,255,255,0.6); padding: 40px 20px calc(var(--bottom-h) + var(--safe-bottom) + 24px);
+  text-align: center;
 }
-.footer a { color: var(--gold); }
+.footer-inner { max-width: 520px; margin: 0 auto; }
+.footer-brand { font-family: var(--font-display); font-size: 20px; font-weight: 800; color: var(--white); margin-bottom: 4px; }
+.footer-brand-star { color: var(--gold); }
+.footer-tagline { font-size: 12px; color: rgba(255,255,255,0.45); margin-bottom: 20px; }
+.footer-links { display: flex; justify-content: center; gap: 20px; margin-bottom: 16px; flex-wrap: wrap; }
+.footer-link { color: rgba(255,255,255,0.7); font-size: 12px; font-weight: 600; text-decoration: none; transition: color 0.2s; }
+.footer-link:hover { color: var(--gold); }
+.footer-divider { width: 40px; height: 2px; background: rgba(255,255,255,0.1); border-radius: 1px; margin: 16px auto; }
+.footer-safety { display: flex; justify-content: center; gap: 16px; margin-bottom: 16px; flex-wrap: wrap; }
+.footer-safety-badge { display: flex; align-items: center; gap: 4px; font-size: 11px; color: rgba(255,255,255,0.5); font-weight: 600; }
+.footer-safety-icon { font-size: 13px; }
+.footer-copy { font-size: 11px; color: rgba(255,255,255,0.3); }
+.footer-copy a { color: var(--gold); opacity: 0.7; text-decoration: none; }
+.footer-copy a:hover { opacity: 1; }
+.tab-btn.active svg { filter: drop-shadow(0 0 4px rgba(198,163,91,0.4)); }
 
 /* ═══ AUTH MODAL ═══ */
 .auth-overlay {
@@ -1412,9 +1426,25 @@ elevenlabs-convai {
 </section>
 
 <!-- ═══ FOOTER ═══ -->
-<footer class="footer">
-  <p>&copy; 2026 Tiny Tots Babysitting &middot; Made with &#10084; by Poppy</p>
-  <p style="margin-top:6px;"><a href="#/dashboard">Dashboard</a></p>
+<footer class="footer" id="footer">
+  <div class="footer-inner">
+    <div class="footer-brand"><span class="footer-brand-star">&#9733;</span> Tiny Tots</div>
+    <div class="footer-tagline">Babysitting made simple — by kids, for families</div>
+    <div class="footer-links">
+      <a href="#hero" class="footer-link" onclick="tabNav('hero')">Home</a>
+      <a href="#avail" class="footer-link" onclick="tabNav('avail')">Book</a>
+      <a href="#about" class="footer-link">Meet Poppy</a>
+      <a href="#pricing" class="footer-link">Pricing</a>
+      <a href="#reviews" class="footer-link">Reviews</a>
+    </div>
+    <div class="footer-divider"></div>
+    <div class="footer-safety">
+      <span class="footer-safety-badge"><span class="footer-safety-icon">🏥</span> Red Cross Certified</span>
+      <span class="footer-safety-badge"><span class="footer-safety-icon">🛡️</span> Parent-Verified</span>
+      <span class="footer-safety-badge"><span class="footer-safety-icon">📱</span> Instant Alerts</span>
+    </div>
+    <p class="footer-copy">&copy; 2026 Tiny Tots Babysitting &middot; Tahoe City, CA<br><a href="#/dashboard">Sitter Dashboard</a></p>
+  </div>
 </footer>
 
 <!-- ═══ STICKY CTA BAR ═══ -->
@@ -1678,7 +1708,12 @@ function init() {
   renderSitters();
   loadAvailability();
 
-  // Nav scroll effect + sticky CTA
+  // Nav scroll effect + sticky CTA + active bottom tab
+  const navSections = [
+    { id: 'hero', tab: 0 },
+    { id: 'avail', tab: 1 },
+    { id: 'share', tab: 3 }
+  ];
   window.addEventListener('scroll', () => {
     document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 20);
     // Show sticky CTA when hero is out of view
@@ -1688,18 +1723,15 @@ function init() {
       const heroBottom = hero.getBoundingClientRect().bottom;
       cta.classList.toggle('visible', heroBottom < -50);
     }
-  });
-
-  // Bottom tab active state
-  const sections = ['hero', 'avail', 'reviews', 'share'];
-  window.addEventListener('scroll', () => {
+    // Active bottom tab indicator
     const tabs = document.querySelectorAll('.tab-btn');
-    let current = 0;
-    sections.forEach((id, i) => {
+    let activeTab = 0;
+    const scrollMid = window.innerHeight / 2;
+    navSections.forEach(({ id, tab }) => {
       const el = document.getElementById(id);
-      if (el && window.scrollY >= el.offsetTop - 200) current = i;
+      if (el && el.getBoundingClientRect().top < scrollMid) activeTab = tab;
     });
-    tabs.forEach((t, i) => t.classList.toggle('active', i === current));
+    tabs.forEach((t, i) => t.classList.toggle('active', i === activeTab));
   });
 
   // Check for referral
