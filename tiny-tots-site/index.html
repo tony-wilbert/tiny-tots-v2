@@ -1977,11 +1977,16 @@ body.dark-mode .date-strip-wrap::before { background: linear-gradient(to left, t
   *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
 }
 *:focus-visible {
-  outline: 2px solid var(--gold); outline-offset: 2px; border-radius: 4px;
+  outline: 2px solid var(--gold); outline-offset: 3px; border-radius: 8px;
+  box-shadow: 0 0 0 4px rgba(212,168,83,0.2);
 }
-.tab-btn:focus-visible, .action-btn:focus-visible, .faq-q:focus-visible {
-  outline: 2px solid var(--gold); outline-offset: 2px;
+.tab-btn:focus-visible, .action-btn:focus-visible, .faq-q:focus-visible, .nav-btn:focus-visible, .share-btn:focus-visible {
+  outline: 2px solid var(--gold); outline-offset: 3px;
+  box-shadow: 0 0 0 4px rgba(212,168,83,0.2);
 }
+.book-btn:focus-visible { outline-color: var(--gold-light); box-shadow: 0 0 0 4px rgba(212,168,83,0.3); }
+.day-pill:focus-visible { outline-offset: 2px; }
+body.dark-mode *:focus-visible { box-shadow: 0 0 0 4px rgba(212,168,83,0.25); }
 .sr-only {
   position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
   overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
@@ -2843,35 +2848,35 @@ body.dark-mode .scenario-pick:hover, body.dark-mode .scenario-pick.active { bord
         Is Poppy certified in first aid & safety?
         <svg class="faq-chevron" viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg>
       </button>
-      <div class="faq-a">Yes! Poppy holds a current American Red Cross babysitting certification, which covers first aid, child safety, and emergency response. She re-certifies every year.</div>
+      <div class="faq-a">Absolutely! Poppy holds a current American Red Cross babysitting certification covering first aid, child safety, and emergency response — and she re-certifies every year because your kids' safety is her #1 priority. 💛</div>
     </div>
     <div class="faq-item">
       <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">
         What ages does Poppy sit for?
         <svg class="faq-chevron" viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg>
       </button>
-      <div class="faq-a">Poppy is great with kids ages 2–10. She brings age-appropriate activities, books, and games for every session. For toddlers, she's extra attentive about safety.</div>
+      <div class="faq-a">Poppy loves hanging out with kids ages 2–10! She matches activities to each age — puzzles and building blocks for the little ones, art projects and outdoor games for the bigger kids. Every session is tailored, never one-size-fits-all.</div>
     </div>
     <div class="faq-item">
       <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">
         What does Poppy bring to each session?
         <svg class="faq-chevron" viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg>
       </button>
-      <div class="faq-a">Poppy arrives with her "fun bag" — art supplies, stickers, coloring books, small games, and a playlist of kid-friendly music. Every visit is an adventure, not just supervision.</div>
+      <div class="faq-a">Poppy never shows up empty-handed! Her "fun bag" is packed with art supplies, stickers, coloring books, mini games, and a kid-approved music playlist. Your kids will be asking when Poppy's coming back before you even get home. 🎨</div>
     </div>
     <div class="faq-item">
       <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">
         What's the cancellation policy?
         <svg class="faq-chevron" viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg>
       </button>
-      <div class="faq-a">Life happens! Cancel anytime before the booking starts — no fees, no questions. Poppy just asks for a quick text so she knows. Rebook whenever you're ready.</div>
+      <div class="faq-a">Totally flexible! Cancel anytime before the session starts — zero fees, zero guilt. Just send Poppy a quick text so she knows. You can rebook in literally 30 seconds whenever you're ready.</div>
     </div>
     <div class="faq-item">
       <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">
         How does Poppy communicate during sessions?
         <svg class="faq-chevron" viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg>
       </button>
-      <div class="faq-a">Poppy sends photo updates throughout the session so you always know your kids are having a blast. She responds to texts within minutes and will call immediately if anything comes up.</div>
+      <div class="faq-a">You'll never wonder what's going on! Poppy sends photo updates throughout every session so you can see your kids having the best time. She responds to texts within minutes and will call right away if anything comes up — your peace of mind matters most. 📸</div>
     </div>
   </div>
 </section>
@@ -2927,6 +2932,8 @@ body.dark-mode .scenario-pick:hover, body.dark-mode .scenario-pick.active { bord
     <span>👨‍👩‍👧 4 families joined via referral</span>
   </div>
 </section>
+<!-- Screen reader live region for dynamic updates -->
+<div id="srAnnounce" class="sr-only" aria-live="polite" aria-atomic="true"></div>
 </main>
 
 <!-- ═══ FOOTER ═══ -->
@@ -3701,8 +3708,10 @@ function selectDay(key, pill) {
   if (avail) {
     document.getElementById('bookDateLabel').innerHTML = label +
       `<span style="display:block;font-family:var(--font-body);font-size:13px;font-weight:600;color:var(--green);margin-top:4px;">Available ${fmt(avail.start_time)} – ${fmt(avail.end_time)}</span>`;
+    srAnnounce(`Selected ${label}. Poppy is available ${fmt(avail.start_time)} to ${fmt(avail.end_time)}.`);
   } else {
     document.getElementById('bookDateLabel').textContent = label;
+    srAnnounce(`Selected ${label}. Not available this day.`);
   }
 
   const sheet = document.getElementById('bookSheet');
@@ -4355,6 +4364,7 @@ async function submitBooking() {
     document.getElementById('confirmKid').textContent = kidName;
     document.getElementById('confirmTotal').textContent = `$${priceCents/100}`;
     document.getElementById('confirmOverlay').classList.add('active');
+    srAnnounce(`Booking confirmed for ${kidName} on ${dayNames[bDate.getDay()]}, ${monthNames[bDate.getMonth()]} ${bDate.getDate()}, ${fmt12(startTime)} to ${fmt12(endTime)}. Total: $${priceCents/100}.`);
     // Stagger "What to Expect" steps
     document.querySelectorAll('.confirm-expect-step').forEach((s, i) => {
       s.style.opacity = '0'; s.style.transform = 'translateX(-10px)';
@@ -4614,6 +4624,10 @@ function tabNav(sectionId) {
 function scrollTo(selector) {
   const el = document.querySelector(selector);
   if (el) el.scrollIntoView({ behavior: 'smooth' });
+}
+function srAnnounce(msg) {
+  const el = document.getElementById('srAnnounce');
+  if (el) { el.textContent = ''; requestAnimationFrame(() => { el.textContent = msg; }); }
 }
 
 /* ═══ TOAST ═══ */
