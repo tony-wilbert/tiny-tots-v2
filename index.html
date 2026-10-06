@@ -2157,6 +2157,75 @@ body.dark-mode .book-guest .form-row input::placeholder { color: #777; }
   border-color: var(--gold) !important;
   box-shadow: 0 0 0 3px rgba(212,168,83,0.15);
 }
+/* ═══ SESSION PLAN PREVIEW ═══ */
+.session-plan {
+  display: none; margin: 16px 0 12px; padding: 16px 18px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(212,168,83,0.06), rgba(92,184,92,0.04));
+  border: 1px solid rgba(212,168,83,0.12);
+  animation: planFadeIn 0.4s ease;
+}
+.session-plan.visible { display: block; }
+@keyframes planFadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+.session-plan-header {
+  display: flex; align-items: center; gap: 8px; margin-bottom: 12px;
+}
+.session-plan-icon {
+  width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(135deg, var(--gold), #E8C547);
+  font-size: 13px; box-shadow: 0 2px 6px rgba(212,168,83,0.25);
+}
+.session-plan-title {
+  font-size: 11px; font-weight: 800; text-transform: uppercase;
+  letter-spacing: 0.8px; color: var(--gold);
+}
+.session-plan-timeline {
+  display: flex; flex-direction: column; gap: 0; position: relative;
+  padding-left: 20px;
+}
+.session-plan-timeline::before {
+  content: ''; position: absolute; left: 6px; top: 8px; bottom: 8px;
+  width: 2px; background: linear-gradient(to bottom, var(--gold), rgba(212,168,83,0.15));
+  border-radius: 2px;
+}
+.plan-step {
+  display: flex; align-items: center; gap: 10px; padding: 5px 0;
+  position: relative;
+}
+.plan-step::before {
+  content: ''; position: absolute; left: -16px; top: 50%; transform: translateY(-50%);
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--gold); border: 2px solid var(--warm);
+  box-shadow: 0 0 0 1px rgba(212,168,83,0.3);
+}
+.plan-step-time {
+  font-size: 10px; font-weight: 700; color: var(--gold);
+  min-width: 42px; flex-shrink: 0;
+}
+.plan-step-emoji { font-size: 14px; flex-shrink: 0; }
+.plan-step-label { font-size: 12px; font-weight: 600; color: var(--charcoal); }
+.plan-step:last-child::before { background: var(--green); }
+/* Scenario quick picks */
+.scenario-picks {
+  display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap;
+}
+.scenario-pick {
+  padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: 700;
+  background: transparent; border: 1.5px solid #ddd; color: var(--charcoal);
+  transition: all 0.2s; cursor: pointer; display: flex; align-items: center; gap: 4px;
+}
+.scenario-pick:hover, .scenario-pick.active {
+  border-color: var(--gold); background: rgba(212,168,83,0.1); color: var(--gold);
+}
+.scenario-pick:active { transform: scale(0.95); }
+.scenario-pick-emoji { font-size: 12px; }
+/* Dark mode session plan */
+body.dark-mode .session-plan { background: linear-gradient(135deg, rgba(212,168,83,0.08), rgba(42,42,46,0.6)); border-color: rgba(212,168,83,0.12); }
+body.dark-mode .plan-step-label { color: #F0EDE8; }
+body.dark-mode .plan-step::before { border-color: #2A2A2E; }
+body.dark-mode .scenario-pick { border-color: #3A3A3E; color: #F0EDE8; }
+body.dark-mode .scenario-pick:hover, body.dark-mode .scenario-pick.active { border-color: var(--gold); color: var(--gold); background: rgba(212,168,83,0.12); }
 
 @media (prefers-color-scheme: dark) {
   body:not(.light-mode) {
@@ -2399,6 +2468,7 @@ body.dark-mode .book-guest .form-row input::placeholder { color: #777; }
           </div>
         </div>
         <div class="time-quick-btns" id="timeQuickBtns"></div>
+        <div class="scenario-picks" id="scenarioPicks"></div>
       </div>
 
       <!-- Dynamic price preview -->
@@ -2411,6 +2481,15 @@ body.dark-mode .book-guest .form-row input::placeholder { color: #777; }
           <span class="price-total-label">Session total</span>
           <span class="price-total-amount" id="priceTotalAmount">$48</span>
         </div>
+      </div>
+
+      <!-- Session Plan Preview -->
+      <div class="session-plan" id="sessionPlan">
+        <div class="session-plan-header">
+          <div class="session-plan-icon">📋</div>
+          <div class="session-plan-title">Poppy's Plan</div>
+        </div>
+        <div class="session-plan-timeline" id="planTimeline"></div>
       </div>
 
       <!-- Signed-in booking (one tap) -->
@@ -3516,6 +3595,8 @@ function populateTimePicker(startTime, endTime) {
   });
   // Hint text
   document.getElementById('timePickerHint').textContent = totalHrs >= 2 ? 'Pick a shorter session to save' : '';
+  // Build scenario quick picks
+  buildScenarioPicks(startTime, endTime);
 }
 
 function updateEndOptions() {
@@ -3600,6 +3681,155 @@ function updateTimePrice() {
     const fmtShort = t => { const [h,m] = t.split(':').map(Number); const ap = h>=12?'p':'a'; return `${h>12?h-12:h||12}${m?':'+String(m).padStart(2,'0'):''}${ap}`; };
     stickyDetail.textContent = `Today ${fmtShort(startSel.value)}–${fmtShort(endSel.value)} · $${total}`;
   }
+  // Update session plan preview
+  updateSessionPlan(sh * 60 + sm, eh * 60 + em);
+}
+
+/* ═══ SESSION PLAN PREVIEW ═══ */
+function updateSessionPlan(startMins, endMins) {
+  const planEl = document.getElementById('sessionPlan');
+  const timeline = document.getElementById('planTimeline');
+  if (!planEl || !timeline) return;
+  const durationMins = endMins - startMins;
+  if (durationMins < 60) { planEl.classList.remove('visible'); return; }
+
+  // Activity library with time-of-day awareness
+  const activities = {
+    earlyAfternoon: [ // 3-5pm
+      { emoji: '🍎', label: 'Snack time & settle in' },
+      { emoji: '📚', label: 'Homework help' },
+      { emoji: '🏃', label: 'Outdoor play & games' },
+      { emoji: '🎨', label: 'Creative time' }
+    ],
+    lateAfternoon: [ // 5-7pm
+      { emoji: '🍳', label: 'Dinner prep together' },
+      { emoji: '🎲', label: 'Games & activities' },
+      { emoji: '📖', label: 'Story time wind-down' }
+    ],
+    evening: [ // 7-9pm
+      { emoji: '🎬', label: 'Movie or show pick' },
+      { emoji: '🧸', label: 'Cozy play time' },
+      { emoji: '🪥', label: 'Pajama & bedtime routine' },
+      { emoji: '🌙', label: 'Tucked in & lights out' }
+    ],
+    lateEvening: [ // 9-11pm
+      { emoji: '😴', label: 'Sleeping soundly' },
+      { emoji: '📱', label: 'Poppy sends photo update' }
+    ]
+  };
+
+  const steps = [];
+  const fmtTime = mins => {
+    const h = Math.floor(mins / 60); const m = mins % 60;
+    const ap = h >= 12 ? 'p' : 'a';
+    return `${h > 12 ? h - 12 : h || 12}${m ? ':' + String(m).padStart(2, '0') : ''}${ap}`;
+  };
+
+  // Build timeline based on time window
+  let cursor = startMins;
+  const blockLen = Math.max(30, Math.floor(durationMins / 4));
+
+  // Arrival
+  steps.push({ time: fmtTime(cursor), emoji: '👋', label: 'Poppy arrives & gets settled' });
+  cursor += 15;
+
+  // Fill middle activities based on time of day
+  const midActivities = [];
+  if (startMins < 17 * 60) { // before 5pm
+    midActivities.push(...activities.earlyAfternoon);
+  }
+  if ((startMins < 19 * 60 && endMins > 17 * 60) || (startMins >= 17 * 60 && startMins < 19 * 60)) {
+    midActivities.push(...activities.lateAfternoon);
+  }
+  if (endMins > 19 * 60) {
+    midActivities.push(...activities.evening);
+  }
+  if (endMins > 21 * 60) {
+    midActivities.push(...activities.lateEvening);
+  }
+
+  // Pick activities that fit the duration (max 4 middle steps)
+  const maxMiddle = Math.min(4, Math.max(2, Math.floor(durationMins / 45)));
+  const stride = Math.max(1, Math.floor(midActivities.length / maxMiddle));
+  const picked = [];
+  for (let i = 0; i < midActivities.length && picked.length < maxMiddle; i += stride) {
+    picked.push(midActivities[i]);
+  }
+
+  picked.forEach((act, i) => {
+    cursor = startMins + 15 + Math.round(((durationMins - 30) / picked.length) * (i + 0.5));
+    steps.push({ time: fmtTime(cursor), emoji: act.emoji, label: act.label });
+  });
+
+  // Wrap-up
+  steps.push({ time: fmtTime(endMins - 10), emoji: '📱', label: 'Text update — on your way!' });
+  steps.push({ time: fmtTime(endMins), emoji: '✅', label: 'Smooth handoff & recap' });
+
+  // Render
+  timeline.innerHTML = steps.map(s =>
+    `<div class="plan-step"><span class="plan-step-time">${s.time}</span><span class="plan-step-emoji">${s.emoji}</span><span class="plan-step-label">${s.label}</span></div>`
+  ).join('');
+
+  planEl.classList.add('visible');
+}
+
+/* ═══ SCENARIO QUICK PICKS ═══ */
+function buildScenarioPicks(startTime, endTime) {
+  const container = document.getElementById('scenarioPicks');
+  if (!container) return;
+  const [sh,sm] = startTime.split(':').map(Number);
+  const [eh,em] = endTime.split(':').map(Number);
+  const startMins = sh * 60 + sm;
+  const endMins = eh * 60 + em;
+  const totalHrs = (endMins - startMins) / 60;
+
+  const scenarios = [];
+  // After School: if window starts before 5pm
+  if (sh < 17 && totalHrs >= 2) {
+    const scEnd = Math.min(startMins + 150, endMins); // ~2.5 hrs
+    scenarios.push({ emoji: '🎒', label: 'After school', startM: startMins, endM: scEnd });
+  }
+  // Dinner & Play: if window spans 5-7pm
+  if (startMins <= 17 * 60 && endMins >= 19 * 60) {
+    scenarios.push({ emoji: '🍽️', label: 'Dinner & play', startM: 17 * 60, endM: 19 * 60 });
+  }
+  // Date Night: if window goes past 8pm and is 3+ hours
+  if (endMins >= 20 * 60 && totalHrs >= 3) {
+    const dnStart = Math.max(startMins, 18 * 60);
+    scenarios.push({ emoji: '💃', label: 'Date night', startM: dnStart, endM: Math.min(dnStart + 240, endMins) });
+  }
+  // Bedtime included: if window goes past 8pm
+  if (endMins >= 20 * 60 && startMins < 20 * 60) {
+    scenarios.push({ emoji: '🌙', label: 'Incl. bedtime', startM: startMins, endM: endMins });
+  }
+
+  container.innerHTML = '';
+  if (scenarios.length === 0) return;
+
+  scenarios.forEach(sc => {
+    const btn = document.createElement('button');
+    btn.className = 'scenario-pick';
+    btn.innerHTML = `<span class="scenario-pick-emoji">${sc.emoji}</span>${sc.label}`;
+    btn.onclick = () => {
+      const startSel = document.getElementById('timeStart');
+      const endSel = document.getElementById('timeEnd');
+      // Set start time
+      const sH = Math.floor(sc.startM / 60); const sM = sc.startM % 60;
+      const sVal = `${String(sH).padStart(2,'0')}:${String(sM).padStart(2,'0')}`;
+      if ([...startSel.options].some(o => o.value === sVal)) startSel.value = sVal;
+      updateEndOptions();
+      // Set end time
+      const eH = Math.floor(sc.endM / 60); const eM = sc.endM % 60;
+      const eVal = `${String(eH).padStart(2,'0')}:${String(eM).padStart(2,'0')}`;
+      if ([...endSel.options].some(o => o.value === eVal)) endSel.value = eVal;
+      else endSel.value = endSel.options[endSel.options.length - 1]?.value || '';
+      updateTimePrice();
+      document.querySelectorAll('.scenario-pick').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.querySelectorAll('.time-quick-btn').forEach(b => b.classList.remove('active'));
+    };
+    container.appendChild(btn);
+  });
 }
 
 function applyDefaultAvailability() {
