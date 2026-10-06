@@ -531,19 +531,98 @@ a { text-decoration: none; color: inherit; }
 .auth-skip:hover { color: var(--charcoal); }
 
 /* ═══ ADMIN DASHBOARD ═══ */
-.dashboard { display: none; padding: 80px 20px 40px; max-width: 600px; margin: 0 auto; }
+.dashboard { display: none; padding: 80px 20px 40px; max-width: 640px; margin: 0 auto; }
 .dashboard.active { display: block; }
-.dash-section { margin-bottom: 32px; }
+.dash-header {
+  display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px;
+}
+.dash-header h2 { font-family: var(--font-display); font-size: 28px; font-weight: 800; }
+.dash-header .dash-logout {
+  font-size: 12px; font-weight: 700; color: var(--gray); background: none; padding: 8px 14px;
+  border-radius: 20px; border: 1.5px solid #eee; transition: all 0.2s;
+}
+.dash-header .dash-logout:hover { border-color: var(--gold); color: var(--gold); }
+
+/* Revenue cards */
+.revenue-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 28px;
+}
+.rev-card {
+  background: var(--white); border-radius: 16px; padding: 18px 16px; text-align: center;
+  box-shadow: var(--shadow-sm); border: 1px solid rgba(0,0,0,0.04);
+}
+.rev-card .rev-label { font-size: 10px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; color: var(--gold); }
+.rev-card .rev-amount {
+  font-family: var(--font-display); font-size: 28px; font-weight: 800; color: var(--charcoal); margin-top: 4px;
+}
+.rev-card .rev-sub { font-size: 11px; color: var(--gray); margin-top: 2px; }
+.rev-card.highlight { background: var(--charcoal); }
+.rev-card.highlight .rev-label { color: var(--gold-light); }
+.rev-card.highlight .rev-amount { color: var(--white); }
+.rev-card.highlight .rev-sub { color: rgba(255,255,255,0.5); }
+
+/* Dashboard tabs */
+.dash-tabs {
+  display: flex; gap: 4px; margin-bottom: 20px; overflow-x: auto;
+  border-bottom: 2px solid #eee; padding-bottom: 0;
+}
+.dash-tab {
+  padding: 10px 16px; font-size: 13px; font-weight: 700; color: var(--gray);
+  background: none; border-bottom: 2px solid transparent; margin-bottom: -2px;
+  white-space: nowrap; transition: all 0.2s;
+}
+.dash-tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+.dash-tab:hover { color: var(--charcoal); }
+.dash-panel { display: none; }
+.dash-panel.active { display: block; }
+
+.dash-section { margin-bottom: 28px; }
 .dash-section h3 { font-family: var(--font-display); font-size: 18px; margin-bottom: 14px; }
 .dash-btn {
   padding: 10px 18px; border-radius: 12px; font-size: 13px; font-weight: 700;
-  background: var(--charcoal); color: var(--white); margin: 4px;
+  background: var(--charcoal); color: var(--white); margin: 4px; transition: all 0.2s;
 }
+.dash-btn:hover { background: var(--gold); }
+.dash-btn.small { padding: 6px 12px; font-size: 11px; margin: 2px; }
+.dash-btn.outline {
+  background: transparent; color: var(--charcoal); border: 1.5px solid #ddd;
+}
+.dash-btn.outline:hover { border-color: var(--gold); color: var(--gold); }
 .dash-input {
   padding: 10px 14px; border: 2px solid #eee; border-radius: 10px;
-  font-size: 13px; margin: 4px; outline: none;
+  font-size: 13px; margin: 4px; outline: none; transition: border-color 0.2s;
 }
 .dash-input:focus { border-color: var(--gold); }
+
+/* Booking row in dashboard */
+.dash-booking-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 14px 16px; background: var(--white); border-radius: 12px;
+  margin-bottom: 8px; box-shadow: var(--shadow-sm);
+}
+.dash-booking-info { flex: 1; }
+.dash-booking-name { font-size: 14px; font-weight: 700; }
+.dash-booking-detail { font-size: 12px; color: var(--gray); margin-top: 2px; }
+.dash-booking-amount {
+  font-family: var(--font-display); font-size: 18px; font-weight: 800; color: var(--green);
+}
+.dash-booking-status {
+  font-size: 10px; font-weight: 700; padding: 3px 10px; border-radius: 20px; margin-left: 8px;
+}
+.dash-booking-status.confirmed { background: #e8f5e9; color: #2e7d32; }
+.dash-booking-status.pending { background: #fff3e0; color: #e65100; }
+.dash-booking-status.cancelled { background: #fce4ec; color: #c62828; }
+.status-badge {
+  font-size: 10px; font-weight: 700; padding: 3px 10px; border-radius: 20px; white-space: nowrap;
+}
+.status-badge.confirmed { background: #e8f5e9; color: #2e7d32; }
+.status-badge.completed { background: #e3f2fd; color: #1565c0; }
+.status-badge.pending { background: #fff3e0; color: #e65100; }
+.dash-empty {
+  text-align: center; padding: 32px 16px; color: var(--gray); font-size: 13px;
+}
+
+/* Admin tables */
 #adminBookingsTable, #adminParentsTable {
   width: 100%; font-size: 11px; border-collapse: collapse; margin-top: 12px;
 }
@@ -551,9 +630,27 @@ a { text-decoration: none; color: inherit; }
 #adminParentsTable th, #adminParentsTable td {
   padding: 8px; text-align: left; border-bottom: 1px solid #eee;
 }
+
+/* Sitter management */
+.dash-sitter-card {
+  display: flex; align-items: center; gap: 12px; padding: 14px 16px;
+  background: var(--white); border-radius: 12px; margin-bottom: 8px; box-shadow: var(--shadow-sm);
+}
+.dash-sitter-avatar {
+  width: 40px; height: 40px; border-radius: 50%; background: var(--pink);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; font-weight: 800; color: var(--gold);
+}
+.dash-sitter-info { flex: 1; }
+.dash-sitter-name { font-size: 14px; font-weight: 700; }
+.dash-sitter-meta { font-size: 11px; color: var(--gray); }
+
 .admin-login { text-align: center; padding: 100px 20px; }
 .admin-login input { padding: 14px 18px; border: 2px solid #eee; border-radius: 12px; font-size: 15px; width: 220px; outline:none; }
 .admin-login input:focus { border-color: var(--gold); }
+
+/* Dashboard empty state */
+.dash-empty { text-align: center; padding: 32px; color: var(--gray); font-size: 13px; }
 
 /* ═══ TOAST ═══ */
 .toast {
@@ -565,11 +662,107 @@ a { text-decoration: none; color: inherit; }
 }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-/* ═══ ElevenLabs widget — hidden ═══ */
+/* ═══ ElevenLabs widget — hidden until voice modal ═══ */
 elevenlabs-convai {
   position: fixed !important; bottom: -9999px !important; right: -9999px !important;
   z-index: -1 !important; opacity: 0 !important; pointer-events: none !important;
   width: 0 !important; height: 0 !important; overflow: hidden !important;
+}
+
+/* ═══ VOICE MODAL ═══ */
+.voice-modal-overlay {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.6); backdrop-filter: blur(12px);
+  z-index: 9000; opacity: 0; visibility: hidden; transition: all 0.3s ease;
+  display: flex; align-items: center; justify-content: center;
+}
+.voice-modal-overlay.active { opacity: 1; visibility: visible; }
+.voice-modal {
+  width: 92%; max-width: 380px; background: linear-gradient(160deg, #2a2a2a, #1a1a1a);
+  border-radius: 28px; padding: 36px 24px 28px; text-align: center;
+  transform: scale(0.9) translateY(20px); transition: transform 0.4s cubic-bezier(.22,1,.36,1);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.4); position: relative;
+}
+.voice-modal-overlay.active .voice-modal { transform: scale(1) translateY(0); }
+
+.voice-modal-close {
+  position: absolute; top: 12px; right: 16px; background: none;
+  color: rgba(255,255,255,0.4); font-size: 28px; line-height: 1; padding: 4px;
+  transition: color 0.2s;
+}
+.voice-modal-close:hover { color: #fff; }
+
+.voice-avatar-container {
+  width: 160px; height: 160px; margin: 0 auto 20px;
+  position: relative; border-radius: 50%;
+}
+.voice-avatar-ring {
+  width: 100%; height: 100%; border-radius: 50%;
+  border: 3px solid var(--gold); overflow: hidden;
+  position: relative; z-index: 2;
+}
+.voice-avatar-ring img {
+  width: 100%; height: 100%; object-fit: cover;
+}
+.voice-pulse {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+  width: 160px; height: 160px; border-radius: 50%; z-index: 1;
+  opacity: 0;
+}
+.voice-modal-overlay.active.speaking .voice-pulse {
+  animation: voicePulse 1.2s ease-in-out infinite;
+}
+@keyframes voicePulse {
+  0% { box-shadow: 0 0 0 0 rgba(212,168,83,0.5); }
+  50% { box-shadow: 0 0 0 20px rgba(212,168,83,0.15); }
+  100% { box-shadow: 0 0 0 30px rgba(212,168,83,0); }
+}
+
+.voice-modal-name {
+  font-family: var(--font-display); font-size: 24px; font-weight: 800;
+  color: #fff; margin-bottom: 4px;
+}
+.voice-modal-status {
+  font-size: 13px; color: rgba(255,255,255,0.5); margin-bottom: 24px;
+}
+.voice-modal-status.connected { color: var(--gold); }
+
+/* Waveform bars */
+.voice-waveform {
+  display: flex; align-items: center; justify-content: center; gap: 3px;
+  height: 40px; margin-bottom: 24px;
+}
+.voice-bar {
+  width: 4px; background: var(--gold); border-radius: 4px;
+  height: 8px; transition: height 0.1s ease;
+}
+.voice-modal-overlay.active.speaking .voice-bar {
+  animation: waveBar 0.8s ease-in-out infinite alternate;
+}
+.voice-bar:nth-child(1) { animation-delay: 0s; }
+.voice-bar:nth-child(2) { animation-delay: 0.1s; }
+.voice-bar:nth-child(3) { animation-delay: 0.2s; }
+.voice-bar:nth-child(4) { animation-delay: 0.3s; }
+.voice-bar:nth-child(5) { animation-delay: 0.15s; }
+.voice-bar:nth-child(6) { animation-delay: 0.25s; }
+.voice-bar:nth-child(7) { animation-delay: 0.05s; }
+.voice-bar:nth-child(8) { animation-delay: 0.35s; }
+.voice-bar:nth-child(9) { animation-delay: 0.12s; }
+@keyframes waveBar {
+  0% { height: 6px; opacity: 0.4; }
+  100% { height: 32px; opacity: 1; }
+}
+
+.voice-end-btn {
+  padding: 14px 32px; border-radius: 50px; font-size: 15px; font-weight: 700;
+  background: linear-gradient(135deg, #E88B8B, #c0392b); color: #fff;
+  box-shadow: 0 4px 16px rgba(192,57,43,0.3); transition: all 0.2s;
+  display: inline-flex; align-items: center; gap: 8px;
+}
+.voice-end-btn:hover { transform: scale(1.05); box-shadow: 0 6px 24px rgba(192,57,43,0.4); }
+
+.voice-modal-hint {
+  font-size: 11px; color: rgba(255,255,255,0.3); margin-top: 16px;
 }
 
 /* ═══ SCROLL REVEAL ═══ */
@@ -858,41 +1051,105 @@ elevenlabs-convai {
 <!-- ═══ ADMIN DASHBOARD ═══ -->
 <div class="dashboard" id="dashboard">
   <div class="admin-login" id="adminLogin">
-    <h2 style="font-family:var(--font-display);margin-bottom:20px;">Poppy's Dashboard</h2>
+    <h2 style="font-family:var(--font-display);margin-bottom:8px;">Poppy's Dashboard</h2>
+    <p style="font-size:13px;color:var(--gray);margin-bottom:20px;">Your babysitting business, all in one place.</p>
     <input type="password" id="adminPass" placeholder="Password" onkeydown="if(event.key==='Enter')adminAuth()">
     <br><button class="dash-btn" style="margin-top:12px;" onclick="adminAuth()">Enter</button>
   </div>
   <div id="adminPanel" style="display:none;">
-    <h2 style="font-family:var(--font-display);margin-bottom:24px;">Dashboard</h2>
-    <div class="dash-section">
-      <h3>Add a Sitter</h3>
-      <input class="dash-input" type="text" id="sitterName" placeholder="Sitter name">
-      <input class="dash-input" type="number" id="sitterAge" placeholder="Age">
-      <input class="dash-input" type="number" id="sitterRate" placeholder="$/hr" value="12">
-      <button class="dash-btn" onclick="addSitter()">Add to Network</button>
-      <div id="sitterAdminList" style="margin-top:12px;"></div>
+    <div class="dash-header">
+      <h2>Hey, Poppy!</h2>
+      <button class="dash-logout" onclick="window.location.hash='';window.location.reload();">Back to Site</button>
     </div>
-    <div class="dash-section">
-      <h3>Set Availability</h3>
-      <input class="dash-input" type="date" id="availDate">
-      <input class="dash-input" type="time" id="availStart" value="15:00">
-      <input class="dash-input" type="time" id="availEnd" value="21:00">
-      <button class="dash-btn" onclick="addAvailability()">Add</button>
-      <div id="availList" style="margin-top:12px;"></div>
+
+    <!-- Revenue Cards -->
+    <div class="revenue-grid">
+      <div class="rev-card highlight">
+        <div class="rev-label">Total Earned</div>
+        <div class="rev-amount" id="revTotal">$0</div>
+        <div class="rev-sub">all time</div>
+      </div>
+      <div class="rev-card">
+        <div class="rev-label">This Month</div>
+        <div class="rev-amount" id="revMonth">$0</div>
+        <div class="rev-sub" id="revMonthLabel">October</div>
+      </div>
+      <div class="rev-card">
+        <div class="rev-label">Upcoming</div>
+        <div class="rev-amount" id="revUpcoming">$0</div>
+        <div class="rev-sub" id="revUpcomingSits">0 sits</div>
+      </div>
     </div>
-    <div class="dash-section">
-      <h3>Bookings</h3>
-      <table id="adminBookingsTable"></table>
+
+    <!-- Dashboard Tabs -->
+    <div class="dash-tabs">
+      <button class="dash-tab active" onclick="switchDashTab('bookings')">Bookings</button>
+      <button class="dash-tab" onclick="switchDashTab('schedule')">Schedule</button>
+      <button class="dash-tab" onclick="switchDashTab('sitters')">Sitters</button>
+      <button class="dash-tab" onclick="switchDashTab('parents')">Parents</button>
+      <button class="dash-tab" onclick="switchDashTab('invite')">Invite</button>
     </div>
-    <div class="dash-section">
-      <h3>Parents</h3>
-      <table id="adminParentsTable"></table>
+
+    <!-- Bookings Panel -->
+    <div class="dash-panel active" id="dashBookings">
+      <div id="dashBookingsList">
+        <div class="dash-empty">Loading bookings...</div>
+      </div>
     </div>
-    <div class="dash-section">
-      <h3>Invite Parents via Text</h3>
-      <input class="dash-input" type="tel" id="invitePhone" placeholder="Parent's phone number">
-      <input class="dash-input" type="text" id="inviteParentName" placeholder="Parent's name">
-      <button class="dash-btn" onclick="sendParentInvite()">Send Invite</button>
+
+    <!-- Schedule Panel -->
+    <div class="dash-panel" id="dashSchedule">
+      <div class="dash-section">
+        <h3>Set Availability</h3>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
+          <input class="dash-input" type="date" id="availDate">
+          <input class="dash-input" type="time" id="availStart" value="15:00">
+          <input class="dash-input" type="time" id="availEnd" value="21:00">
+          <button class="dash-btn" onclick="addAvailability()">Add</button>
+        </div>
+        <p style="font-size:11px;color:var(--gray);margin-top:8px;">Default: Tue & Thu 3:45–8 PM, Sat 4–11 PM</p>
+        <div id="availList" style="margin-top:12px;"></div>
+      </div>
+    </div>
+
+    <!-- Sitters Panel -->
+    <div class="dash-panel" id="dashSitters">
+      <div class="dash-section">
+        <h3>Your Sitter Network</h3>
+        <div id="dashSittersList"></div>
+        <div style="margin-top:16px;padding:16px;background:var(--white);border-radius:12px;border:2px dashed rgba(212,168,83,0.3);">
+          <h3 style="font-size:14px;margin-bottom:8px;">Add a Sitter</h3>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;">
+            <input class="dash-input" type="text" id="sitterName" placeholder="Name" style="flex:1;min-width:120px;">
+            <input class="dash-input" type="number" id="sitterAge" placeholder="Age" style="width:70px;">
+            <input class="dash-input" type="number" id="sitterRate" placeholder="$/hr" value="12" style="width:70px;">
+            <button class="dash-btn" onclick="addSitter()">Add</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Parents Panel -->
+    <div class="dash-panel" id="dashParents">
+      <div class="dash-section">
+        <h3>Your Families</h3>
+        <div id="dashParentsList">
+          <table id="adminParentsTable"></table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Invite Panel -->
+    <div class="dash-panel" id="dashInvite">
+      <div class="dash-section">
+        <h3>Invite Parents via Text</h3>
+        <p style="font-size:12px;color:var(--gray);margin-bottom:12px;">Send a personalized invite link to a parent. They'll see your page with their name in the greeting.</p>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+          <input class="dash-input" type="text" id="inviteParentName" placeholder="Parent's name" style="flex:1;">
+          <input class="dash-input" type="tel" id="invitePhone" placeholder="Phone number" style="flex:1;">
+          <button class="dash-btn" onclick="sendParentInvite()">Send Invite</button>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -1288,8 +1545,19 @@ async function submitBooking() {
   btns.forEach(b => { b.disabled = false; b.textContent = 'Book Poppy'; });
 }
 
-/* ═══ VOICE (ElevenLabs via Avatar) ═══ */
+/* ═══ VOICE (ElevenLabs via Avatar Modal) ═══ */
 function toggleVoice() {
+  if (voiceActive) { endVoiceCall(); return; }
+  // Open voice modal
+  const modal = document.getElementById('voiceModal');
+  const statusEl = document.getElementById('voiceModalStatus');
+  modal.classList.add('active');
+  modal.classList.remove('speaking');
+  statusEl.textContent = 'Connecting...';
+  statusEl.className = 'voice-modal-status';
+  document.body.style.overflow = 'hidden';
+
+  // Trigger ElevenLabs widget
   const widget = document.querySelector('elevenlabs-convai');
   if (!widget) return;
   widget.style.cssText = 'position:fixed!important;bottom:-200px!important;right:-200px!important;z-index:-1!important;opacity:0!important;pointer-events:auto!important;width:auto!important;height:auto!important;overflow:visible!important;';
@@ -1300,9 +1568,32 @@ function toggleVoice() {
       if (btn) btn.click();
     } else { widget.click(); }
     setTimeout(() => { widget.style.cssText = ''; }, 100);
-    voiceActive = !voiceActive;
+    voiceActive = true;
     updateVoiceUI();
   }, 50);
+}
+
+function endVoiceCall() {
+  // Close modal
+  const modal = document.getElementById('voiceModal');
+  modal.classList.remove('active', 'speaking');
+  document.body.style.overflow = '';
+
+  // Stop ElevenLabs
+  const widget = document.querySelector('elevenlabs-convai');
+  if (widget) {
+    widget.style.cssText = 'position:fixed!important;bottom:-200px!important;right:-200px!important;z-index:-1!important;opacity:0!important;pointer-events:auto!important;width:auto!important;height:auto!important;overflow:visible!important;';
+    setTimeout(() => {
+      const shadow = widget.shadowRoot;
+      if (shadow) {
+        const btn = shadow.querySelector('button');
+        if (btn) btn.click();
+      }
+      setTimeout(() => { widget.style.cssText = ''; }, 100);
+    }, 50);
+  }
+  voiceActive = false;
+  updateVoiceUI();
 }
 
 function updateVoiceUI() {
@@ -1311,10 +1602,8 @@ function updateVoiceUI() {
   const btnText = document.getElementById('voiceBtnText');
   if (voiceActive) {
     wrap.classList.add('voice-active');
-    status.textContent = 'Listening...';
+    status.textContent = 'On a call...';
     btnText.textContent = 'End Call';
-    // Scroll to top to see avatar
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   } else {
     wrap.classList.remove('voice-active');
     status.textContent = 'Tap to talk';
@@ -1322,16 +1611,49 @@ function updateVoiceUI() {
   }
 }
 
-// Watch widget state
+// Watch widget state for real-time updates
 setTimeout(() => {
   const widget = document.querySelector('elevenlabs-convai');
   if (!widget) return;
+  const modal = document.getElementById('voiceModal');
+  const statusEl = document.getElementById('voiceModalStatus');
+
   widget.addEventListener('elevenlabs-convai:call', e => {
-    if (e.detail?.status === 'connected') { voiceActive = true; updateVoiceUI(); }
+    if (e.detail?.status === 'connected') {
+      voiceActive = true;
+      statusEl.textContent = 'Connected — say hi!';
+      statusEl.className = 'voice-modal-status connected';
+      modal.classList.add('speaking');
+      updateVoiceUI();
+    }
   });
   widget.addEventListener('elevenlabs-convai:call-end', () => {
-    voiceActive = false; updateVoiceUI();
+    voiceActive = false;
+    modal.classList.remove('active', 'speaking');
+    document.body.style.overflow = '';
+    updateVoiceUI();
   });
+
+  // MutationObserver on shadow DOM for speaking state
+  const checkSpeaking = () => {
+    if (!widget.shadowRoot) return;
+    const obs = new MutationObserver(() => {
+      const shadow = widget.shadowRoot;
+      if (!shadow || !modal.classList.contains('active')) return;
+      // Check for various speaking indicators in shadow DOM
+      const isSpeaking = shadow.querySelector('[data-state="speaking"]') ||
+                         shadow.querySelector('.speaking') ||
+                         shadow.innerHTML?.includes('speaking');
+      if (isSpeaking) {
+        modal.classList.add('speaking');
+        statusEl.textContent = 'Poppy is talking...';
+      } else if (modal.classList.contains('active')) {
+        statusEl.textContent = 'Listening...';
+      }
+    });
+    obs.observe(widget.shadowRoot, { subtree: true, childList: true, attributes: true });
+  };
+  setTimeout(checkSpeaking, 3000);
 }, 2000);
 
 /* ═══ SHARING / VIRAL ═══ */
@@ -1428,8 +1750,78 @@ function adminAuth() {
   if (document.getElementById('adminPass').value === 'poppy2026') {
     document.getElementById('adminLogin').style.display = 'none';
     document.getElementById('adminPanel').style.display = 'block';
-    loadAdminBookings(); loadAdminParents(); loadAdminAvail();
+    loadRevenueSummary();
+    loadAdminBookings();
+    loadAdminParents();
+    loadAdminAvail();
+    loadDashSitters();
   }
+}
+
+/* ═══ DASHBOARD TABS ═══ */
+function switchDashTab(tab) {
+  document.querySelectorAll('.dash-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.dash-panel').forEach(p => p.classList.remove('active'));
+  event.target.classList.add('active');
+  const panelMap = { bookings:'dashBookings', schedule:'dashSchedule', sitters:'dashSitters', parents:'dashParents', invite:'dashInvite' };
+  const panel = document.getElementById(panelMap[tab]);
+  if (panel) panel.classList.add('active');
+}
+
+/* ═══ REVENUE SUMMARY ═══ */
+async function loadRevenueSummary() {
+  const { data: bookings } = await db.from('bookings').select('*');
+  if (!bookings) return;
+  const now = new Date();
+  const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  let totalEarned = 0, monthEarned = 0, upcoming = 0, upcomingSits = 0;
+  bookings.forEach(b => {
+    const bDate = new Date(b.date);
+    const hours = calcHours(b.start_time, b.end_time);
+    const amt = hours * 12;
+    if (b.status === 'confirmed' || b.status === 'completed') {
+      if (bDate < now) {
+        totalEarned += amt;
+        if (bDate.getMonth() === now.getMonth() && bDate.getFullYear() === now.getFullYear()) monthEarned += amt;
+      } else {
+        upcoming += amt;
+        upcomingSits++;
+      }
+    }
+  });
+  document.getElementById('revTotal').textContent = '$' + totalEarned.toFixed(0);
+  document.getElementById('revMonth').textContent = '$' + monthEarned.toFixed(0);
+  document.getElementById('revMonthLabel').textContent = monthNames[now.getMonth()];
+  document.getElementById('revUpcoming').textContent = '$' + upcoming.toFixed(0);
+  document.getElementById('revUpcomingSits').textContent = upcomingSits + ' sit' + (upcomingSits !== 1 ? 's' : '');
+}
+
+function calcHours(start, end) {
+  if (!start || !end) return 2;
+  const [sh, sm] = start.split(':').map(Number);
+  const [eh, em] = end.split(':').map(Number);
+  return Math.max(1, ((eh * 60 + em) - (sh * 60 + sm)) / 60);
+}
+
+/* ═══ DASHBOARD SITTERS LIST ═══ */
+function loadDashSitters() {
+  const el = document.getElementById('dashSittersList');
+  if (!el) return;
+  if (sitters.length === 0) {
+    el.innerHTML = '<div class="dash-empty">No sitters yet. Add your first sitter below!</div>';
+    return;
+  }
+  el.innerHTML = sitters.map((s, i) => `
+    <div class="dash-sitter-card">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div style="width:40px;height:40px;border-radius:50%;background:var(--pink);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--gold);">${s.name.charAt(0)}</div>
+        <div>
+          <div style="font-weight:700;font-size:14px;">${s.name}</div>
+          <div style="font-size:11px;color:var(--gray);">Age ${s.age} · $${s.rate}/hr · ${s.stats.sits} sits</div>
+        </div>
+      </div>
+    </div>
+  `).join('');
 }
 
 async function addAvailability() {
@@ -1458,17 +1850,51 @@ async function loadAdminAvail() {
 }
 
 async function loadAdminBookings() {
-  const { data } = await db.from('bookings').select('*, parents(full_name, phone)').order('date', { ascending: false }).limit(20);
-  let html = '<tr><th>Date</th><th>Parent</th><th>Status</th></tr>';
-  (data || []).forEach(b => { html += `<tr><td>${b.date}</td><td>${b.parents?.full_name || '—'}</td><td>${b.status}</td></tr>`; });
-  document.getElementById('adminBookingsTable').innerHTML = html;
+  const { data } = await db.from('bookings').select('*, parents(full_name, phone)').order('date', { ascending: false }).limit(30);
+  const el = document.getElementById('dashBookingsList');
+  if (!data || data.length === 0) {
+    el.innerHTML = '<div class="dash-empty">No bookings yet — share your link!</div>';
+    return;
+  }
+  el.innerHTML = data.map(b => {
+    const hours = calcHours(b.start_time, b.end_time);
+    const amt = (hours * 12).toFixed(0);
+    const statusClass = b.status === 'confirmed' ? 'confirmed' : b.status === 'completed' ? 'completed' : 'pending';
+    const statusLabel = b.status.charAt(0).toUpperCase() + b.status.slice(1);
+    const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+    const d = new Date(b.date + 'T00:00:00');
+    const dayName = dayNames[d.getDay()];
+    return `<div class="dash-booking-row">
+      <div style="display:flex;justify-content:space-between;align-items:start;">
+        <div>
+          <div style="font-weight:700;font-size:14px;">${b.parents?.full_name || 'Unknown'}</div>
+          <div style="font-size:12px;color:var(--gray);margin-top:2px;">${dayName}, ${b.date} · ${b.start_time || ''}–${b.end_time || ''}</div>
+          <div style="font-size:11px;color:var(--gray);margin-top:2px;">${b.num_children || '?'} kid${(b.num_children||0)!==1?'s':''} · ${hours.toFixed(1)}h · $${amt}</div>
+        </div>
+        <span class="status-badge ${statusClass}">${statusLabel}</span>
+      </div>
+    </div>`;
+  }).join('');
 }
 
 async function loadAdminParents() {
   const { data } = await db.from('parents').select('*').order('created_at', { ascending: false }).limit(20);
-  let html = '<tr><th>Name</th><th>Phone</th><th>Email</th></tr>';
-  (data || []).forEach(p => { html += `<tr><td>${p.full_name}</td><td>${p.phone}</td><td>${p.email || '—'}</td></tr>`; });
-  document.getElementById('adminParentsTable').innerHTML = html;
+  const el = document.getElementById('dashParentsList');
+  if (!data || data.length === 0) {
+    el.innerHTML = '<div class="dash-empty">No parents yet — invite some families!</div>';
+    return;
+  }
+  el.innerHTML = data.map(p => `
+    <div class="dash-booking-row">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div style="width:36px;height:36px;border-radius:50%;background:var(--pink);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;color:var(--gold);">${(p.full_name||'?').charAt(0)}</div>
+        <div>
+          <div style="font-weight:700;font-size:14px;">${p.full_name}</div>
+          <div style="font-size:12px;color:var(--gray);">${p.phone} ${p.email ? '· '+p.email : ''}</div>
+        </div>
+      </div>
+    </div>
+  `).join('');
 }
 
 function addSitter() {
@@ -1607,6 +2033,32 @@ requestAnimationFrame(() => {
   initScrollReveal();
 });
 </script>
+
+<!-- ═══ VOICE MODAL ═══ -->
+<div class="voice-modal-overlay" id="voiceModal">
+  <div class="voice-modal">
+    <button class="voice-modal-close" onclick="endVoiceCall()">&times;</button>
+    <div class="voice-avatar-container">
+      <div class="voice-pulse"></div>
+      <div class="voice-avatar-ring">
+        <img src="poppy-photo.jpg" alt="Poppy"
+             onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 200 200%22><circle cx=%22100%22 cy=%22100%22 r=%22100%22 fill=%22%23F5E0DC%22/><text x=%2250%25%22 y=%2255%25%22 text-anchor=%22middle%22 font-size=%2272%22>P</text></svg>'">
+      </div>
+    </div>
+    <div class="voice-modal-name">Poppy</div>
+    <div class="voice-modal-status" id="voiceModalStatus">Connecting...</div>
+    <div class="voice-waveform" id="voiceWaveform">
+      <div class="voice-bar"></div><div class="voice-bar"></div><div class="voice-bar"></div>
+      <div class="voice-bar"></div><div class="voice-bar"></div><div class="voice-bar"></div>
+      <div class="voice-bar"></div><div class="voice-bar"></div><div class="voice-bar"></div>
+    </div>
+    <button class="voice-end-btn" onclick="endVoiceCall()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 9c-1.6 0-3.15.25-4.6.72v3.1c0 .39-.23.74-.56.9-.98.49-1.87 1.12-2.66 1.85-.18.18-.43.28-.7.28-.28 0-.53-.11-.71-.29L.29 13.08c-.18-.17-.29-.42-.29-.7 0-.28.11-.53.29-.71C3.34 8.78 7.46 7 12 7s8.66 1.78 11.71 4.67c.18.18.29.43.29.71 0 .28-.11.53-.29.71l-2.48 2.48c-.18.18-.43.29-.71.29-.27 0-.52-.11-.7-.28-.79-.74-1.69-1.36-2.67-1.85-.33-.16-.56-.5-.56-.9v-3.1C15.15 9.25 13.6 9 12 9z"/></svg>
+      End Call
+    </button>
+    <div class="voice-modal-hint">Poppy can answer questions about babysitting, parenting tips, and booking</div>
+  </div>
+</div>
 
 <!-- ElevenLabs Conversational AI — hidden, triggered via avatar -->
 <elevenlabs-convai agent-id="agent_9201m47wf1t0e7wt6djfassmqy6t"></elevenlabs-convai>
