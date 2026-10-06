@@ -21,6 +21,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://udhgdtiezzzudczckaaw.supabase.co">
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="dns-prefetch" href="https://elevenlabs.io">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -956,6 +957,44 @@ a { text-decoration: none; color: inherit; }
 }
 .faq-item.open .faq-a { max-height: 200px; padding: 0 0 16px 0; }
 
+/* ═══ PERFORMANCE ═══ */
+/* Skeleton loading animation */
+@keyframes skeleton-pulse {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+.skeleton {
+  background: linear-gradient(90deg, rgba(0,0,0,0.04) 25%, rgba(0,0,0,0.08) 50%, rgba(0,0,0,0.04) 75%);
+  background-size: 200% 100%;
+  animation: skeleton-pulse 1.8s ease-in-out infinite;
+  border-radius: 8px;
+}
+.skeleton-pill {
+  width: 54px; height: 72px; border-radius: 16px;
+  background: linear-gradient(90deg, rgba(0,0,0,0.04) 25%, rgba(0,0,0,0.08) 50%, rgba(0,0,0,0.04) 75%);
+  background-size: 200% 100%;
+  animation: skeleton-pulse 1.8s ease-in-out infinite;
+  flex-shrink: 0;
+}
+.skeleton-card {
+  min-width: 260px; height: 180px; border-radius: 16px;
+  background: linear-gradient(90deg, rgba(0,0,0,0.03) 25%, rgba(0,0,0,0.06) 50%, rgba(0,0,0,0.03) 75%);
+  background-size: 200% 100%;
+  animation: skeleton-pulse 1.8s ease-in-out infinite;
+  flex-shrink: 0;
+}
+/* content-visibility for below-fold sections */
+.feed-section, .reviews-section, .meet-section, .faq-section,
+.pricing-section, .sitters-section, .share-section {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 400px;
+}
+/* GPU-accelerate animated elements */
+.reveal { will-change: opacity, transform; }
+.avatar-wave { will-change: transform, opacity; }
+.sticky-cta { will-change: transform; }
+.day-pill.available { will-change: transform; }
+
 /* ═══ FOOTER ═══ */
 .footer {
   background: var(--charcoal); color: rgba(255,255,255,0.6); padding: 40px 20px calc(var(--bottom-h) + var(--safe-bottom) + 24px);
@@ -1390,7 +1429,7 @@ elevenlabs-convai {
   <div class="avatar-wrap hero-enter" id="avatarWrap" onclick="toggleVoice()">
     <div class="avatar-wave"></div>
     <div class="avatar-ring">
-      <img src="poppy-photo.jpg" alt="Poppy Wilbert"
+      <img src="poppy-photo.jpg" alt="Poppy Wilbert" fetchpriority="high"
            onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 200 200%22><circle cx=%22100%22 cy=%22100%22 r=%22100%22 fill=%22%23F5E0DC%22/><text x=%2250%25%22 y=%2255%25%22 text-anchor=%22middle%22 font-size=%2272%22>P</text></svg>'">
     </div>
     <div class="avatar-status" id="avatarStatus">Tap to talk</div>
@@ -3074,6 +3113,8 @@ function initScrollReveal() {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
         entry.target.classList.add('visible');
+        // Clean up will-change after animation to free GPU memory
+        setTimeout(() => { entry.target.style.willChange = 'auto'; }, 800);
         observer.unobserve(entry.target);
       }
     });
