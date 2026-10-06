@@ -2100,18 +2100,18 @@ body.dark-mode .meet-quote { background: rgba(212,168,83,0.08); border-color: rg
 body.dark-mode .social-proof-notif { background: #2A2A2E; color: var(--white); box-shadow: 0 4px 24px rgba(0,0,0,0.3); }
 body.dark-mode .social-proof-notif .sp-time { color: rgba(255,255,255,0.4); }
 
-/* ═══ ElevenLabs widget — hidden by default, shown inside voice modal ═══ */
+/* ═══ ElevenLabs widget — hidden off-screen by default, shown inside voice modal ═══ */
 elevenlabs-convai {
   position: fixed !important; bottom: -9999px !important; right: -9999px !important;
   z-index: -1 !important; opacity: 0 !important; pointer-events: none !important;
   width: 0 !important; height: 0 !important; overflow: hidden !important;
 }
-/* When voice modal is active, show the widget inside it */
+/* When voice modal is active, show the widget VISIBLE so users can click Start directly (mic permissions require real user gesture) */
 .voice-modal-overlay.active elevenlabs-convai {
   position: relative !important; bottom: auto !important; right: auto !important;
   z-index: 10 !important; opacity: 1 !important; pointer-events: auto !important;
   width: 100% !important; height: auto !important; overflow: visible !important;
-  display: block !important;
+  display: block !important; max-width: 400px !important; margin: 0 auto !important;
 }
 
 /* ═══ VOICE MODAL ═══ */
@@ -2184,10 +2184,10 @@ elevenlabs-convai {
   50% { box-shadow: 0 0 32px rgba(212,168,83,0.7), 0 0 64px rgba(212,168,83,0.3); }
 }
 
-/* ElevenLabs widget container — rendered but visually hidden so shadow DOM stays active */
+/* ElevenLabs widget container — visible inside modal so user can click Start directly (required for mic permissions) */
 .voice-widget-container {
-  margin: 0; position: absolute; width: 1px; height: 1px; overflow: hidden;
-  opacity: 0; pointer-events: none;
+  margin: 12px 0 0; width: 100%; min-height: 60px;
+  display: flex; justify-content: center; align-items: center;
 }
 
 /* Waveform bars — shown when connected */
@@ -3292,7 +3292,7 @@ body.dark-mode .scenario-pick:hover, body.dark-mode .scenario-pick.active { bord
   <div class="hero-blob hero-blob-1"></div>
   <div class="hero-blob hero-blob-2"></div>
   <div class="hero-blob hero-blob-3"></div>
-  <div class="avatar-wrap hero-enter" id="avatarWrap" onclick="toggleVoice()" role="button" tabindex="0" aria-label="Talk to Poppy — tap to start voice chat">
+  <div class="avatar-wrap hero-enter" id="avatarWrap" onclick="toggleVoice()" role="button" tabindex="0" aria-label="Talk to Daisy — tap to start voice chat">
     <div class="avatar-wave"></div>
     <div class="avatar-ring">
       <img src="poppy-photo.jpg" alt="Poppy Wilbert" fetchpriority="high" width="154" height="154"
@@ -3342,7 +3342,7 @@ body.dark-mode .scenario-pick:hover, body.dark-mode .scenario-pick.active { bord
   <div class="hero-actions hero-enter">
     <button class="action-btn primary pulse" onclick="toggleVoice()">
       <span class="mic-dot"></span>
-      <span id="voiceBtnText">Talk to Poppy</span>
+      <span id="voiceBtnText">Talk to Daisy</span>
     </button>
     <button class="action-btn secondary" id="heroBookBtn" onclick="bookNextAvailable()">Book Today</button>
   </div>
@@ -3648,7 +3648,7 @@ body.dark-mode .scenario-pick:hover, body.dark-mode .scenario-pick.active { bord
     </div>
   </div>
   <div class="adventures-cta reveal">
-    <p class="adventures-cta-text">Ask Poppy what she'd plan for <span>your kids</span> →  tap "Talk to Poppy" above</p>
+    <p class="adventures-cta-text">Ask Daisy what Poppy would plan for <span>your kids</span> →  tap "Talk to Daisy" above</p>
   </div>
 </section>
 
@@ -3986,7 +3986,7 @@ body.dark-mode .scenario-pick:hover, body.dark-mode .scenario-pick.active { bord
     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-2 .9-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm0 16H5V8h14v11z"/></svg>
     Book
   </button>
-  <button class="tab-btn" onclick="toggleVoice()" aria-label="Talk to Poppy">
+  <button class="tab-btn" onclick="toggleVoice()" aria-label="Talk to Daisy">
     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.91-3c-.49 0-.9.36-.96.84C16.6 14.59 14.53 16.5 12 16.5s-4.6-1.91-4.95-4.66A.96.96 0 006.09 11c-.61 0-1.09.54-1 1.14.49 3 2.89 5.35 5.91 5.78V21h2v-3.08c3.02-.43 5.42-2.78 5.91-5.78.1-.6-.39-1.14-1-1.14z"/></svg>
     Ask
   </button>
@@ -4546,7 +4546,7 @@ function renderFeed() {
       <div class="tip-title">Got a Kid Question?</div>
       <div class="tip-body">Bedtime struggles? Picky eaters? Activity ideas? Tap here and ask Poppy — she'll talk you through it.</div>
       <button class="tip-share" onclick="toggleVoice()">
-        &#127908; Talk to Poppy
+        &#127908; Talk to Daisy
       </button>
     </div>
   `;
@@ -5876,6 +5876,7 @@ function loadElevenLabs() {
     const container = document.getElementById('voiceWidgetContainer');
     const el = document.createElement('elevenlabs-convai');
     el.setAttribute('agent-id', 'agent_9201m47wf1t0e7wt6djfassmqy6t');
+    el.setAttribute('avatar-id', '06ylnnHRpk6DfMBKs8U2');
     container.appendChild(el);
     const sc = document.createElement('script');
     sc.src = 'https://elevenlabs.io/convai-widget/index.js';
@@ -5893,7 +5894,7 @@ function loadElevenLabs() {
   });
 }
 
-/* Open voice modal — widget loads inside it so user can tap Start a Call directly */
+/* Open voice modal — widget loads VISIBLE so user can click "Start a call" directly (required for Chrome mic permissions) */
 function toggleVoice() {
   if (voiceActive) { endVoiceCall(); return; }
   const modal = document.getElementById('voiceModal');
@@ -5906,65 +5907,14 @@ function toggleVoice() {
   modal._escHandler = (e) => { if (e.key === 'Escape') closeVoiceModal(); };
   document.addEventListener('keydown', modal._escHandler);
 
-  // Show start button, hide end button
-  const startBtn = document.getElementById('voiceStartBtn');
+  // Hide end button until call connects
   const endBtn = document.getElementById('voiceEndBtn');
-  if (startBtn) startBtn.style.display = 'flex';
   if (endBtn) endBtn.style.display = 'none';
-  statusEl.textContent = 'Tap the button below to start talking';
+  statusEl.textContent = "Poppy's AI assistant — tap Start below to chat";
   statusEl.className = 'voice-modal-status';
 
-  // Lazy-load widget into the modal container on first use
+  // Lazy-load widget into the modal container — widget is VISIBLE so user clicks it directly
   loadElevenLabs();
-}
-
-/* User taps gold "Start Talking" — clicks the real widget button via user gesture chain */
-function startElevenLabsCall() {
-  const widget = document.querySelector('elevenlabs-convai');
-  if (!widget || !widget.shadowRoot) {
-    // Widget not ready yet — show feedback
-    const statusEl = document.getElementById('voiceModalStatus');
-    statusEl.textContent = 'Loading... tap again in a moment';
-    return;
-  }
-  const statusEl = document.getElementById('voiceModalStatus');
-  statusEl.textContent = 'Connecting...';
-
-  const shadow = widget.shadowRoot;
-  const buttons = shadow.querySelectorAll('button');
-
-  // First: auto-accept consent dialog if visible (synchronous — preserves user gesture)
-  for (const b of buttons) {
-    const text = (b.textContent || '').trim().toLowerCase();
-    if (text === 'agree' && b.offsetParent !== null) {
-      b.click();
-      break;
-    }
-  }
-
-  // Then: click "Start a call" button (synchronous — preserves user gesture for mic)
-  const freshButtons = shadow.querySelectorAll('button');
-  let clicked = false;
-  for (const b of freshButtons) {
-    const text = (b.textContent || '').trim().toLowerCase();
-    if ((text.includes('start') || text.includes('call')) && b.offsetParent !== null) {
-      b.click();
-      clicked = true;
-      break;
-    }
-  }
-  // Fallback: try button index 2 (known "Start a call" position)
-  if (!clicked && freshButtons.length > 2 && freshButtons[2].offsetParent !== null) {
-    freshButtons[2].click();
-  }
-
-  // Update UI to "calling" state
-  const startBtnUI = document.getElementById('voiceStartBtn');
-  const endBtnUI = document.getElementById('voiceEndBtn');
-  if (startBtnUI) startBtnUI.style.display = 'none';
-  if (endBtnUI) endBtnUI.style.display = 'flex';
-  voiceActive = true;
-  updateVoiceUI();
 }
 
 /* Close modal without necessarily ending a call */
@@ -6007,7 +5957,7 @@ function updateVoiceUI() {
   } else {
     wrap.classList.remove('voice-active');
     status.textContent = 'Tap to talk';
-    btnText.textContent = 'Talk to Poppy';
+    btnText.textContent = 'Talk to Daisy';
   }
 }
 
@@ -6021,12 +5971,10 @@ function _setupWidgetListeners() {
   widget.addEventListener('elevenlabs-convai:call', e => {
     if (e.detail?.status === 'connected') {
       voiceActive = true;
-      statusEl.textContent = 'Connected — say hi!';
+      statusEl.textContent = 'Connected — say hi to Daisy!';
       statusEl.className = 'voice-modal-status connected';
       modal.classList.add('speaking');
-      const startBtn = document.getElementById('voiceStartBtn');
       const endBtn = document.getElementById('voiceEndBtn');
-      if (startBtn) startBtn.style.display = 'none';
       if (endBtn) endBtn.style.display = 'flex';
       updateVoiceUI();
     }
@@ -6035,10 +5983,8 @@ function _setupWidgetListeners() {
     voiceActive = false;
     modal.classList.remove('speaking');
     const statusEl2 = document.getElementById('voiceModalStatus');
-    statusEl2.textContent = 'Call ended. Tap to call again.';
-    const startBtn = document.getElementById('voiceStartBtn');
+    statusEl2.textContent = 'Call ended. Tap Start below to call again.';
     const endBtn = document.getElementById('voiceEndBtn');
-    if (startBtn) startBtn.style.display = 'flex';
     if (endBtn) endBtn.style.display = 'none';
     updateVoiceUI();
   });
@@ -7237,7 +7183,7 @@ requestAnimationFrame(() => {
 </script>
 
 <!-- ═══ VOICE MODAL ═══ -->
-<div class="voice-modal-overlay" id="voiceModal" role="dialog" aria-modal="true" aria-label="Voice call with Poppy" aria-hidden="true">
+<div class="voice-modal-overlay" id="voiceModal" role="dialog" aria-modal="true" aria-label="Voice call with Daisy" aria-hidden="true">
   <div class="voice-modal">
     <button class="voice-modal-close" onclick="closeVoiceModal()" aria-label="Close">&times;</button>
     <div class="voice-avatar-container">
@@ -7247,25 +7193,21 @@ requestAnimationFrame(() => {
              onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 200 200%22><circle cx=%22100%22 cy=%22100%22 r=%22100%22 fill=%22%23F5E0DC%22/><text x=%2250%25%22 y=%2255%25%22 text-anchor=%22middle%22 font-size=%2272%22>P</text></svg>'">
       </div>
     </div>
-    <div class="voice-modal-name">Poppy</div>
-    <div class="voice-modal-status" id="voiceModalStatus">Tap the button below to start talking</div>
+    <div class="voice-modal-name">Daisy</div>
+    <div class="voice-modal-status" id="voiceModalStatus">Poppy's AI assistant — tap Start below to chat</div>
     <div class="voice-waveform" id="voiceWaveform">
       <div class="voice-bar"></div><div class="voice-bar"></div><div class="voice-bar"></div>
       <div class="voice-bar"></div><div class="voice-bar"></div><div class="voice-bar"></div>
       <div class="voice-bar"></div><div class="voice-bar"></div><div class="voice-bar"></div>
     </div>
     <div class="voice-widget-container" id="voiceWidgetContainer">
-      <!-- ElevenLabs widget gets moved here when modal opens -->
+      <!-- ElevenLabs widget — visible so user can click "Start a call" directly (required for mic permissions in Chrome) -->
     </div>
-    <button class="voice-start-btn" id="voiceStartBtn" onclick="startElevenLabsCall()">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.91-3c-.49 0-.9.36-.98.85C16.52 14.2 14.47 16 12 16s-4.52-1.8-4.93-4.15c-.08-.49-.49-.85-.98-.85-.61 0-1.09.54-1 1.14.49 3 2.89 5.35 5.91 5.78V20c0 .55.45 1 1 1s1-.45 1-1v-2.08c3.02-.43 5.42-2.78 5.91-5.78.1-.6-.39-1.14-1-1.14z"/></svg>
-      Start Talking
-    </button>
-    <button class="voice-end-btn" id="voiceEndBtn" onclick="endVoiceCall()">
+    <button class="voice-end-btn" id="voiceEndBtn" onclick="endVoiceCall()" style="display:none">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 9c-1.6 0-3.15.25-4.6.72v3.1c0 .39-.23.74-.56.9-.98.49-1.87 1.12-2.66 1.85-.18.18-.43.28-.7.28-.28 0-.53-.11-.71-.29L.29 13.08c-.18-.17-.29-.42-.29-.7 0-.28.11-.53.29-.71C3.34 8.78 7.46 7 12 7s8.66 1.78 11.71 4.67c.18.18.29.43.29.71 0 .28-.11.53-.29.71l-2.48 2.48c-.18.18-.43.29-.71.29-.27 0-.52-.11-.7-.28-.79-.74-1.69-1.36-2.67-1.85-.33-.16-.56-.5-.56-.9v-3.1C15.15 9.25 13.6 9 12 9z"/></svg>
       End Call
     </button>
-    <div class="voice-modal-hint">Poppy can answer questions about babysitting, scheduling, and more</div>
+    <div class="voice-modal-hint">Daisy is Poppy's AI assistant — ask about babysitting, scheduling, rates & more</div>
   </div>
 </div>
 
