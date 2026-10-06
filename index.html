@@ -8,6 +8,16 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="description" content="Meet Poppy — your 12-year-old Red Cross certified babysitter. Talk to her, book instantly, get parenting tips. The babysitting service parents actually share.">
+<!-- Open Graph — beautiful previews on iMessage, WhatsApp, Instagram, Twitter -->
+<meta property="og:title" content="Meet Poppy — Babysitter Extraordinaire">
+<meta property="og:description" content="Red Cross certified, $12/hr, and she has an AI voice assistant. The babysitting service parents actually share with other parents.">
+<meta property="og:image" content="https://tinytots-v2.netlify.app/poppy-photo.jpg">
+<meta property="og:url" content="https://tinytots-v2.netlify.app">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Meet Poppy — Babysitter Extraordinaire">
+<meta name="twitter:description" content="Red Cross certified, $12/hr, AI-powered parenting tips. The babysitting service parents actually share.">
+<meta name="twitter:image" content="https://tinytots-v2.netlify.app/poppy-photo.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -562,6 +572,62 @@ elevenlabs-convai {
   width: 0 !important; height: 0 !important; overflow: hidden !important;
 }
 
+/* ═══ SCROLL REVEAL ═══ */
+.reveal {
+  opacity: 0; transform: translateY(32px);
+  transition: opacity 0.7s cubic-bezier(.22,1,.36,1), transform 0.7s cubic-bezier(.22,1,.36,1);
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+.reveal-delay-4 { transition-delay: 0.4s; }
+
+/* ═══ HERO ENTRANCE ═══ */
+.hero-enter { opacity: 0; transform: translateY(24px); }
+.hero-enter.animate-in {
+  animation: heroFadeIn 0.8s cubic-bezier(.22,1,.36,1) forwards;
+}
+@keyframes heroFadeIn {
+  to { opacity: 1; transform: translateY(0); }
+}
+.hero .avatar-wrap { animation-delay: 0s; }
+.hero .profile-name { animation-delay: 0.12s; }
+.hero .profile-verified { animation-delay: 0.18s; }
+.hero .profile-bio { animation-delay: 0.24s; }
+.hero .stats-row { animation-delay: 0.32s; }
+.hero .hero-actions { animation-delay: 0.4s; }
+.hero .hero-badges { animation-delay: 0.5s; }
+
+/* ═══ ACTIVITY TICKER ═══ */
+.activity-ticker {
+  position: fixed; top: calc(var(--nav-h) + 8px); left: 50%; z-index: 150;
+  transform: translateX(-50%) translateY(-120%);
+  background: var(--white); padding: 10px 18px; border-radius: 50px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+  font-size: 13px; font-weight: 600; color: var(--charcoal);
+  display: flex; align-items: center; gap: 8px; white-space: nowrap;
+  transition: transform 0.5s cubic-bezier(.22,1,.36,1), opacity 0.5s ease;
+  opacity: 0;
+}
+.activity-ticker.show {
+  transform: translateX(-50%) translateY(0); opacity: 1;
+}
+.activity-ticker .activity-dot {
+  width: 8px; height: 8px; border-radius: 50%; background: var(--green);
+  animation: activity-pulse 1.5s ease-in-out infinite;
+}
+@keyframes activity-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.7); }
+}
+
+/* ═══ CONFETTI CANVAS ═══ */
+#confettiCanvas {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  z-index: 999; pointer-events: none;
+}
+
 /* ═══ RESPONSIVE ═══ */
 @media (min-width: 768px) {
   .profile-name { font-size: 44px; }
@@ -588,7 +654,7 @@ elevenlabs-convai {
 
 <!-- ═══ PROFILE HERO ═══ -->
 <section class="hero" id="hero">
-  <div class="avatar-wrap" id="avatarWrap" onclick="toggleVoice()">
+  <div class="avatar-wrap hero-enter" id="avatarWrap" onclick="toggleVoice()">
     <div class="avatar-wave"></div>
     <div class="avatar-ring">
       <img src="poppy-photo.jpg" alt="Poppy Wilbert"
@@ -597,20 +663,20 @@ elevenlabs-convai {
     <div class="avatar-status" id="avatarStatus">Tap to talk</div>
   </div>
 
-  <h1 class="profile-name">Ask <em>Poppy</em></h1>
-  <div class="profile-verified">
+  <h1 class="profile-name hero-enter">Ask <em>Poppy</em></h1>
+  <div class="profile-verified hero-enter">
     <svg viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
     Red Cross Certified · Age 12
   </div>
-  <p class="profile-bio">Your go-to babysitter. Got kid questions? I've got answers. Tap my face — let's talk.</p>
+  <p class="profile-bio hero-enter">Your go-to babysitter. Got kid questions? I've got answers. Tap my face — let's talk.</p>
 
-  <div class="stats-row">
+  <div class="stats-row hero-enter">
     <div class="stat-item"><div class="stat-num">47</div><div class="stat-label">Sits</div></div>
     <div class="stat-item"><div class="stat-num">12</div><div class="stat-label">Families</div></div>
     <div class="stat-item"><div class="stat-num">4.9</div><div class="stat-label">Rating</div></div>
   </div>
 
-  <div class="hero-actions">
+  <div class="hero-actions hero-enter">
     <button class="action-btn primary" onclick="toggleVoice()">
       <span class="mic-dot"></span>
       <span id="voiceBtnText">Talk to Poppy</span>
@@ -618,7 +684,7 @@ elevenlabs-convai {
     <button class="action-btn secondary" onclick="scrollTo('#avail')">Book Now</button>
   </div>
 
-  <div class="hero-badges">
+  <div class="hero-badges hero-enter">
     <div class="badge"><span class="dot"></span> Available This Week</div>
     <div class="badge">&#9733; $12/hr</div>
     <div class="badge">Apple Pay or Cash</div>
@@ -627,7 +693,7 @@ elevenlabs-convai {
 
 <!-- ═══ POPPY'S WORLD — AI CONTENT FEED ═══ -->
 <section class="feed-section" id="feed">
-  <div class="feed-header">
+  <div class="feed-header reveal">
     <p class="section-label">Poppy's World</p>
     <h2 class="section-title">Tips & Tricks</h2>
     <p class="section-sub">Parenting hacks from Poppy (and friends). Share your favorites.</p>
@@ -639,7 +705,7 @@ elevenlabs-convai {
 
 <!-- ═══ CALENDAR / BOOKING ═══ -->
 <section class="avail-section" id="avail">
-  <div class="avail-header">
+  <div class="avail-header reveal">
     <p class="section-label">Schedule</p>
     <h2 class="section-title">Pick a Day</h2>
   </div>
@@ -693,7 +759,7 @@ elevenlabs-convai {
 
 <!-- ═══ REVIEWS ═══ -->
 <section class="section reviews-section" id="reviews">
-  <div class="section-header">
+  <div class="section-header reveal">
     <p class="section-label">From Parents</p>
     <h2 class="section-title">What Families Say</h2>
   </div>
@@ -704,11 +770,11 @@ elevenlabs-convai {
 
 <!-- ═══ PRICING ═══ -->
 <section class="section pricing-section" id="pricing">
-  <div class="section-header">
+  <div class="section-header reveal">
     <p class="section-label">Pricing</p>
     <h2 class="section-title">Simple & Fair</h2>
   </div>
-  <div class="price-spotlight">
+  <div class="price-spotlight reveal reveal-delay-1">
     <div class="price-amount">$12</div>
     <div class="price-note">per hour (my age!)</div>
     <div class="price-details">
@@ -721,7 +787,7 @@ elevenlabs-convai {
 
 <!-- ═══ SITTER NETWORK ═══ -->
 <section class="section sitters-section" id="sitters">
-  <div class="section-header">
+  <div class="section-header reveal">
     <p class="section-label">The Network</p>
     <h2 class="section-title">Tiny Tots Sitters</h2>
     <p class="section-sub">Trusted, certified sitters you can count on.</p>
@@ -733,12 +799,12 @@ elevenlabs-convai {
 
 <!-- ═══ SHARE / INVITE ═══ -->
 <section class="section share-section" id="share">
-  <div class="section-header">
+  <div class="section-header reveal">
     <p class="section-label">Spread the Word</p>
     <h2 class="section-title">Know a Family<br>That Needs Poppy?</h2>
     <p class="section-sub">Share her link. Their kids will thank you.</p>
   </div>
-  <div class="invite-preview">
+  <div class="invite-preview reveal reveal-delay-1">
     <div class="invite-emoji">&#128150;</div>
     <div class="invite-title">Meet Poppy — Babysitter Extraordinaire</div>
     <div class="invite-body">Red Cross certified, $12/hr, and she has an AI voice assistant that actually answers your parenting questions.</div>
@@ -830,6 +896,15 @@ elevenlabs-convai {
     </div>
   </div>
 </div>
+
+<!-- ═══ ACTIVITY TICKER ═══ -->
+<div class="activity-ticker" id="activityTicker">
+  <span class="activity-dot"></span>
+  <span id="activityText"></span>
+</div>
+
+<!-- ═══ CONFETTI ═══ -->
+<canvas id="confettiCanvas"></canvas>
 
 <!-- ═══ TOAST ═══ -->
 <div class="toast" id="toast"></div>
@@ -1192,6 +1267,7 @@ async function submitBooking() {
     msgEl.textContent = "You're booked! Poppy will see you soon. 🎉";
     msgEl.className = 'book-msg success'; msgEl.style.display = 'block';
     showToast('Booking confirmed!');
+    launchConfetti();
 
     fetch(SUPABASE_URL + '/functions/v1/send-booking-sms', {
       method: 'POST',
@@ -1412,8 +1488,124 @@ function addSitter() {
   document.getElementById('sitterAge').value = '';
 }
 
+/* ═══ SCROLL REVEAL (IntersectionObserver) ═══ */
+function initScrollReveal() {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+}
+
+/* ═══ HERO ENTRANCE ═══ */
+function animateHeroEntrance() {
+  const els = document.querySelectorAll('.hero-enter');
+  els.forEach((el, i) => {
+    setTimeout(() => el.classList.add('animate-in'), i * 120);
+  });
+}
+
+/* ═══ ACTIVITY TICKER (social proof) ═══ */
+const activityMessages = [
+  { name: 'Sarah M.', action: 'just booked Poppy for Saturday' },
+  { name: 'The Rodriguez Family', action: 'left a 5-star review' },
+  { name: 'Jennifer K.', action: 'shared Poppy with 3 friends' },
+  { name: 'A parent nearby', action: 'is viewing this page' },
+  { name: 'Mike & Lisa T.', action: 'just booked for next Tuesday' },
+  { name: 'Emily W.', action: 'joined the Tiny Tots network' },
+  { name: 'A neighbor', action: 'recommended Poppy to a friend' },
+  { name: 'Amanda S.', action: 'booked Poppy for 2 kids' },
+];
+let tickerIndex = 0;
+let tickerTimeout = null;
+
+function showActivityTicker() {
+  const ticker = document.getElementById('activityTicker');
+  const text = document.getElementById('activityText');
+  const msg = activityMessages[tickerIndex % activityMessages.length];
+  text.textContent = `${msg.name} ${msg.action}`;
+  ticker.classList.add('show');
+
+  setTimeout(() => {
+    ticker.classList.remove('show');
+  }, 3500);
+
+  tickerIndex++;
+  // Next one in 12-25 seconds (random for realism)
+  tickerTimeout = setTimeout(showActivityTicker, 12000 + Math.random() * 13000);
+}
+
+// Start ticker after 6 seconds on page
+setTimeout(showActivityTicker, 6000);
+
+/* ═══ CONFETTI ═══ */
+function launchConfetti() {
+  const canvas = document.getElementById('confettiCanvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  const colors = ['#D4A853', '#E8C97A', '#F5E0DC', '#EACDC6', '#5CB85C', '#FF6B6B', '#4ECDC4', '#FFE66D'];
+  const particles = [];
+  const count = 120;
+
+  for (let i = 0; i < count; i++) {
+    particles.push({
+      x: canvas.width / 2 + (Math.random() - 0.5) * 100,
+      y: canvas.height / 2,
+      vx: (Math.random() - 0.5) * 16,
+      vy: -Math.random() * 18 - 4,
+      w: Math.random() * 10 + 4,
+      h: Math.random() * 6 + 2,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      rotation: Math.random() * 360,
+      rotSpeed: (Math.random() - 0.5) * 12,
+      gravity: 0.25 + Math.random() * 0.15,
+      opacity: 1,
+    });
+  }
+
+  let frame = 0;
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    let alive = false;
+    particles.forEach(p => {
+      if (p.opacity <= 0) return;
+      alive = true;
+      p.x += p.vx;
+      p.vy += p.gravity;
+      p.y += p.vy;
+      p.rotation += p.rotSpeed;
+      p.vx *= 0.99;
+      if (frame > 60) p.opacity -= 0.015;
+
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rotation * Math.PI / 180);
+      ctx.globalAlpha = Math.max(0, p.opacity);
+      ctx.fillStyle = p.color;
+      ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+      ctx.restore();
+    });
+    frame++;
+    if (alive) requestAnimationFrame(draw);
+    else ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }
+  requestAnimationFrame(draw);
+}
+
 /* ═══ GO ═══ */
 init();
+// Trigger hero entrance and scroll reveals after DOM paint
+requestAnimationFrame(() => {
+  animateHeroEntrance();
+  initScrollReveal();
+});
 </script>
 
 <!-- ElevenLabs Conversational AI — hidden, triggered via avatar -->
