@@ -369,9 +369,9 @@ elevenlabs-convai {
 <section class="hero" id="hero">
   <div class="avatar-wrap">
     <div class="avatar-ring">
-      <img src="https://udhgdtiezzzudczckaaw.supabase.co/storage/v1/object/public/site-assets/poppy-avatar.jpg"
+      <img src="poppy-photo.jpg"
            alt="Poppy Wilbert"
-           onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 200 200%22><circle cx=%22100%22 cy=%22100%22 r=%22100%22 fill=%22%23F5E0DC%22/><text x=%2250%25%22 y=%2255%25%22 text-anchor=%22middle%22 font-size=%2272%22>&#128567;</text></svg>'">
+           onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 200 200%22><circle cx=%22100%22 cy=%22100%22 r=%22100%22 fill=%22%23F5E0DC%22/><text x=%2250%25%22 y=%2255%25%22 text-anchor=%22middle%22 font-size=%2272%22>P</text></svg>'">
     </div>
   </div>
 
@@ -600,15 +600,26 @@ function selectDay(key, dateObj, pill) {
   const dayNames = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
   const d = new Date(key + 'T12:00:00');
   const label = `${dayNames[d.getDay()]}, ${monthNames[d.getMonth()]} ${d.getDate()}`;
-  document.getElementById('bookDateLabel').textContent = label;
+
+  function formatTime12(t) {
+    const [h,m] = t.split(':').map(Number);
+    const ampm = h >= 12 ? 'PM' : 'AM';
+    return `${h > 12 ? h-12 : h || 12}:${String(m).padStart(2,'0')} ${ampm}`;
+  }
+
+  if (avail) {
+    document.getElementById('bookDateLabel').innerHTML = label +
+      `<span style="display:block;font-family:var(--font-body);font-size:14px;font-weight:600;color:var(--gold);margin-top:4px;">${formatTime12(avail.start_time)} – ${formatTime12(avail.end_time)}</span>`;
+  } else {
+    document.getElementById('bookDateLabel').textContent = label;
+  }
 
   const sheet = document.getElementById('bookSheet');
   if (avail) {
     sheet.classList.add('open');
     sheet.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   } else {
-    sheet.classList.add('open');
-    sheet.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    sheet.classList.remove('open');
   }
 }
 
@@ -624,6 +635,25 @@ function scrollToBook(pkg) {
   document.getElementById('avail').scrollIntoView({ behavior: 'smooth' });
 }
 
+/* ── Default recurring schedule (Tue/Thu 3:45-8:00, Sat 4:00-11:00) ── */
+const defaultSchedule = {
+  2: { start_time: '15:45', end_time: '20:00' }, // Tuesday
+  4: { start_time: '15:45', end_time: '20:00' }, // Thursday
+  6: { start_time: '16:00', end_time: '23:00' }  // Saturday
+};
+
+function applyDefaultAvailability() {
+  const today = new Date();
+  for (let i = 0; i < 21; i++) {
+    const d = new Date(today); d.setDate(today.getDate() + i);
+    const key = d.toISOString().split('T')[0];
+    const dow = d.getDay();
+    if (!availabilityData[key] && defaultSchedule[dow]) {
+      availabilityData[key] = { ...defaultSchedule[dow], recurring: true };
+    }
+  }
+}
+
 /* ── Load Availability ── */
 async function loadAvailability() {
   const today = new Date().toISOString().split('T')[0];
@@ -632,10 +662,11 @@ async function loadAvailability() {
     .select('*')
     .gte('date', today)
     .order('date');
+  availabilityData = {};
   if (!error && data) {
-    availabilityData = {};
     data.forEach(r => { availabilityData[r.date] = { start_time: r.start_time, end_time: r.end_time, id: r.id }; });
   }
+  applyDefaultAvailability();
   buildDateStrip();
 }
 
