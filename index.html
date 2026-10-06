@@ -729,6 +729,58 @@ a { text-decoration: none; color: inherit; }
   to { opacity: 1; transform: translateY(0); }
 }
 
+/* ═══ QUICK-PICK SLOT CARDS ═══ */
+.quick-slots {
+  display: flex; gap: 10px; padding: 0 20px 14px; overflow-x: auto;
+  scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.quick-slots::-webkit-scrollbar { display: none; }
+.quick-slot {
+  flex: 0 0 auto; min-width: 140px; scroll-snap-align: start;
+  background: var(--white); border-radius: 16px; padding: 14px 16px;
+  border: 2px solid rgba(212,168,83,0.15); cursor: pointer;
+  transition: all 0.25s ease; position: relative; overflow: hidden;
+}
+.quick-slot::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: var(--gradient-gold); opacity: 0; transition: opacity 0.2s;
+}
+.quick-slot:hover { border-color: var(--gold); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(212,168,83,0.15); }
+.quick-slot:hover::before { opacity: 1; }
+.quick-slot:active { transform: scale(0.96); }
+.quick-slot-day {
+  font-size: 13px; font-weight: 800; color: var(--charcoal); margin-bottom: 2px;
+}
+.quick-slot-date {
+  font-size: 11px; color: var(--gray); font-weight: 600; margin-bottom: 8px;
+}
+.quick-slot-time {
+  font-size: 12px; font-weight: 700; color: var(--gold);
+  display: flex; align-items: center; gap: 5px;
+}
+.quick-slot-time .live-dot {
+  width: 6px; height: 6px; border-radius: 50%; background: var(--green);
+  animation: live-pulse 2s ease-in-out infinite;
+}
+.quick-slot-price {
+  font-size: 11px; font-weight: 700; color: var(--charcoal); margin-top: 6px;
+  background: rgba(212,168,83,0.08); padding: 3px 8px; border-radius: 8px;
+  display: inline-block;
+}
+@keyframes live-pulse {
+  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(92,184,92,0.4); }
+  50% { opacity: 0.6; box-shadow: 0 0 0 4px rgba(92,184,92,0.1); }
+}
+.quick-slots-label {
+  font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.2px;
+  color: var(--gold); padding: 0 20px 8px; display: flex; align-items: center; gap: 6px;
+}
+.quick-slots-label .live-dot {
+  width: 6px; height: 6px; border-radius: 50%; background: var(--green);
+  animation: live-pulse 2s ease-in-out infinite;
+}
+
 /* ═══ PRICE COUNTER ANIMATION ═══ */
 .price-total-amount.counting {
   transition: transform 0.15s ease-out;
@@ -1929,7 +1981,7 @@ elevenlabs-convai {
   <!-- Next available session callout -->
   <div class="next-avail-card hero-enter" id="nextAvailCard" style="display:none;">
     <div class="next-avail-inner glow-border" id="nextAvailInner" onclick="bookNextAvailable()">
-      <span class="next-avail-label">Next available</span>
+      <span class="next-avail-label"><span class="live-dot" style="width:6px;height:6px;border-radius:50%;background:var(--green);display:inline-block;animation:live-pulse 2s ease-in-out infinite;margin-right:4px;vertical-align:middle;"></span>Next available</span>
       <span class="next-avail-detail" id="nextAvailDetail"></span>
       <span class="next-avail-arrow">→</span>
     </div>
@@ -1978,6 +2030,10 @@ elevenlabs-convai {
     <h2 class="section-title">Pick a Day</h2>
     <p class="section-sub">Gold days = Poppy's free. Tap to book in 30 seconds — families grab slots fast.</p>
   </div>
+  <div class="quick-slots-label reveal" id="quickSlotsLabel" style="display:none;">
+    <span class="live-dot"></span> Quick pick — next available
+  </div>
+  <div class="quick-slots reveal" id="quickSlots" style="display:none;"></div>
   <div class="date-strip" id="dateStrip"></div>
   <div style="padding: 0 20px;">
     <div class="book-sheet" id="bookSheet">
@@ -3139,8 +3195,61 @@ async function loadAvailability(retries = 2) {
   }
   applyDefaultAvailability();
   buildDateStrip();
+  buildQuickSlots();
   showNextAvailable();
   autoSelectFirstAvailable();
+}
+
+/* ═══ QUICK-PICK SLOT CARDS ═══ */
+function buildQuickSlots() {
+  const container = document.getElementById('quickSlots');
+  const label = document.getElementById('quickSlotsLabel');
+  if (!container || !label) return;
+  const today = new Date();
+  const dayNames = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const monthShort = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const fmt = t => { const [h,m] = t.split(':').map(Number); const ap = h>=12?'PM':'AM'; return `${h>12?h-12:h||12}:${String(m).padStart(2,'0')} ${ap}`; };
+  const slots = [];
+  for (let i = 0; i < 21 && slots.length < 3; i++) {
+    const d = new Date(today); d.setDate(today.getDate() + i);
+    const key = d.toISOString().split('T')[0];
+    if (availabilityData[key]) {
+      const avail = availabilityData[key];
+      const isToday = d.toDateString() === today.toDateString();
+      const tomorrow = new Date(today); tomorrow.setDate(today.getDate() + 1);
+      const isTomorrow = d.toDateString() === tomorrow.toDateString();
+      const dayLabel = isToday ? 'Today' : isTomorrow ? 'Tomorrow' : dayNames[d.getDay()];
+      const dateLabel = `${monthShort[d.getMonth()]} ${d.getDate()}`;
+      const [sh,sm] = avail.start_time.split(':').map(Number);
+      const [eh,em] = avail.end_time.split(':').map(Number);
+      const hrs = Math.max(1, Math.round(((eh*60+em)-(sh*60+sm))/60));
+      const price = hrs * 12;
+      slots.push({ key, dayLabel, dateLabel, avail, hrs, price, isToday });
+    }
+  }
+  if (slots.length === 0) { container.style.display = 'none'; label.style.display = 'none'; return; }
+  label.style.display = 'flex';
+  container.style.display = 'flex';
+  container.innerHTML = slots.map((s, i) => `
+    <div class="quick-slot" onclick="quickPickSlot('${s.key}')" style="animation-delay:${i * 0.1}s">
+      <div class="quick-slot-day">${s.dayLabel}</div>
+      <div class="quick-slot-date">${s.dateLabel}</div>
+      <div class="quick-slot-time">
+        ${s.isToday ? '<span class="live-dot"></span>' : ''}
+        ${fmt(s.avail.start_time)} – ${fmt(s.avail.end_time)}
+      </div>
+      <div class="quick-slot-price">${s.hrs} hr${s.hrs !== 1 ? 's' : ''} · $${s.price}</div>
+    </div>
+  `).join('');
+}
+
+function quickPickSlot(dateKey) {
+  const pill = document.querySelector('.day-pill[data-date="' + dateKey + '"]');
+  if (pill) {
+    const avail = document.getElementById('avail');
+    if (avail) avail.scrollIntoView({ behavior: 'smooth' });
+    setTimeout(() => selectDay(dateKey, pill), 300);
+  }
 }
 
 /* ═══ NEXT AVAILABLE + AUTO-SELECT ═══ */
