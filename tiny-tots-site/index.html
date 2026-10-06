@@ -299,8 +299,8 @@ a { text-decoration: none; color: inherit; }
 }
 .date-strip::-webkit-scrollbar { display: none; }
 .day-pill {
-  scroll-snap-align: start; flex-shrink: 0; width: 56px; padding: 12px 0;
-  border-radius: 18px; display: flex; flex-direction: column; align-items: center; gap: 4px;
+  scroll-snap-align: start; flex-shrink: 0; width: 64px; padding: 10px 4px;
+  border-radius: 18px; display: flex; flex-direction: column; align-items: center; gap: 3px;
   background: var(--white); border: 2px solid transparent;
   transition: all 0.25s ease; cursor: pointer;
   -webkit-tap-highlight-color: transparent;
@@ -317,6 +317,10 @@ a { text-decoration: none; color: inherit; }
 .day-num { font-size: 18px; font-weight: 800; color: var(--charcoal); }
 .avail-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--green); }
 .unavail-dot { width: 5px; height: 5px; border-radius: 50%; background: transparent; }
+.pill-time { font-size: 7.5px; font-weight: 700; color: var(--gold); letter-spacing: 0.2px; white-space: nowrap; line-height: 1; }
+.day-pill.selected .pill-time { color: var(--gold-light); }
+.day-pill:not(.available) { opacity: 0.4; }
+.day-pill:not(.available):hover { border-color: transparent; cursor: default; }
 
 /* Booking Sheet */
 .book-sheet {
@@ -1548,10 +1552,11 @@ function buildDateStrip() {
     const pill = document.createElement('div');
     pill.className = 'day-pill' + (avail ? ' available' : '');
     pill.dataset.date = key;
+    const fmtShort = t => { const [h,m] = t.split(':').map(Number); const ap = h>=12?'p':'a'; return `${h>12?h-12:h||12}${m?':'+String(m).padStart(2,'0'):''}${ap}`; };
     pill.innerHTML = `
       <span class="day-name">${i === 0 ? 'TODAY' : dayNames[d.getDay()]}</span>
       <span class="day-num">${d.getDate()}</span>
-      ${avail ? '<span class="avail-dot"></span>' : '<span class="unavail-dot"></span>'}
+      ${avail ? `<span class="pill-time">${fmtShort(avail.start_time)}–${fmtShort(avail.end_time)}</span>` : '<span class="unavail-dot"></span>'}
     `;
     pill.addEventListener('click', () => selectDay(key, pill));
     strip.appendChild(pill);
