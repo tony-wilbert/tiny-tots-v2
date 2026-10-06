@@ -1257,7 +1257,7 @@ body.dark-mode .extended-note { color: #E8C97A; background: rgba(212,168,83,0.1)
   background: rgba(255,248,245,1); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   opacity: 0; pointer-events: none; transition: opacity 0.4s ease;
-  padding: 24px;
+  padding: 24px; overscroll-behavior: contain;
 }
 .confirm-overlay.active { opacity: 1; pointer-events: auto; }
 .confirm-card {
@@ -2199,7 +2199,7 @@ elevenlabs-convai {
   background: rgba(0,0,0,0.7); backdrop-filter: blur(16px);
   z-index: 9000; opacity: 0; visibility: hidden; transition: all 0.3s ease;
   display: flex; align-items: center; justify-content: center;
-  padding: 20px;
+  padding: 20px; overscroll-behavior: contain;
 }
 .voice-modal-overlay.active { opacity: 1; visibility: visible; }
 .voice-modal {
@@ -2684,6 +2684,9 @@ body.dark-mode .avail-insight-chip.urgent { background: rgba(232,139,139,0.15); 
   .tip-card { width: auto; scroll-snap-align: unset; }
   .reviews-scroll { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 20px; overflow-x: visible; scroll-snap-type: none; padding: 0 48px 16px; }
   .review-card { width: auto; scroll-snap-align: unset; }
+  /* Quick-pick cards: grid on tablet */
+  .quick-slots { display: grid; grid-template-columns: repeat(3, 1fr); overflow-x: visible; scroll-snap-type: none; padding: 0 20px 14px; }
+  .quick-slot { min-width: 0; scroll-snap-align: unset; }
   /* Wider bottom bar + booking elements */
   .bottom-bar { max-width: 560px; }
   .sticky-cta { max-width: 560px; }
@@ -7406,6 +7409,20 @@ requestAnimationFrame(() => {
   // Register service worker for PWA install
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js').catch(() => {});
+  }
+  // Hide bottom bar when virtual keyboard is open (mobile)
+  if (window.visualViewport) {
+    const bottomBar = document.querySelector('.bottom-bar');
+    const stickyCta = document.querySelector('.sticky-cta');
+    let lastH = window.visualViewport.height;
+    window.visualViewport.addEventListener('resize', () => {
+      const keyboardOpen = window.visualViewport.height < lastH * 0.75;
+      if (bottomBar) bottomBar.style.display = keyboardOpen ? 'none' : '';
+      if (stickyCta) stickyCta.style.display = keyboardOpen ? 'none' : '';
+    });
+    window.visualViewport.addEventListener('scroll', () => {
+      lastH = window.innerHeight;
+    });
   }
 });
 </script>
