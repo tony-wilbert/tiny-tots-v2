@@ -1837,6 +1837,75 @@ elevenlabs-convai {
   .bottom-bar { padding-left: env(safe-area-inset-left); padding-right: env(safe-area-inset-right); }
   .sticky-cta { padding-left: max(16px, env(safe-area-inset-left)); padding-right: max(16px, env(safe-area-inset-right)); }
 }
+/* ═══ CALENDAR SWIPE INDICATOR ═══ */
+.date-strip {
+  position: relative;
+}
+.date-strip-wrap {
+  position: relative;
+}
+.date-strip-wrap::after {
+  content: ''; position: absolute; top: 0; right: 0; bottom: 16px; width: 48px;
+  background: linear-gradient(to right, transparent, var(--warm));
+  pointer-events: none; z-index: 2;
+  transition: opacity 0.3s;
+}
+.date-strip-wrap.scrolled-end::after { opacity: 0; }
+.date-strip-wrap::before {
+  content: ''; position: absolute; top: 0; left: 0; bottom: 16px; width: 32px;
+  background: linear-gradient(to left, transparent, var(--warm));
+  pointer-events: none; z-index: 2; opacity: 0;
+  transition: opacity 0.3s;
+}
+.date-strip-wrap.scrolled-start::before { opacity: 1; }
+body.dark-mode .date-strip-wrap::after { background: linear-gradient(to right, transparent, #1A1A1E); }
+body.dark-mode .date-strip-wrap::before { background: linear-gradient(to left, transparent, #1A1A1E); }
+/* Swipe hint animation */
+@keyframes swipeHint {
+  0% { transform: translateX(0); opacity: 1; }
+  40% { transform: translateX(-20px); opacity: 1; }
+  60% { transform: translateX(-20px); opacity: 0.7; }
+  100% { transform: translateX(0); opacity: 1; }
+}
+.swipe-hint {
+  position: absolute; right: 16px; top: 50%; transform: translateY(-50%);
+  font-size: 10px; font-weight: 700; color: var(--gold);
+  display: flex; align-items: center; gap: 4px;
+  animation: swipeHint 2s ease-in-out 1.5s 2;
+  pointer-events: none; z-index: 3; opacity: 0;
+  animation-fill-mode: forwards;
+}
+.swipe-hint.show { opacity: 1; }
+.swipe-hint span { font-size: 14px; }
+/* ═══ iPad / Tablet Layout ═══ */
+@media (min-width: 768px) {
+  .hero { min-height: 72vh; padding: calc(var(--nav-h) + 24px) 32px 32px; }
+  .avatar-ring { width: 140px; height: 140px; }
+  .avatar-wave { width: 140px; height: 140px; }
+  .profile-name { font-size: 36px; }
+  .hero-subtitle { font-size: 16px; max-width: 420px; }
+  .section { padding: 48px 32px; max-width: 720px; margin: 0 auto; }
+  .avail-header { max-width: 720px; }
+  .day-pill { width: 80px; padding: 14px 6px; }
+  .day-num { font-size: 20px; }
+  .time-row { gap: 12px; }
+  .time-select { min-height: 52px; }
+  .book-card { max-width: 520px; margin: 0 auto; }
+  .tips-scroll { gap: 20px; }
+  .tip-card { width: 280px; }
+  .reviews-scroll { gap: 20px; }
+  .review-card { width: 300px; }
+  .stats-row { gap: 40px; }
+  .stat-num { font-size: 28px; }
+  .book-guest .form-row { gap: 12px; }
+  .book-guest .form-row input { padding: 14px 18px; }
+  .session-plan { padding: 20px 24px; }
+  .scenario-picks { gap: 10px; }
+  .scenario-pick { padding: 10px 18px; font-size: 12px; }
+  .section-title { font-size: 28px; }
+  .meet-grid { max-width: 720px; margin: 0 auto; }
+  .how-steps { max-width: 600px; margin: 0 auto; }
+}
 /* ═══ TOUCH DEVICE REFINEMENTS ═══ */
 @media (hover: none) and (pointer: coarse) {
   /* Remove hover effects that stick on touch */
@@ -1859,6 +1928,14 @@ elevenlabs-convai {
   .tip-share { min-height: 44px; }
   .share-btn { min-height: 48px; }
   .day-pill { min-height: 72px; }
+  .scenario-pick { min-height: 44px; padding: 10px 16px; font-size: 12px; }
+  .book-guest .form-row input { padding: 14px 16px; min-height: 48px; font-size: 16px; }
+  .google-btn { min-height: 48px; font-size: 14px; }
+  .book-btn { min-height: 52px; font-size: 16px; }
+  .time-quick-btn { padding: 10px 16px; font-size: 13px; }
+  .time-select { min-height: 52px; font-size: 16px; }
+  /* Prevent iOS zoom on input focus */
+  input, select, textarea { font-size: 16px; }
 }
 /* ═══ ACCESSIBILITY ═══ */
 @media (prefers-reduced-motion: reduce) {
@@ -2010,6 +2087,23 @@ elevenlabs-convai {
 }
 .noscript-notice h2 { font-family: var(--font-display); margin-bottom: 12px; }
 .noscript-notice p { color: var(--gray); }
+
+/* ═══ TOUCH RIPPLE EFFECT ═══ */
+@keyframes touchRipple {
+  0% { transform: translate(-50%, -50%) scale(0); opacity: 0.35; }
+  100% { transform: translate(-50%, -50%) scale(2.5); opacity: 0; }
+}
+.touch-ripple {
+  position: absolute; border-radius: 50%;
+  width: 100px; height: 100px;
+  background: radial-gradient(circle, var(--gold) 0%, transparent 70%);
+  animation: touchRipple 0.5s ease-out forwards;
+  pointer-events: none; z-index: 0;
+}
+.action-btn, .book-btn, .google-btn, .scenario-pick, .time-quick-btn,
+.share-btn, .day-pill.available, .sticky-cta-btn {
+  position: relative; overflow: hidden;
+}
 
 /* ═══ DARK MODE ═══ */
 .dark-toggle {
@@ -2437,7 +2531,9 @@ body.dark-mode .scenario-pick:hover, body.dark-mode .scenario-pick.active { bord
     <span class="live-dot"></span> Quick pick — next available
   </div>
   <div class="quick-slots reveal" id="quickSlots" style="display:none;"></div>
-  <div class="date-strip" id="dateStrip"></div>
+  <div class="date-strip-wrap" id="dateStripWrap">
+    <div class="date-strip" id="dateStrip"></div>
+  </div>
   <div style="padding: 0 20px;">
     <div class="comm-promise reveal">
       <div class="comm-promise-icon">💬</div>
@@ -3503,9 +3599,45 @@ function buildDateStrip() {
   }
 }
 
+/* Calendar scroll indicators + auto-center */
+function initCalendarScroll() {
+  const strip = document.getElementById('dateStrip');
+  const wrap = document.getElementById('dateStripWrap');
+  if (!strip || !wrap) return;
+  function updateScrollIndicators() {
+    const atStart = strip.scrollLeft <= 10;
+    const atEnd = strip.scrollLeft + strip.clientWidth >= strip.scrollWidth - 10;
+    wrap.classList.toggle('scrolled-start', !atStart);
+    wrap.classList.toggle('scrolled-end', atEnd);
+  }
+  strip.addEventListener('scroll', updateScrollIndicators, { passive: true });
+  updateScrollIndicators();
+  // Show swipe hint for first-time visitors
+  if (!localStorage.getItem('tt_cal_swiped')) {
+    const hint = document.createElement('div');
+    hint.className = 'swipe-hint';
+    hint.innerHTML = 'swipe <span>→</span>';
+    wrap.appendChild(hint);
+    setTimeout(() => hint.classList.add('show'), 1500);
+    strip.addEventListener('scroll', function onFirst() {
+      hint.remove(); localStorage.setItem('tt_cal_swiped','1');
+      strip.removeEventListener('scroll', onFirst);
+    }, { once: false });
+    setTimeout(() => { if (hint.parentNode) hint.remove(); }, 8000);
+  }
+}
+function centerSelectedPill(pill) {
+  const strip = document.getElementById('dateStrip');
+  if (!strip || !pill) return;
+  const pillCenter = pill.offsetLeft + pill.offsetWidth / 2;
+  const stripCenter = strip.clientWidth / 2;
+  strip.scrollTo({ left: pillCenter - stripCenter, behavior: 'smooth' });
+}
+
 function selectDay(key, pill) {
   document.querySelectorAll('.day-pill').forEach(p => p.classList.remove('selected'));
   pill.classList.add('selected');
+  centerSelectedPill(pill);
   selectedDate = key;
   const avail = availabilityData[key];
   const d = new Date(key + 'T12:00:00');
@@ -3863,6 +3995,7 @@ async function loadAvailability(retries = 2) {
   }
   applyDefaultAvailability();
   buildDateStrip();
+  initCalendarScroll();
   buildQuickSlots();
   showNextAvailable();
   autoSelectFirstAvailable();
@@ -4926,6 +5059,23 @@ function animateCounter(el) {
   }
   requestAnimationFrame(tick);
 }
+
+/* Touch ripple on interactive elements */
+function addTouchRipple(el, e) {
+  if (!('ontouchstart' in window)) return;
+  const rect = el.getBoundingClientRect();
+  const rip = document.createElement('span');
+  rip.className = 'touch-ripple';
+  const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+  const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+  rip.style.left = x + 'px'; rip.style.top = y + 'px';
+  el.appendChild(rip);
+  setTimeout(() => rip.remove(), 500);
+}
+document.addEventListener('touchstart', function(e) {
+  const el = e.target.closest('.scenario-pick, .time-quick-btn, .day-pill.available, .google-btn, .share-btn');
+  if (el) addTouchRipple(el, e);
+}, { passive: true });
 
 /* Button ripple on click */
 function initRipples() {
