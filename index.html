@@ -35,6 +35,9 @@
   --shadow-sm: 0 2px 8px rgba(0,0,0,0.04);
   --shadow-md: 0 4px 20px rgba(0,0,0,0.06);
   --shadow-lg: 0 12px 40px rgba(0,0,0,0.1);
+  --glass-card: rgba(255,255,255,0.65);
+  --glass-card-border: rgba(255,255,255,0.45);
+  --gradient-gold: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 50%, var(--gold) 100%);
   --font-display: 'Playfair Display', Georgia, serif;
   --font-body: 'Nunito', -apple-system, sans-serif;
   --safe-bottom: env(safe-area-inset-bottom, 0px);
@@ -119,6 +122,40 @@ a { text-decoration: none; color: inherit; }
 @keyframes shimmer {
   0%, 100% { transform: scale(1); opacity: 0.6; }
   50% { transform: scale(1.1) rotate(2deg); opacity: 1; }
+}
+/* Floating gradient blobs */
+.hero-blob {
+  position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.35;
+  pointer-events: none; z-index: 0;
+}
+.hero-blob-1 {
+  width: 300px; height: 300px; top: 10%; left: -10%;
+  background: radial-gradient(circle, rgba(212,168,83,0.4), transparent 70%);
+  animation: blob-float-1 12s ease-in-out infinite;
+}
+.hero-blob-2 {
+  width: 250px; height: 250px; bottom: 15%; right: -8%;
+  background: radial-gradient(circle, rgba(234,205,198,0.5), transparent 70%);
+  animation: blob-float-2 15s ease-in-out infinite;
+}
+.hero-blob-3 {
+  width: 180px; height: 180px; top: 45%; left: 60%;
+  background: radial-gradient(circle, rgba(212,168,83,0.2), transparent 70%);
+  animation: blob-float-3 10s ease-in-out infinite;
+}
+@keyframes blob-float-1 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(30px, -20px) scale(1.1); }
+  66% { transform: translate(-15px, 15px) scale(0.95); }
+}
+@keyframes blob-float-2 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(-25px, 15px) scale(1.05); }
+  66% { transform: translate(20px, -20px) scale(1.1); }
+}
+@keyframes blob-float-3 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-20px, -15px) scale(1.15); }
 }
 
 .avatar-wrap {
@@ -270,12 +307,14 @@ a { text-decoration: none; color: inherit; }
 
 .tip-card {
   scroll-snap-align: start; flex-shrink: 0; width: 260px;
-  background: var(--warm); border-radius: 20px; padding: 24px 20px;
+  background: rgba(255,248,245,0.7); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  border-radius: 20px; padding: 24px 20px;
   position: relative; overflow: hidden;
-  border: 1px solid rgba(0,0,0,0.04);
-  transition: transform 0.2s, box-shadow 0.2s;
+  border: 1px solid rgba(255,255,255,0.4);
+  transition: transform 0.3s cubic-bezier(.22,1,.36,1), box-shadow 0.3s;
+  box-shadow: var(--shadow-sm), inset 0 1px 0 rgba(255,255,255,0.5);
 }
-.tip-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+.tip-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg), inset 0 1px 0 rgba(255,255,255,0.5); }
 .tip-card .tip-category {
   font-size: 9px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase;
   color: var(--gold); margin-bottom: 10px;
@@ -384,10 +423,14 @@ a { text-decoration: none; color: inherit; }
 }
 .how-icon {
   width: 44px; height: 44px; border-radius: 50%;
-  background: var(--white); display: flex; align-items: center; justify-content: center;
+  background: var(--glass-card); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  display: flex; align-items: center; justify-content: center;
   margin: 0 auto 8px; font-size: 20px;
-  box-shadow: var(--shadow-sm); border: 1.5px solid rgba(212,168,83,0.15);
+  box-shadow: var(--shadow-sm), inset 0 1px 0 rgba(255,255,255,0.5);
+  border: 1.5px solid rgba(212,168,83,0.2);
+  transition: transform 0.3s, box-shadow 0.3s;
 }
+.how-icon:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
 .how-label {
   font-size: 11px; font-weight: 700; color: var(--charcoal); line-height: 1.3;
 }
@@ -412,7 +455,11 @@ a { text-decoration: none; color: inherit; }
 .next-avail-label {
   font-size: 10px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase;
   color: var(--green); background: rgba(92,184,92,0.1); padding: 3px 8px; border-radius: 6px;
-  flex-shrink: 0;
+  flex-shrink: 0; animation: avail-breathe 3s ease-in-out infinite;
+}
+@keyframes avail-breathe {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(92,184,92,0.2); }
+  50% { box-shadow: 0 0 0 4px rgba(92,184,92,0.1); }
 }
 .next-avail-detail {
   font-family: var(--font-body); font-size: 14px; font-weight: 700; color: var(--charcoal);
@@ -424,8 +471,10 @@ a { text-decoration: none; color: inherit; }
 /* Booking Sheet */
 .book-sheet {
   max-height: 0; overflow: hidden; transition: max-height 0.4s ease, padding 0.4s ease;
-  background: var(--white); border-radius: 20px; max-width: 560px; margin: 0 auto;
-  box-shadow: var(--shadow-md);
+  background: rgba(255,255,255,0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border-radius: 20px; max-width: 560px; margin: 0 auto;
+  box-shadow: var(--shadow-md), inset 0 1px 0 rgba(255,255,255,0.6);
+  border: 1px solid rgba(255,255,255,0.4);
 }
 .book-sheet.open { max-height: 1000px; padding: 24px; margin-top: 16px; }
 .book-date-label {
@@ -768,11 +817,13 @@ a { text-decoration: none; color: inherit; }
 .reviews-scroll::-webkit-scrollbar { display: none; }
 .review-card {
   scroll-snap-align: start; flex-shrink: 0; width: 260px;
-  background: var(--warm); border-radius: 20px; padding: 22px 20px;
-  border: 1px solid rgba(0,0,0,0.04); position: relative;
-  transition: transform 0.2s, box-shadow 0.2s;
+  background: rgba(255,248,245,0.8); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  border-radius: 20px; padding: 22px 20px;
+  border: 1px solid rgba(212,168,83,0.1); position: relative;
+  transition: transform 0.3s cubic-bezier(.22,1,.36,1), box-shadow 0.3s;
+  box-shadow: var(--shadow-sm), inset 0 1px 0 rgba(255,255,255,0.5);
 }
-.review-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+.review-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg), inset 0 1px 0 rgba(255,255,255,0.5); }
 .review-header {
   display: flex; align-items: center; gap: 10px; margin-bottom: 12px;
 }
@@ -895,9 +946,14 @@ a { text-decoration: none; color: inherit; }
 /* ═══ MEET POPPY ═══ */
 .meet-section { background: var(--warm); padding: 40px 20px; }
 .meet-card {
-  max-width: 520px; margin: 0 auto; background: var(--white); border-radius: 24px;
-  padding: 28px 24px; box-shadow: var(--shadow-md);
+  max-width: 520px; margin: 0 auto; border-radius: 24px;
+  padding: 28px 24px;
+  background: var(--glass-card); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-card-border);
+  box-shadow: var(--shadow-md), inset 0 1px 0 rgba(255,255,255,0.6);
+  transition: box-shadow 0.3s, transform 0.3s;
 }
+.meet-card:hover { box-shadow: var(--shadow-lg), inset 0 1px 0 rgba(255,255,255,0.6); }
 .meet-top { display: flex; align-items: center; gap: 16px; margin-bottom: 16px; }
 .meet-photo {
   width: 72px; height: 72px; border-radius: 50%; object-fit: cover;
@@ -926,7 +982,17 @@ a { text-decoration: none; color: inherit; }
 .pricing-section { background: var(--white); }
 .price-spotlight {
   text-align: center; margin-top: 24px;
-  background: var(--warm); border-radius: 24px; padding: 36px 32px;
+  background: linear-gradient(145deg, rgba(255,248,245,0.9) 0%, rgba(245,224,220,0.6) 100%);
+  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+  border-radius: 24px; padding: 36px 32px;
+  border: 1px solid rgba(212,168,83,0.15);
+  box-shadow: var(--shadow-sm), inset 0 1px 0 rgba(255,255,255,0.5);
+  position: relative; overflow: hidden;
+}
+.price-spotlight::before {
+  content: ''; position: absolute; top: -50%; right: -50%; width: 100%; height: 100%;
+  background: radial-gradient(circle, rgba(212,168,83,0.06), transparent 70%);
+  pointer-events: none;
 }
 .price-amount {
   font-family: var(--font-display); font-size: 52px; font-weight: 800;
@@ -1292,6 +1358,43 @@ elevenlabs-convai {
   font-size: 11px; color: rgba(255,255,255,0.3); margin-top: 16px;
 }
 
+/* ═══ BIO TYPING ═══ */
+.bio-typing { overflow: hidden; }
+.bio-cursor {
+  display: inline-block; width: 2px; height: 1em; background: var(--gold);
+  margin-left: 2px; vertical-align: text-bottom;
+  animation: blink-cursor 0.7s step-end infinite;
+}
+@keyframes blink-cursor { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+/* ═══ SPARKLE ON STAT COMPLETION ═══ */
+.stat-sparkle {
+  position: relative; display: inline-block;
+}
+.stat-sparkle::after {
+  content: '✦'; position: absolute; top: -8px; right: -14px;
+  font-size: 12px; color: var(--gold); opacity: 0; transform: scale(0);
+  animation: sparkle-pop 0.6s cubic-bezier(.22,1,.36,1) forwards;
+}
+@keyframes sparkle-pop {
+  0% { opacity: 0; transform: scale(0) rotate(0deg); }
+  50% { opacity: 1; transform: scale(1.3) rotate(10deg); }
+  100% { opacity: 0.7; transform: scale(1) rotate(0deg); }
+}
+
+/* ═══ PREMIUM CARD TILT ═══ */
+.tilt-card { transition: transform 0.15s ease-out; transform-style: preserve-3d; }
+.tilt-inner { transform: translateZ(20px); }
+
+/* ═══ GRADIENT BORDER GLOW ═══ */
+.glow-border { position: relative; }
+.glow-border::after {
+  content: ''; position: absolute; inset: -1px; border-radius: inherit; z-index: -1;
+  background: var(--gradient-gold); opacity: 0;
+  transition: opacity 0.4s;
+}
+.glow-border:hover::after { opacity: 0.15; }
+
 /* ═══ SCROLL REVEAL ═══ */
 .reveal {
   opacity: 0; transform: translateY(32px);
@@ -1521,6 +1624,9 @@ elevenlabs-convai {
 <!-- ═══ PROFILE HERO ═══ -->
 <main>
 <section class="hero" id="hero" aria-label="Meet Poppy">
+  <div class="hero-blob hero-blob-1"></div>
+  <div class="hero-blob hero-blob-2"></div>
+  <div class="hero-blob hero-blob-3"></div>
   <div class="avatar-wrap hero-enter" id="avatarWrap" onclick="toggleVoice()" role="button" tabindex="0" aria-label="Talk to Poppy — tap to start voice chat">
     <div class="avatar-wave"></div>
     <div class="avatar-ring">
@@ -1557,7 +1663,7 @@ elevenlabs-convai {
 
   <!-- Next available session callout -->
   <div class="next-avail-card hero-enter" id="nextAvailCard" style="display:none;">
-    <div class="next-avail-inner" id="nextAvailInner" onclick="bookNextAvailable()">
+    <div class="next-avail-inner glow-border" id="nextAvailInner" onclick="bookNextAvailable()">
       <span class="next-avail-label">Next available</span>
       <span class="next-avail-detail" id="nextAvailDetail"></span>
       <span class="next-avail-arrow">→</span>
@@ -3322,7 +3428,7 @@ function launchConfetti() {
   requestAnimationFrame(draw);
 }
 
-/* ═══ COUNT-UP ANIMATION ═══ */
+/* ═══ COUNT-UP ANIMATION WITH SPARKLE ═══ */
 function animateCountUp() {
   document.querySelectorAll('.stat-num').forEach(el => {
     const target = parseFloat(el.textContent);
@@ -3332,12 +3438,53 @@ function animateCountUp() {
     el.textContent = '0';
     function tick(now) {
       const progress = Math.min((now - start) / duration, 1);
-      const eased = 1 - Math.pow(1 - progress, 3); // ease-out cubic
+      const eased = 1 - Math.pow(1 - progress, 3);
       const current = target * eased;
       el.textContent = isDecimal ? current.toFixed(1) : Math.round(current).toString();
       if (progress < 1) requestAnimationFrame(tick);
+      else el.classList.add('stat-sparkle'); // sparkle on completion
     }
     requestAnimationFrame(tick);
+  });
+}
+
+/* ═══ BIO TYPING ANIMATION ═══ */
+function animateBioTyping() {
+  const bio = document.getElementById('heroBio');
+  if (!bio) return;
+  const text = bio.textContent;
+  bio.textContent = '';
+  bio.classList.add('bio-typing');
+  const cursor = document.createElement('span');
+  cursor.className = 'bio-cursor';
+  bio.appendChild(cursor);
+  let i = 0;
+  const speed = 28; // ms per character
+  function typeChar() {
+    if (i < text.length) {
+      bio.insertBefore(document.createTextNode(text[i]), cursor);
+      i++;
+      setTimeout(typeChar, speed + Math.random() * 15);
+    } else {
+      setTimeout(() => cursor.remove(), 1500); // remove cursor after pause
+    }
+  }
+  setTimeout(typeChar, 800); // start after hero entrance
+}
+
+/* ═══ CARD TILT (3D hover effect) ═══ */
+function initCardTilt() {
+  document.querySelectorAll('.meet-card, .next-avail-inner').forEach(card => {
+    card.classList.add('tilt-card');
+    card.addEventListener('mousemove', (e) => {
+      const rect = card.getBoundingClientRect();
+      const x = (e.clientX - rect.left) / rect.width - 0.5;
+      const y = (e.clientY - rect.top) / rect.height - 0.5;
+      card.style.transform = `perspective(600px) rotateY(${x * 6}deg) rotateX(${-y * 6}deg) scale(1.01)`;
+    });
+    card.addEventListener('mouseleave', () => {
+      card.style.transform = 'perspective(600px) rotateY(0) rotateX(0) scale(1)';
+    });
   });
 }
 
@@ -3347,7 +3494,9 @@ init();
 requestAnimationFrame(() => {
   animateHeroEntrance();
   initScrollReveal();
-  setTimeout(animateCountUp, 600); // Start count-up after hero entrance
+  setTimeout(animateCountUp, 600);
+  animateBioTyping();
+  initCardTilt();
 });
 </script>
 
