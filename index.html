@@ -948,10 +948,6 @@ body.dark-mode .book-progress-step.done { color: var(--green); }
   text-transform: uppercase; letter-spacing: 0.5px;
   margin-bottom: 4px;
 }
-@keyframes fadeSlideIn {
-  from { opacity: 0; transform: translateY(-8px); }
-  to { opacity: 1; transform: translateY(0); }
-}
 
 /* ═══ QUICK-PICK SLOT CARDS ═══ */
 .quick-slots {
@@ -1605,6 +1601,14 @@ body.dark-mode .book-progress-step.done { color: var(--green); }
 .avatar-wave { will-change: transform, opacity; }
 .sticky-cta { will-change: transform; }
 .day-pill.available { will-change: transform; }
+/* Contain layout recalculations */
+.book-card, .review-card, .adventure-card, .tip-card, .meet-card {
+  contain: layout style;
+}
+/* Offscreen animation pause — JS adds .paused to sections outside viewport */
+.paused .hero-blob, .paused .avatar-ring, .paused .earliest-badge {
+  animation-play-state: paused !important;
+}
 
 /* ═══ FOOTER ═══ */
 .footer {
@@ -2035,10 +2039,7 @@ elevenlabs-convai {
 .tilt-on-scroll {
   transition: transform 0.3s cubic-bezier(.22,1,.36,1);
 }
-@media (prefers-reduced-motion: reduce) {
-  .parallax-card, .tilt-on-scroll { transition: none !important; }
-  .float-badge { animation: none !important; }
-}
+/* reduced-motion: consolidated below in accessibility section */
 
 /* ═══ HERO ENTRANCE ═══ */
 .hero-enter { opacity: 0; transform: translateY(24px); }
@@ -2064,7 +2065,6 @@ elevenlabs-convai {
 .hero .hero-actions { animation-delay: 0.4s; }
 .hero .next-avail-card { animation-delay: 0.46s; }
 .hero .social-proof-strip { animation-delay: 0.52s; }
-.hero .hero-badges { animation-delay: 0.58s; }
 .hero .hero-badges { animation-delay: 0.5s; }
 
 /* ═══ ACTIVITY TICKER ═══ */
@@ -2324,6 +2324,11 @@ body.dark-mode .avail-insight-chip.urgent { background: rgba(232,139,139,0.15); 
 /* ═══ ACCESSIBILITY ═══ */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+  .parallax-card, .tilt-on-scroll, .tilt-card { transition: none !important; transform: none !important; }
+  .float-badge, .hero-blob, .hero-badges .badge, .ripple-circle { animation: none !important; }
+  .magnetic-btn { transform: none !important; }
+  .stat-num.counting { animation: none; }
+  .ripple-circle { display: none; }
 }
 *:focus-visible {
   outline: 2px solid var(--gold); outline-offset: 3px; border-radius: 8px;
@@ -2347,16 +2352,6 @@ body.dark-mode *:focus-visible { box-shadow: 0 0 0 4px rgba(212,168,83,0.25); }
   box-shadow: var(--shadow-md); transition: top 0.2s;
 }
 .skip-link:focus { top: 0; }
-/* ═══ SKELETON LOADING ═══ */
-@keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
-}
-.skeleton-pill {
-  width: 72px; height: 80px; border-radius: 18px; flex-shrink: 0;
-  background: linear-gradient(90deg, #f0ebe7 25%, #faf5f0 50%, #f0ebe7 75%);
-  background-size: 200% 100%; animation: shimmer 1.5s infinite;
-}
 .empty-state {
   text-align: center; padding: 32px 20px; color: var(--gray);
 }
@@ -2451,15 +2446,7 @@ body.dark-mode *:focus-visible { box-shadow: 0 0 0 4px rgba(212,168,83,0.25); }
 .hero-badges .badge:nth-child(2) { animation: floatGentle 4s ease-in-out 0.5s infinite; }
 .hero-badges .badge:nth-child(3) { animation: floatGentle 4s ease-in-out 1s infinite; }
 
-/* Reduced motion: kill all fancy animations */
-@media (prefers-reduced-motion: reduce) {
-  .stat-num.counting { animation: none; }
-  .tilt-card { transform: none !important; }
-  .magnetic-btn { transform: none !important; }
-  .ripple-circle { animation: none; display: none; }
-  .hero-badges .badge { animation: none !important; }
-  .hero-blob { animation: none !important; }
-}
+/* reduced-motion: consolidated in accessibility section */
 
 /* Scroll progress bar */
 .scroll-progress {
@@ -6017,6 +6004,22 @@ function initScrollReveal() {
   document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 }
 
+/* ═══ PAUSE OFF-SCREEN ANIMATIONS ═══ */
+function initAnimationPauser() {
+  const hero = document.querySelector('.hero');
+  if (!hero) return;
+  const pauseObs = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.remove('paused');
+      } else {
+        entry.target.classList.add('paused');
+      }
+    });
+  }, { threshold: 0, rootMargin: '100px' });
+  pauseObs.observe(hero);
+}
+
 /* ═══ MICRO-INTERACTIONS ENGINE ═══ */
 
 /* Animated stat counters */
@@ -6552,6 +6555,7 @@ init();
 requestAnimationFrame(() => {
   animateHeroEntrance();
   initScrollReveal();
+  initAnimationPauser();
   animateBioTyping();
   initCounters();
   // Defer non-critical visual enhancements
