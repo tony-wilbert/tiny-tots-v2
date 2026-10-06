@@ -2383,6 +2383,7 @@ body.dark-mode .adventure-card { border-color: rgba(255,255,255,0.06); }
 body.dark-mode .reviews-section { background: #222226; }
 body.dark-mode .safety-promise { background: #2A2A2E; border-color: rgba(255,255,255,0.06); }
 body.dark-mode .safety-promise-title { color: var(--green); }
+body.dark-mode .updates-phone { background: #111113; box-shadow: 0 20px 60px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05); }
 body.dark-mode .review-card { background: rgba(42,42,46,0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-color: rgba(255,255,255,0.08); box-shadow: 0 2px 16px rgba(0,0,0,0.2); }
 body.dark-mode .meet-section { background: #1B1B1F; }
 body.dark-mode .meet-card { background: #2A2A2E; border-color: rgba(255,255,255,0.06); }
@@ -2472,6 +2473,91 @@ body.dark-mode .book-guest .form-row input.field-invalid { border-color: var(--r
 .comm-promise-content { flex: 1; }
 .comm-promise-text { font-size: 13px; font-weight: 700; color: var(--charcoal); line-height: 1.3; }
 .comm-promise-sub { font-size: 11px; color: var(--gray); margin-top: 2px; }
+
+/* ═══ SESSION UPDATE PREVIEW (animated chat) ═══ */
+.session-updates-section {
+  padding: 48px 20px 40px; text-align: center;
+}
+.updates-phone {
+  max-width: 320px; margin: 20px auto 0; border-radius: 28px;
+  background: #1B1B1F; padding: 16px 14px 20px; position: relative;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.18), 0 4px 16px rgba(0,0,0,0.1),
+    inset 0 1px 0 rgba(255,255,255,0.08);
+  overflow: hidden;
+}
+.updates-phone::before {
+  content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+  width: 120px; height: 5px; background: #2A2A2E; border-radius: 0 0 8px 8px;
+}
+.phone-header {
+  display: flex; align-items: center; gap: 8px; padding: 4px 4px 12px;
+  border-bottom: 1px solid rgba(255,255,255,0.06); margin-bottom: 12px;
+}
+.phone-header-avatar {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--gold), var(--gold-light));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 800; color: white;
+}
+.phone-header-info { flex: 1; text-align: left; }
+.phone-header-name { font-size: 13px; font-weight: 800; color: white; }
+.phone-header-status { font-size: 10px; color: rgba(255,255,255,0.4); }
+.phone-time {
+  font-size: 10px; color: rgba(255,255,255,0.3); text-align: center;
+  margin-bottom: 12px; font-weight: 600;
+}
+.update-bubble {
+  max-width: 85%; padding: 10px 14px; border-radius: 16px 16px 16px 4px;
+  font-size: 13px; line-height: 1.5; text-align: left; margin-bottom: 8px;
+  opacity: 0; transform: translateY(12px) scale(0.95);
+  transition: opacity 0.4s ease, transform 0.4s cubic-bezier(.22,1,.36,1);
+}
+.update-bubble.visible {
+  opacity: 1; transform: translateY(0) scale(1);
+}
+.update-bubble.poppy {
+  background: #34C759; color: white; margin-right: auto;
+}
+.update-bubble.poppy-img {
+  background: #34C759; color: white; margin-right: auto; padding: 6px;
+}
+.update-bubble.poppy-img .img-placeholder {
+  width: 100%; height: 100px; border-radius: 12px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0.08));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 28px; margin-bottom: 4px;
+}
+.update-bubble.poppy-img .img-caption {
+  font-size: 12px; padding: 4px 8px 0; opacity: 0.9;
+}
+.update-bubble.parent {
+  background: #007AFF; color: white; margin-left: auto;
+  border-radius: 16px 16px 4px 16px;
+}
+.update-bubble .bubble-time {
+  font-size: 9px; opacity: 0.6; margin-top: 4px; font-weight: 600;
+}
+.typing-indicator {
+  display: flex; gap: 4px; padding: 10px 14px; width: fit-content;
+  background: #34C759; border-radius: 16px 16px 16px 4px;
+  opacity: 0; transition: opacity 0.3s;
+  margin-bottom: 8px;
+}
+.typing-indicator.visible { opacity: 1; }
+.typing-dot {
+  width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.7);
+  animation: typingBounce 1.4s ease-in-out infinite;
+}
+.typing-dot:nth-child(2) { animation-delay: 0.2s; }
+.typing-dot:nth-child(3) { animation-delay: 0.4s; }
+@keyframes typingBounce {
+  0%, 60%, 100% { transform: translateY(0); }
+  30% { transform: translateY(-4px); }
+}
+.updates-caption {
+  margin-top: 16px; font-size: 12px; color: var(--gray);
+  font-weight: 600; letter-spacing: 0.3px;
+}
 /* Enhanced form focus glow */
 .book-guest .form-row input:focus {
   border-color: var(--gold);
@@ -2869,6 +2955,38 @@ body.dark-mode .scenario-pick:hover, body.dark-mode .scenario-pick.active { bord
       <div class="book-msg" id="bookMsg"></div>
     </div>
   </div>
+</section>
+
+<!-- ═══ DURING YOUR SESSION — ANIMATED CHAT PREVIEW ═══ -->
+<section class="session-updates-section" id="sessionUpdates">
+  <p class="section-label reveal">During Your Session</p>
+  <h2 class="section-title reveal">Poppy keeps you posted</h2>
+  <p class="section-sub reveal" style="max-width:340px;margin:8px auto 0;">Real-time updates, photos, and check-ins — so you can relax and enjoy your evening.</p>
+
+  <div class="updates-phone reveal">
+    <div class="phone-header">
+      <div class="phone-header-avatar">P</div>
+      <div class="phone-header-info">
+        <div class="phone-header-name">Poppy W.</div>
+        <div class="phone-header-status">Babysitting Session</div>
+      </div>
+    </div>
+    <div class="phone-time" id="updatePhoneTime">Today 6:15 PM</div>
+    <div id="updateBubbles">
+      <div class="update-bubble poppy" data-delay="0">Hey! We're all settled in and having a blast 🎉<div class="bubble-time">6:15 PM</div></div>
+      <div class="update-bubble poppy-img" data-delay="1"><div class="img-placeholder">🎨</div><div class="img-caption">We made friendship bracelets!</div><div class="bubble-time">6:42 PM</div></div>
+      <div class="update-bubble parent" data-delay="2">Omg those are so cute!! 😍<div class="bubble-time">6:43 PM</div></div>
+      <div class="update-bubble poppy" data-delay="3">Snack time done — everyone had apple slices & PB 🍎 Now we're reading stories<div class="bubble-time">7:30 PM</div></div>
+      <div class="update-bubble poppy" data-delay="4">Both kids brushed teeth and are in PJs. Story time winding down 📖<div class="bubble-time">8:15 PM</div></div>
+      <div class="update-bubble parent" data-delay="5">You're the best, Poppy!! 💛<div class="bubble-time">8:16 PM</div></div>
+    </div>
+    <div class="typing-indicator" id="typingIndicator">
+      <div class="typing-dot"></div>
+      <div class="typing-dot"></div>
+      <div class="typing-dot"></div>
+    </div>
+  </div>
+  <p class="updates-caption reveal">Every parent gets photo updates & instant responses</p>
 </section>
 
 <!-- ═══ POPPY'S WORLD — AI CONTENT FEED ═══ -->
@@ -5690,6 +5808,64 @@ function initScrollProgress() {
   }, { passive: true });
 }
 
+/* ═══ SESSION UPDATES CHAT ANIMATION ═══ */
+function initSessionUpdates() {
+  const section = document.getElementById('sessionUpdates');
+  if (!section) return;
+  const bubbles = section.querySelectorAll('.update-bubble');
+  const typing = document.getElementById('typingIndicator');
+  if (!bubbles.length) return;
+
+  // Set phone time to realistic evening time
+  const phoneTime = document.getElementById('updatePhoneTime');
+  if (phoneTime) {
+    const now = new Date();
+    const dayNames = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+    phoneTime.textContent = `${dayNames[now.getDay()]} Evening`;
+  }
+
+  let animated = false;
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting && !animated) {
+        animated = true;
+        animateBubbles(bubbles, typing);
+        observer.disconnect();
+      }
+    });
+  }, { threshold: 0.3 });
+  observer.observe(section);
+}
+
+function animateBubbles(bubbles, typing) {
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reducedMotion) {
+    bubbles.forEach(b => b.classList.add('visible'));
+    return;
+  }
+  let delay = 300;
+  bubbles.forEach((bubble, i) => {
+    const d = parseInt(bubble.dataset.delay || i);
+    // Show typing before each Poppy bubble
+    if (bubble.classList.contains('poppy') || bubble.classList.contains('poppy-img')) {
+      setTimeout(() => { typing.classList.add('visible'); }, delay);
+      delay += 800;
+      setTimeout(() => {
+        typing.classList.remove('visible');
+        bubble.classList.add('visible');
+      }, delay);
+    } else {
+      setTimeout(() => { bubble.classList.add('visible'); }, delay);
+    }
+    delay += 900;
+  });
+  // After all bubbles, show typing one last time briefly
+  setTimeout(() => {
+    typing.classList.add('visible');
+    setTimeout(() => typing.classList.remove('visible'), 1500);
+  }, delay);
+}
+
 /* Parallax hero blobs on scroll */
 function initParallax() {
   const blobs = document.querySelectorAll('.hero-blob');
@@ -5970,6 +6146,7 @@ requestAnimationFrame(() => {
     initScrollMotion();
     initRotatingProof();
     initSocialProofNotifs();
+    initSessionUpdates();
   });
   setTimeout(initChatLogging, 3000);
   // Register service worker for PWA install
