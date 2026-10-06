@@ -408,7 +408,7 @@ a { text-decoration: none; color: inherit; }
   background: var(--white); border-radius: 20px; max-width: 560px; margin: 0 auto;
   box-shadow: var(--shadow-md);
 }
-.book-sheet.open { max-height: 700px; padding: 24px; margin-top: 16px; }
+.book-sheet.open { max-height: 1000px; padding: 24px; margin-top: 16px; }
 .book-date-label {
   font-family: var(--font-display); font-size: 18px; font-weight: 700; margin-bottom: 16px;
 }
@@ -516,6 +516,52 @@ a { text-decoration: none; color: inherit; }
   font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px;
   color: var(--gold); writing-mode: vertical-lr; transform: rotate(180deg);
   min-height: 60px;
+}
+
+/* ═══ RETURNING VISITOR ═══ */
+.welcome-back-badge {
+  display: none; align-items: center; gap: 6px; justify-content: center;
+  padding: 6px 14px; border-radius: 20px;
+  background: linear-gradient(135deg, rgba(212,168,83,0.12), rgba(212,168,83,0.06));
+  border: 1px solid rgba(212,168,83,0.2);
+  font-size: 12px; font-weight: 700; color: var(--gold);
+  margin: -4px auto 8px; width: fit-content;
+  animation: fadeSlideIn 0.6s ease-out;
+}
+.welcome-back-badge.visible { display: flex; }
+.welcome-back-badge svg { width: 14px; height: 14px; fill: var(--gold); }
+.rebook-quick {
+  display: none; margin: 0 auto 12px; padding: 10px 20px;
+  border-radius: 14px; font-size: 13px; font-weight: 700;
+  background: linear-gradient(135deg, var(--gold), var(--gold-light));
+  color: var(--white); border: none; cursor: pointer;
+  box-shadow: 0 4px 16px rgba(212,168,83,0.3);
+  transition: all 0.2s; text-align: center;
+}
+.rebook-quick.visible { display: block; }
+.rebook-quick:active { transform: scale(0.96); }
+.prefilled-indicator {
+  font-size: 10px; font-weight: 700; color: var(--green);
+  text-transform: uppercase; letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ═══ PRICE COUNTER ANIMATION ═══ */
+.price-total-amount.counting {
+  transition: transform 0.15s ease-out;
+  transform: scale(1.1);
+}
+
+/* ═══ CONTEXTUAL HERO GLOW ═══ */
+.hero-context-glow {
+  position: absolute; top: -60px; left: 50%; transform: translateX(-50%);
+  width: 300px; height: 300px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(212,168,83,0.08) 0%, transparent 70%);
+  pointer-events: none; z-index: 0;
 }
 
 /* Auth-aware booking */
@@ -1278,12 +1324,16 @@ elevenlabs-convai {
     <div class="avatar-status" id="avatarStatus">Tap to talk</div>
   </div>
 
-  <h1 class="profile-name hero-enter">Ask <em>Poppy</em></h1>
+  <div class="welcome-back-badge hero-enter" id="welcomeBackBadge">
+    <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+    <span id="welcomeBackText">Welcome back!</span>
+  </div>
+  <h1 class="profile-name hero-enter" id="heroTitle">Ask <em>Poppy</em></h1>
   <div class="profile-verified hero-enter">
     <svg viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
     Red Cross Certified · Age 12
   </div>
-  <p class="profile-bio hero-enter">Your go-to babysitter. Got kid questions? I've got answers. Tap my face — let's talk.</p>
+  <p class="profile-bio hero-enter" id="heroBio">Your go-to babysitter. Got kid questions? I've got answers. Tap my face — let's talk.</p>
 
   <div class="stats-row hero-enter">
     <div class="stat-item"><div class="stat-num">47</div><div class="stat-label">Sits</div></div>
@@ -1856,6 +1906,57 @@ const defaultSchedule = {
 };
 
 /* ═══ INIT ═══ */
+/* ═══ SMART CONTEXT: TIME-OF-DAY + RETURNING VISITOR ═══ */
+function applySmartContext() {
+  const hour = new Date().getHours();
+  const heroTitle = document.getElementById('heroTitle');
+  const heroBio = document.getElementById('heroBio');
+
+  // Time-of-day hero personalization
+  if (hour >= 5 && hour < 12) {
+    heroBio.textContent = "Planning ahead for tonight? Smart parent move. Tap my face — let's chat about it.";
+  } else if (hour >= 12 && hour < 17) {
+    heroBio.textContent = "Need a sitter for this evening? I've got you covered. Tap my face — let's talk.";
+  } else if (hour >= 17 && hour < 21) {
+    heroBio.textContent = "Looking for tonight? Let's make it happen. Tap my face to talk, or book below.";
+  } else {
+    heroBio.textContent = "Planning your next night out? I'm just a tap away. Check my schedule below.";
+  }
+
+  // Returning visitor recognition
+  const savedParent = getSavedParent();
+  if (savedParent && savedParent.name) {
+    const firstName = savedParent.name.split(' ')[0];
+    const badge = document.getElementById('welcomeBackBadge');
+    const badgeText = document.getElementById('welcomeBackText');
+    badge.classList.add('visible');
+    badgeText.textContent = `Welcome back, ${firstName}!`;
+
+    // Pre-fill guest booking form
+    setTimeout(() => {
+      const nameEl = document.getElementById('parentName');
+      const phoneEl = document.getElementById('parentPhone');
+      const emailEl = document.getElementById('parentEmail');
+      if (nameEl && !nameEl.value) nameEl.value = savedParent.name;
+      if (phoneEl && !phoneEl.value && savedParent.phone) phoneEl.value = savedParent.phone;
+      if (emailEl && !emailEl.value && savedParent.email) emailEl.value = savedParent.email;
+    }, 500);
+  }
+}
+
+function getSavedParent() {
+  try {
+    const data = localStorage.getItem('tt_parent');
+    return data ? JSON.parse(data) : null;
+  } catch { return null; }
+}
+
+function saveParentInfo(name, phone, email) {
+  try {
+    localStorage.setItem('tt_parent', JSON.stringify({ name, phone, email, lastBooking: new Date().toISOString() }));
+  } catch {}
+}
+
 function init() {
   checkRoute();
   checkAuth();
@@ -1863,6 +1964,7 @@ function init() {
   renderReviews();
   renderSitters();
   loadAvailability();
+  applySmartContext();
 
   // Nav scroll effect + sticky CTA + active bottom tab
   const navSections = [
@@ -2207,7 +2309,25 @@ function updateTimePrice() {
   document.getElementById('priceHoursLabel').textContent = displayHrs + (parseFloat(displayHrs) === 1 ? ' hour' : ' hours');
   document.getElementById('priceCalc').textContent = '× $12/hr';
   const totalEl = document.getElementById('priceTotalAmount');
-  totalEl.textContent = '$' + total;
+  // Animated price counter
+  const prevTotal = parseInt(totalEl.textContent.replace('$','')) || 0;
+  if (prevTotal !== total) {
+    const diff = total - prevTotal;
+    const steps = Math.min(Math.abs(diff), 12);
+    const stepTime = 200 / steps;
+    let step = 0;
+    totalEl.classList.add('counting');
+    const counter = setInterval(() => {
+      step++;
+      const current = Math.round(prevTotal + (diff * step / steps));
+      totalEl.textContent = '$' + current;
+      if (step >= steps) {
+        clearInterval(counter);
+        totalEl.textContent = '$' + total;
+        setTimeout(() => totalEl.classList.remove('counting'), 150);
+      }
+    }, stepTime);
+  }
   totalEl.classList.remove('updating');
   void totalEl.offsetWidth;
   totalEl.classList.add('updating');
@@ -2271,13 +2391,22 @@ function showNextAvailable() {
   if (nextKey && nextDate) {
     const avail = availabilityData[nextKey];
     const fmt = t => { const [h,m] = t.split(':').map(Number); const ap = h>=12?'p':'a'; return `${h>12?h-12:h||12}${m?':'+String(m).padStart(2,'0'):''}${ap}`; };
-    const dayLabel = (nextDate.toDateString() === today.toDateString()) ? 'Today' : dayNamesShort[nextDate.getDay()];
+    const isToday = nextDate.toDateString() === today.toDateString();
+    const tomorrow = new Date(today); tomorrow.setDate(today.getDate() + 1);
+    const isTomorrow = nextDate.toDateString() === tomorrow.toDateString();
+    const dayLabel = isToday ? 'Today' : isTomorrow ? 'Tomorrow' : dayNamesShort[nextDate.getDay()];
     const detail = `${dayLabel} ${monthNamesShort[nextDate.getMonth()]} ${nextDate.getDate()}, ${fmt(avail.start_time)}–${fmt(avail.end_time)}`;
     document.getElementById('nextAvailDetail').textContent = detail;
     document.getElementById('nextAvailCard').style.display = 'block';
-    // Update hero Book button
+    // Contextual hero book button
     const heroBtn = document.getElementById('heroBookBtn');
-    if (heroBtn) heroBtn.textContent = 'Book ' + dayLabel;
+    if (heroBtn) {
+      const hour = today.getHours();
+      if (isToday && hour >= 14) heroBtn.textContent = 'Book Tonight';
+      else if (isToday) heroBtn.textContent = 'Book Today';
+      else if (isTomorrow) heroBtn.textContent = 'Book Tomorrow';
+      else heroBtn.textContent = 'Book ' + dayLabel;
+    }
     // Update availability count badge
     let availCount = 0;
     for (let i = 0; i < 14; i++) {
@@ -2293,6 +2422,13 @@ function showNextAvailable() {
     const total = hrs * 12;
     const stickyDetail = document.getElementById('stickyCtaDetail');
     if (stickyDetail) stickyDetail.textContent = `${dayLabel} ${fmt(availabilityData[nextKey].start_time)}–${fmt(availabilityData[nextKey].end_time)} · $${total}`;
+    // Update sticky CTA label contextually
+    const stickyLabel = document.querySelector('.sticky-cta-label');
+    if (stickyLabel) {
+      if (isToday) stickyLabel.textContent = 'Available tonight';
+      else if (isTomorrow) stickyLabel.textContent = 'Available tomorrow';
+      else stickyLabel.textContent = 'Next available';
+    }
   }
 }
 
@@ -2391,6 +2527,9 @@ async function submitBooking() {
     document.getElementById('confirmTotal').textContent = `$${priceCents/100}`;
     document.getElementById('confirmOverlay').classList.add('active');
     launchConfetti();
+
+    // Save parent info for returning visitor recognition
+    saveParentInfo(parentName, parentPhone, parentEmail);
 
     fetch(SUPABASE_URL + '/functions/v1/send-booking-sms', {
       method: 'POST',
