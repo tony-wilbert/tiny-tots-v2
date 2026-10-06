@@ -2169,15 +2169,25 @@ elevenlabs-convai {
   color: #fff; margin-bottom: 4px;
 }
 .voice-modal-status {
-  font-size: 14px; color: rgba(255,255,255,0.5); margin-bottom: 16px;
+  font-size: 14px; color: rgba(255,255,255,0.5); margin-bottom: 20px;
+  transition: color 0.3s;
 }
-.voice-modal-status.connected { color: var(--gold); }
+.voice-modal-status.connected { color: var(--gold); font-weight: 600; }
 .voice-modal-status.ready { color: #34C759; }
+/* Avatar glows when connected */
+.voice-modal-overlay.active.speaking .voice-avatar-ring {
+  box-shadow: 0 0 24px rgba(212,168,83,0.5), 0 0 48px rgba(212,168,83,0.2);
+  animation: avatarGlow 2s ease-in-out infinite;
+}
+@keyframes avatarGlow {
+  0%, 100% { box-shadow: 0 0 24px rgba(212,168,83,0.5), 0 0 48px rgba(212,168,83,0.2); }
+  50% { box-shadow: 0 0 32px rgba(212,168,83,0.7), 0 0 64px rgba(212,168,83,0.3); }
+}
 
-/* ElevenLabs widget container inside modal */
+/* ElevenLabs widget container — rendered but visually hidden so shadow DOM stays active */
 .voice-widget-container {
-  margin: 0 auto 16px; position: relative;
-  min-height: 60px; display: flex; align-items: center; justify-content: center;
+  margin: 0; position: absolute; width: 1px; height: 1px; overflow: hidden;
+  opacity: 0; pointer-events: none;
 }
 
 /* Waveform bars — shown when connected */
@@ -2207,18 +2217,21 @@ elevenlabs-convai {
   100% { height: 32px; opacity: 1; }
 }
 
-/* Start call button — shown before connection */
+/* Start call button — prominent branded CTA */
 .voice-start-btn {
-  padding: 16px 36px; border-radius: 50px; font-size: 16px; font-weight: 700;
+  padding: 18px 44px; border-radius: 50px; font-size: 17px; font-weight: 700;
   background: linear-gradient(135deg, var(--gold), #C4982F); color: #1B1B1F;
-  box-shadow: 0 6px 24px rgba(212,168,83,0.35); transition: all 0.25s;
+  box-shadow: 0 6px 24px rgba(212,168,83,0.35), 0 0 0 0 rgba(212,168,83,0.4);
+  transition: all 0.25s; cursor: pointer; border: none;
   display: inline-flex; align-items: center; gap: 10px;
   animation: startPulse 2s ease-in-out infinite;
+  letter-spacing: 0.3px;
 }
-.voice-start-btn:hover { transform: scale(1.05); box-shadow: 0 8px 32px rgba(212,168,83,0.5); }
+.voice-start-btn:hover { transform: scale(1.06); box-shadow: 0 8px 32px rgba(212,168,83,0.5); }
+.voice-start-btn:active { transform: scale(0.97); }
 @keyframes startPulse {
-  0%, 100% { box-shadow: 0 6px 24px rgba(212,168,83,0.35); }
-  50% { box-shadow: 0 6px 32px rgba(212,168,83,0.55); }
+  0%, 100% { box-shadow: 0 6px 24px rgba(212,168,83,0.35), 0 0 0 0 rgba(212,168,83,0.4); }
+  50% { box-shadow: 0 6px 32px rgba(212,168,83,0.55), 0 0 0 8px rgba(212,168,83,0); }
 }
 
 .voice-end-btn {
@@ -5905,38 +5918,44 @@ function toggleVoice() {
   loadElevenLabs();
 }
 
-/* User taps gold "Start Talking" button — this clicks the real widget button with user gesture chain */
+/* User taps gold "Start Talking" — clicks the real widget button via user gesture chain */
 function startElevenLabsCall() {
   const widget = document.querySelector('elevenlabs-convai');
-  if (!widget) return;
+  if (!widget || !widget.shadowRoot) {
+    // Widget not ready yet — show feedback
+    const statusEl = document.getElementById('voiceModalStatus');
+    statusEl.textContent = 'Loading... tap again in a moment';
+    return;
+  }
   const statusEl = document.getElementById('voiceModalStatus');
-  statusEl.textContent = 'Starting call...';
+  statusEl.textContent = 'Connecting...';
 
   const shadow = widget.shadowRoot;
-  if (shadow) {
-    // Find the "Start a call" button (button index 2, or look for visible ones)
-    const buttons = shadow.querySelectorAll('button');
-    let startBtn = null;
-    buttons.forEach(b => {
-      const text = (b.textContent || '').trim().toLowerCase();
-      if (text.includes('start') || text.includes('call')) startBtn = b;
-    });
-    // If we found the right button, click it — but first agree to consent if needed
-    const agreeBtn = Array.from(buttons).find(b => (b.textContent || '').trim().toLowerCase() === 'agree');
-    if (agreeBtn && agreeBtn.offsetParent !== null) {
-      agreeBtn.click();
-      setTimeout(() => {
-        const btns2 = shadow.querySelectorAll('button');
-        btns2.forEach(b => {
-          const t = (b.textContent || '').trim().toLowerCase();
-          if (t.includes('start') || t.includes('call')) b.click();
-        });
-      }, 300);
-    } else if (startBtn) {
-      startBtn.click();
-    } else if (buttons.length > 2) {
-      buttons[2].click(); // fallback: index 2 is "Start a call"
+  const buttons = shadow.querySelectorAll('button');
+
+  // First: auto-accept consent dialog if visible (synchronous — preserves user gesture)
+  for (const b of buttons) {
+    const text = (b.textContent || '').trim().toLowerCase();
+    if (text === 'agree' && b.offsetParent !== null) {
+      b.click();
+      break;
     }
+  }
+
+  // Then: click "Start a call" button (synchronous — preserves user gesture for mic)
+  const freshButtons = shadow.querySelectorAll('button');
+  let clicked = false;
+  for (const b of freshButtons) {
+    const text = (b.textContent || '').trim().toLowerCase();
+    if ((text.includes('start') || text.includes('call')) && b.offsetParent !== null) {
+      b.click();
+      clicked = true;
+      break;
+    }
+  }
+  // Fallback: try button index 2 (known "Start a call" position)
+  if (!clicked && freshButtons.length > 2 && freshButtons[2].offsetParent !== null) {
+    freshButtons[2].click();
   }
 
   // Update UI to "calling" state
