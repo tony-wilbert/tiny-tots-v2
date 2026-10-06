@@ -751,6 +751,30 @@ a { text-decoration: none; color: inherit; }
 .price-note { font-size: 14px; font-weight: 700; color: var(--gold); margin-top: 4px; }
 .price-details { font-size: 12px; color: var(--gray); margin-top: 16px; line-height: 1.7; }
 
+/* ═══ FAQ ═══ */
+.faq-section { background: var(--white); padding: 40px 20px; }
+.faq-list { max-width: 520px; margin: 16px auto 0; }
+.faq-item {
+  border-bottom: 1px solid rgba(0,0,0,0.06); overflow: hidden;
+}
+.faq-q {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 16px 0; cursor: pointer; background: none; border: none; width: 100%;
+  font-size: 14px; font-weight: 700; color: var(--charcoal); text-align: left;
+  font-family: var(--font-body);
+}
+.faq-q:active { opacity: 0.7; }
+.faq-chevron {
+  width: 18px; height: 18px; fill: var(--gray); flex-shrink: 0;
+  transition: transform 0.3s ease;
+}
+.faq-item.open .faq-chevron { transform: rotate(180deg); }
+.faq-a {
+  max-height: 0; overflow: hidden; transition: max-height 0.35s ease, padding 0.35s ease;
+  font-size: 13px; color: #666; line-height: 1.6; padding: 0 0 0 0;
+}
+.faq-item.open .faq-a { max-height: 200px; padding: 0 0 16px 0; }
+
 /* ═══ FOOTER ═══ */
 .footer {
   background: var(--charcoal); color: rgba(255,255,255,0.6); padding: 40px 20px calc(var(--bottom-h) + var(--safe-bottom) + 24px);
@@ -1373,6 +1397,41 @@ elevenlabs-convai {
         <div class="meet-fun-emoji">🧩</div>
         <div class="meet-fun-label">Games &<br>Puzzles</div>
       </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FAQ ═══ -->
+<section class="faq-section" id="faq">
+  <h2 class="section-title">Parents Ask</h2>
+  <div class="faq-list">
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        Is Poppy certified in first aid & safety?
+        <svg class="faq-chevron" viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg>
+      </button>
+      <div class="faq-a">Yes! Poppy holds a current American Red Cross babysitting certification, which covers first aid, child safety, and emergency response. She re-certifies every year.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        What ages does Poppy sit for?
+        <svg class="faq-chevron" viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg>
+      </button>
+      <div class="faq-a">Poppy is great with kids ages 2–10. She brings age-appropriate activities, books, and games for every session. For toddlers, she's extra attentive about safety.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        What does Poppy bring to each session?
+        <svg class="faq-chevron" viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg>
+      </button>
+      <div class="faq-a">Poppy arrives with her "fun bag" — art supplies, stickers, coloring books, small games, and a playlist of kid-friendly music. Every visit is an adventure, not just supervision.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        What's the cancellation policy?
+        <svg class="faq-chevron" viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg>
+      </button>
+      <div class="faq-a">Life happens! Cancel anytime before the booking starts — no fees, no questions. Poppy just asks for a quick text so she knows. Rebook whenever you're ready.</div>
     </div>
   </div>
 </section>
@@ -2129,6 +2188,15 @@ function closeConfirmation() {
   document.getElementById('confirmOverlay').classList.remove('active');
   // Scroll back to top
   window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function toggleFaq(btn) {
+  const item = btn.parentElement;
+  const wasOpen = item.classList.contains('open');
+  // Close all
+  document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+  // Open clicked if it was closed
+  if (!wasOpen) item.classList.add('open');
 }
 
 function toggleVoice() {
