@@ -5904,6 +5904,9 @@ function loadElevenLabs() {
         initChatLogging();
         // Hide any floating trigger button the widget creates outside the modal
         _hideFloatingWidgetButton();
+        // Re-check after delays — ElevenLabs script may create duplicate widget instances
+        setTimeout(_hideFloatingWidgetButton, 1500);
+        setTimeout(_hideFloatingWidgetButton, 3000);
         resolve();
       }, 800);
     };
@@ -5913,33 +5916,29 @@ function loadElevenLabs() {
 }
 
 /* Hide the ElevenLabs widget's floating minimize/trigger button — we show the full interface inline */
+/* The ElevenLabs script auto-creates a second widget instance, so we must target ALL of them */
 function _hideFloatingWidgetButton() {
-  const widget = document.querySelector('elevenlabs-convai');
-  if (!widget || !widget.shadowRoot) return;
-  const shadow = widget.shadowRoot;
-  // Inject style into shadow DOM to hide the floating minimize/avatar button
-  if (!shadow.querySelector('#tt-custom-style')) {
-    const style = document.createElement('style');
-    style.id = 'tt-custom-style';
-    style.textContent = `
-      /* Hide the floating minimize/trigger orb button — we embed the full interface inside our modal */
-      [class*="minimize"], [class*="avatarButton"] { display: none !important; }
-      /* Force the main interface box to be visible (widget hides it at opacity:0 when minimize button is hidden) */
-      [class*="_box_"] { opacity: 1 !important; margin: 0 auto; transform: none !important; pointer-events: auto !important; }
-      /* Hide feedback UI — "Is this response helpful?" is confusing before any conversation */
-      [class*="_feedback_"] { display: none !important; }
-      /* Make the wrapper use full width */
-      [class*="_wrapper_"] { width: 100% !important; justify-content: center !important; }
-    `;
-    shadow.appendChild(style);
-  }
-  // Also try direct element hiding as fallback
-  const btns = shadow.querySelectorAll('button');
-  btns.forEach(btn => {
-    if (btn.className.includes('minimize') || btn.className.includes('avatarButton')) {
-      btn.style.display = 'none';
+  const _ttStyle = `
+    [class*="minimize"], [class*="avatarButton"] { display: none !important; }
+    [class*="_box_"] { opacity: 1 !important; margin: 0 auto; transform: none !important; pointer-events: auto !important; }
+    [class*="_feedback_"] { display: none !important; }
+    [class*="_wrapper_"] { width: 100% !important; justify-content: center !important; }
+  `;
+  document.querySelectorAll('elevenlabs-convai').forEach(widget => {
+    if (!widget.shadowRoot) return;
+    const shadow = widget.shadowRoot;
+    if (!shadow.querySelector('#tt-custom-style')) {
+      const style = document.createElement('style');
+      style.id = 'tt-custom-style';
+      style.textContent = _ttStyle;
+      shadow.appendChild(style);
     }
   });
+  // Keep only the first widget instance — remove duplicates created by the ElevenLabs script
+  const allWidgets = document.querySelectorAll('elevenlabs-convai');
+  if (allWidgets.length > 1) {
+    for (let i = 1; i < allWidgets.length; i++) allWidgets[i].remove();
+  }
 }
 
 /* Open voice modal — widget loads VISIBLE so user can click "Start a call" directly (required for Chrome mic permissions) */
