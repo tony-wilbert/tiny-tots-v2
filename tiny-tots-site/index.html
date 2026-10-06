@@ -1238,40 +1238,98 @@ body.dark-mode .wave-divider.hero-wave { color: #1B1B1F; }
 .share-section .section-title { color: var(--white); }
 .share-section .section-sub { color: rgba(255,255,255,0.6); }
 
-.invite-preview {
-  background: rgba(255,255,255,0.08); border-radius: 20px; padding: 24px;
-  margin-top: 24px; text-align: center; border: 1px solid rgba(255,255,255,0.1);
+/* iMessage-style bubble preview */
+.msg-preview {
+  max-width: 340px; margin: 24px auto 0; position: relative;
 }
-.invite-preview .invite-emoji { font-size: 32px; margin-bottom: 8px; }
-.invite-preview .invite-title {
-  font-family: var(--font-display); font-size: 18px; font-weight: 700;
+.msg-bubble {
+  background: #34C759; color: white; border-radius: 18px 18px 4px 18px;
+  padding: 14px 16px; font-size: 14px; line-height: 1.55; position: relative;
+  box-shadow: 0 2px 12px rgba(52,199,89,0.3);
 }
-.invite-preview .invite-body {
-  font-size: 13px; color: rgba(255,255,255,0.6); margin-top: 6px; line-height: 1.5;
+.msg-bubble::after {
+  content: ''; position: absolute; bottom: 0; right: -6px;
+  width: 12px; height: 12px; background: #34C759;
+  clip-path: polygon(0 0, 100% 0, 0 100%);
 }
-.invite-preview .invite-url {
-  font-size: 12px; color: var(--gold-light); margin-top: 12px;
-  padding: 8px 16px; background: rgba(255,255,255,0.06); border-radius: 8px;
-  display: inline-block; font-weight: 600;
+.msg-bubble .msg-link {
+  display: block; margin-top: 10px; padding: 10px 12px;
+  background: rgba(255,255,255,0.18); border-radius: 10px;
+  font-size: 12px; text-decoration: none; color: white;
+}
+.msg-bubble .msg-link-domain { font-weight: 700; font-size: 11px; opacity: 0.7; text-transform: uppercase; letter-spacing: 0.5px; }
+.msg-bubble .msg-link-title { font-weight: 700; margin-top: 2px; }
+.msg-bubble .msg-link-desc { opacity: 0.8; font-size: 11px; margin-top: 2px; }
+.msg-time {
+  text-align: right; font-size: 11px; color: rgba(255,255,255,0.35);
+  margin-top: 6px; padding-right: 4px;
+}
+.msg-delivered {
+  text-align: right; font-size: 10px; color: rgba(255,255,255,0.3);
+  font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;
+  margin-top: 2px; padding-right: 4px;
 }
 
-.share-actions {
-  display: flex; gap: 10px; margin-top: 20px; justify-content: center;
+/* Share channel grid */
+.share-channels {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+  margin-top: 24px; max-width: 340px; margin-left: auto; margin-right: auto;
 }
-.share-btn {
-  display: flex; align-items: center; gap: 8px;
-  padding: 14px 24px; border-radius: 14px; font-size: 14px; font-weight: 700;
-  transition: all 0.2s;
+.share-channel-btn {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 14px 12px; border-radius: 14px; font-size: 13px; font-weight: 700;
+  transition: all 0.2s; cursor: pointer; border: none;
 }
-.share-btn.text-share {
-  background: var(--gold); color: var(--charcoal);
+.share-channel-btn:active { transform: scale(0.95); }
+.share-channel-btn.ch-text {
+  background: #34C759; color: white; grid-column: 1 / -1;
+  padding: 16px; font-size: 15px;
 }
-.share-btn.text-share:hover { background: var(--gold-light); }
-.share-btn.copy-share {
+.share-channel-btn.ch-text:hover { background: #2DB84E; }
+.share-channel-btn.ch-copy {
   background: rgba(255,255,255,0.1); color: var(--white);
   border: 1px solid rgba(255,255,255,0.2);
 }
-.share-btn.copy-share:hover { background: rgba(255,255,255,0.15); }
+.share-channel-btn.ch-copy:hover { background: rgba(255,255,255,0.18); }
+.share-channel-btn.ch-copy.copied { background: #34C759; border-color: #34C759; }
+.share-channel-btn.ch-email {
+  background: rgba(255,255,255,0.1); color: var(--white);
+  border: 1px solid rgba(255,255,255,0.2);
+}
+.share-channel-btn.ch-email:hover { background: rgba(255,255,255,0.18); }
+.share-channel-btn svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+/* Referral ripple animation */
+.referral-ripple {
+  display: flex; align-items: center; justify-content: center;
+  gap: 16px; margin-top: 28px; padding: 16px 20px;
+  background: rgba(255,255,255,0.05); border-radius: 16px;
+  max-width: 340px; margin-left: auto; margin-right: auto;
+}
+.ripple-visual {
+  position: relative; width: 48px; height: 48px; flex-shrink: 0;
+}
+.ripple-center {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+  width: 16px; height: 16px; border-radius: 50%; background: var(--gold);
+  z-index: 2;
+}
+.ripple-ring {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+  border-radius: 50%; border: 2px solid var(--gold);
+  animation: rippleExpand 2.5s ease-out infinite;
+}
+.ripple-ring:nth-child(2) { animation-delay: 0.5s; }
+.ripple-ring:nth-child(3) { animation-delay: 1s; }
+@keyframes rippleExpand {
+  0% { width: 16px; height: 16px; opacity: 0.6; }
+  100% { width: 48px; height: 48px; opacity: 0; }
+}
+.ripple-stats {
+  font-size: 13px; color: rgba(255,255,255,0.7); line-height: 1.6;
+}
+.ripple-stats strong { color: var(--gold-light); font-weight: 700; }
+.ripple-stats .stat-num { font-size: 20px; font-weight: 800; color: var(--white); }
 
 /* ═══ MEET POPPY ═══ */
 .meet-section { background: var(--warm); padding: 40px 20px; }
@@ -3041,19 +3099,45 @@ body.dark-mode .scenario-pick:hover, body.dark-mode .scenario-pick.active { bord
     <h2 class="section-title">Know a Family<br>That Needs Poppy?</h2>
     <p class="section-sub">One family tells another. That's how every sitter here got started.</p>
   </div>
-  <div class="invite-preview reveal reveal-delay-1">
-    <div class="invite-emoji">&#128150;</div>
-    <div class="invite-title">Meet Poppy — Babysitter Extraordinaire</div>
-    <div class="invite-body">Red Cross certified, $12/hr, and she has an AI voice assistant that actually answers your parenting questions.</div>
-    <div class="invite-url" id="inviteUrl">tinytots-v2.netlify.app</div>
+  <div class="msg-preview reveal reveal-delay-1">
+    <div class="msg-bubble" id="msgBubble">
+      Hey! My babysitter Poppy is amazing — the kids BEG for her to come back 😂 She's $12/hr and super responsible. Check her out:
+      <a class="msg-link" id="inviteUrl">
+        <div class="msg-link-domain">tinytots-v2.netlify.app</div>
+        <div class="msg-link-title">⭐ Tiny Tots — Book Poppy</div>
+        <div class="msg-link-desc">Red Cross certified · AI voice assistant · $12/hr</div>
+      </a>
+    </div>
+    <div class="msg-time" id="msgTime">now</div>
+    <div class="msg-delivered">Delivered</div>
   </div>
-  <div class="share-actions">
-    <button class="share-btn text-share" onclick="shareViaText()">&#128172; Text a Friend</button>
-    <button class="share-btn copy-share" onclick="copyInviteLink()">&#128203; Copy Link</button>
+
+  <div class="share-channels reveal reveal-delay-1">
+    <button class="share-channel-btn ch-text" onclick="shareViaText()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+      Text a Friend
+    </button>
+    <button class="share-channel-btn ch-copy" id="copyLinkBtn" onclick="copyInviteLink()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+      <span id="copyLinkText">Copy Link</span>
+    </button>
+    <button class="share-channel-btn ch-email" onclick="emailInvite()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      Email
+    </button>
   </div>
-  <div class="share-stats reveal reveal-delay-2" style="display:flex;justify-content:center;gap:24px;margin-top:18px;font-size:12px;color:rgba(255,255,255,0.5);">
-    <span>📤 Shared 23 times</span>
-    <span>👨‍👩‍👧 4 families joined via referral</span>
+
+  <div class="referral-ripple reveal reveal-delay-2">
+    <div class="ripple-visual">
+      <div class="ripple-ring"></div>
+      <div class="ripple-ring"></div>
+      <div class="ripple-ring"></div>
+      <div class="ripple-center"></div>
+    </div>
+    <div class="ripple-stats">
+      <div><span class="stat-num">23</span> shares</div>
+      <div><strong>4 families</strong> joined via word-of-mouth</div>
+    </div>
   </div>
 </section>
 <!-- Screen reader live region for dynamic updates -->
@@ -4808,22 +4892,46 @@ function getInviteUrl() {
   localStorage.setItem('tt_my_code', code);
   return window.location.origin + '?ref=' + code;
 }
+// Set message time to current time
+(function initMsgTime() {
+  const el = document.getElementById('msgTime');
+  if (!el) return;
+  const now = new Date();
+  const h = now.getHours() % 12 || 12;
+  const m = String(now.getMinutes()).padStart(2, '0');
+  const ap = now.getHours() >= 12 ? 'PM' : 'AM';
+  el.textContent = h + ':' + m + ' ' + ap;
+})();
 
 function shareViaText() {
   const url = getInviteUrl();
-  const text = `Hey! Check out Poppy — she's the best babysitter. Red Cross certified, $12/hr, and she even has an AI that answers your parenting questions 😂\n\n${url}`;
+  const text = `Hey! My babysitter Poppy is amazing — the kids BEG for her to come back 😂 She's $12/hr and super responsible. Check her out: ${url}`;
   if (navigator.share) {
-    navigator.share({ title: 'Meet Poppy — Babysitter Extraordinaire', text, url });
+    navigator.share({ title: 'Book Poppy — Tiny Tots Babysitting', text, url }).catch(() => {});
   } else {
     window.open(`sms:?body=${encodeURIComponent(text)}`);
   }
+  if (navigator.vibrate) navigator.vibrate(5);
 }
 
 function copyInviteLink() {
   const url = getInviteUrl();
-  navigator.clipboard.writeText(url).then(() => showToast('Link copied!')).catch(() => {
-    showToast(url); // fallback: show the URL
-  });
+  navigator.clipboard.writeText(url).then(() => {
+    const btn = document.getElementById('copyLinkBtn');
+    const txt = document.getElementById('copyLinkText');
+    btn.classList.add('copied');
+    txt.textContent = 'Copied!';
+    showToast('Link copied to clipboard!');
+    setTimeout(() => { btn.classList.remove('copied'); txt.textContent = 'Copy Link'; }, 2500);
+  }).catch(() => showToast(url));
+}
+
+function emailInvite() {
+  const url = getInviteUrl();
+  const subject = encodeURIComponent('Check out this amazing babysitter!');
+  const body = encodeURIComponent(`Hey!\n\nI found the best babysitter — my kids ask for her by name! She's $12/hr, Red Cross certified, and she even has an AI voice assistant.\n\nCheck her out: ${url}\n\nTrust me, your kids will love her! 😊`);
+  window.open(`mailto:?subject=${subject}&body=${body}`);
+  if (navigator.vibrate) navigator.vibrate(5);
 }
 
 function shareTip(title, body) {
