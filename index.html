@@ -408,6 +408,7 @@ a { text-decoration: none; color: inherit; }
 .adventure-tag.popular { background: rgba(212,168,83,0.15); color: var(--gold); }
 .adventure-tag.new { background: rgba(92,184,92,0.15); color: var(--green); }
 .adventure-tag.fave { background: rgba(232,139,139,0.15); color: var(--red-soft); }
+.adventure-tag.seasonal { background: linear-gradient(135deg, rgba(212,168,83,0.2), rgba(232,139,100,0.2)); color: #E8944D; }
 .adventures-cta {
   text-align: center; padding: 8px 20px 0;
 }
@@ -3515,12 +3516,36 @@ function applySmartContext() {
   const heroBio = document.getElementById('heroBio');
   const heroGreeting = document.getElementById('heroGreeting');
 
-  // Time-of-day greeting
+  // Season detection
+  const month = new Date().getMonth(); // 0-11
+  const season = month >= 2 && month <= 4 ? 'spring' : month >= 5 && month <= 7 ? 'summer' : month >= 8 && month <= 10 ? 'fall' : 'winter';
+  const seasonEmoji = { spring: '🌸', summer: '☀️', fall: '🍂', winter: '❄️' }[season];
+
+  // Time-of-day greeting with seasonal flavor
   if (heroGreeting) {
-    if (hour >= 5 && hour < 12) heroGreeting.textContent = 'Good morning ☀️';
-    else if (hour >= 12 && hour < 17) heroGreeting.textContent = 'Good afternoon 👋';
-    else if (hour >= 17 && hour < 21) heroGreeting.textContent = 'Good evening ✨';
+    const seasonGreet = { spring: ' 🌷', summer: ' ☀️', fall: ' 🍁', winter: ' ❄️' }[season];
+    if (hour >= 5 && hour < 12) heroGreeting.textContent = 'Good morning' + seasonGreet;
+    else if (hour >= 12 && hour < 17) heroGreeting.textContent = 'Good afternoon' + seasonGreet;
+    else if (hour >= 17 && hour < 21) heroGreeting.textContent = 'Good evening' + seasonGreet;
     else heroGreeting.textContent = 'Hey there 🌙';
+  }
+
+  // Inject seasonal adventure card
+  const seasonalActivities = {
+    fall: { emoji: '🎃', name: 'Fall Crafts', desc: 'Leaf art, pumpkin decorating, and apple cider. Poppy brings the autumn vibes indoors.', tag: 'Seasonal' },
+    winter: { emoji: '⛄', name: 'Winter Wonders', desc: 'Hot cocoa, snowflake cutting, and cozy stories by the fire. Winter magic.', tag: 'Seasonal' },
+    spring: { emoji: '🌱', name: 'Spring Garden', desc: 'Planting seeds, nature walks, and flower pressing. Growing things together.', tag: 'Seasonal' },
+    summer: { emoji: '🏊', name: 'Summer Splash', desc: 'Water games, popsicle making, and backyard camping. Sun-soaked adventures.', tag: 'Seasonal' }
+  };
+  const seasonCard = seasonalActivities[season];
+  if (seasonCard) {
+    const scroll = document.querySelector('.adventures-scroll');
+    if (scroll) {
+      const card = document.createElement('div');
+      card.className = 'adventure-card c7 reveal';
+      card.innerHTML = `<span class="adventure-tag seasonal">${seasonEmoji} ${seasonCard.tag}</span><span class="adventure-emoji-big">${seasonCard.emoji}</span><div class="adventure-name">${seasonCard.name}</div><div class="adventure-desc">${seasonCard.desc}</div>`;
+      scroll.insertBefore(card, scroll.firstChild);
+    }
   }
 
   // Time-of-day hero personalization
@@ -4114,8 +4139,8 @@ function updateSessionPlan(startMins, endMins) {
     earlyAfternoon: [ // 3-5pm
       { emoji: '🍎', label: 'Snack time & settle in' },
       { emoji: '📚', label: 'Homework help' },
-      { emoji: '🏃', label: 'Outdoor play & games' },
-      { emoji: '🎨', label: 'Creative time' }
+      { emoji: season === 'fall' ? '🍂' : season === 'winter' ? '⛄' : '🏃', label: season === 'fall' ? 'Leaf collecting & nature walk' : season === 'winter' ? 'Snow play & hot cocoa' : 'Outdoor play & games' },
+      { emoji: season === 'fall' ? '🎃' : '🎨', label: season === 'fall' ? 'Fall crafts & pumpkin art' : 'Creative time' }
     ],
     lateAfternoon: [ // 5-7pm
       { emoji: '🍳', label: 'Dinner prep together' },
