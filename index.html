@@ -3,61 +3,95 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Tiny Tots Babysitting — Ask Poppy</title>
+<title>Tiny Tots — Poppy's Babysitting Network</title>
+<meta name="theme-color" content="#FFF8F5">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="description" content="Meet Poppy — your 12-year-old Red Cross certified babysitter. Talk to her, book instantly, get parenting tips. The babysitting service parents actually share.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-/* ── Reset & Base ── */
+/* ═══ VARIABLES & RESET ═══ */
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
 :root {
   --pink: #F5E0DC; --pink-deep: #EACDC6; --gold: #D4A853; --gold-light: #E8C97A;
   --warm: #FFF8F5; --charcoal: #3A3A3A; --white: #FFFFFF; --gray: #999;
   --green: #5CB85C; --red-soft: #E88B8B;
+  --glass: rgba(255,255,255,0.72); --glass-border: rgba(255,255,255,0.3);
+  --shadow-sm: 0 2px 8px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 20px rgba(0,0,0,0.06);
+  --shadow-lg: 0 12px 40px rgba(0,0,0,0.1);
   --font-display: 'Playfair Display', Georgia, serif;
   --font-body: 'Nunito', -apple-system, sans-serif;
   --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --nav-h: 60px;
+  --bottom-h: 72px;
 }
 html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
 body {
   font-family: var(--font-body); color: var(--charcoal);
   background: var(--warm); overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
+  padding-bottom: calc(var(--bottom-h) + var(--safe-bottom) + 8px);
 }
 button { font-family: var(--font-body); cursor: pointer; border: none; }
 input, select { font-family: var(--font-body); }
+a { text-decoration: none; color: inherit; }
 
-/* ── Floating Nav ── */
+/* ═══ TOP NAV (glass) ═══ */
 .nav {
   position: fixed; top: 0; left: 0; right: 0; z-index: 100;
   display: flex; align-items: center; justify-content: space-between;
-  padding: 16px 24px;
-  background: rgba(255,248,245,0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  padding: 14px 20px; height: var(--nav-h);
+  background: var(--glass); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+  border-bottom: 1px solid var(--glass-border);
   transition: box-shadow 0.3s;
 }
-.nav.scrolled { box-shadow: 0 1px 20px rgba(0,0,0,0.06); }
+.nav.scrolled { box-shadow: var(--shadow-sm); }
 .nav-logo {
-  font-family: var(--font-display); font-size: 20px; font-weight: 700;
-  color: var(--charcoal); text-decoration: none; display: flex; align-items: center; gap: 6px;
+  font-family: var(--font-display); font-size: 18px; font-weight: 700;
+  color: var(--charcoal); display: flex; align-items: center; gap: 5px;
 }
-.nav-logo span { color: var(--gold); font-size: 18px; }
-.nav-links { display: flex; gap: 8px; }
-.nav-links a {
-  font-size: 13px; font-weight: 600; color: var(--charcoal); text-decoration: none;
-  padding: 8px 16px; border-radius: 20px; transition: all 0.2s;
+.nav-logo span { color: var(--gold); }
+.nav-right { display: flex; gap: 6px; align-items: center; }
+.nav-btn {
+  font-size: 12px; font-weight: 700; padding: 8px 14px; border-radius: 20px;
+  transition: all 0.2s; background: transparent; color: var(--charcoal);
 }
-.nav-links a:hover { background: var(--pink); }
-.nav-links a.cta {
-  background: var(--charcoal); color: var(--white); border-radius: 20px;
+.nav-btn:hover { background: var(--pink); }
+.nav-btn.primary { background: var(--charcoal); color: var(--white); }
+.nav-btn.primary:hover { background: var(--gold); }
+.nav-user {
+  width: 32px; height: 32px; border-radius: 50%; object-fit: cover;
+  border: 2px solid var(--gold); cursor: pointer; display: none;
 }
-.nav-links a.cta:hover { background: var(--gold); }
 
-/* ── Hero: Voice-First ── */
+/* ═══ BOTTOM TAB BAR ═══ */
+.bottom-bar {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
+  height: calc(var(--bottom-h) + var(--safe-bottom));
+  padding-bottom: var(--safe-bottom);
+  background: var(--glass); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+  border-top: 1px solid var(--glass-border);
+  display: flex; justify-content: space-around; align-items: center;
+}
+.tab-btn {
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  background: none; color: var(--gray); font-size: 10px; font-weight: 700;
+  padding: 8px 16px; border-radius: 12px; transition: all 0.2s;
+  letter-spacing: 0.3px;
+}
+.tab-btn.active { color: var(--gold); }
+.tab-btn svg { width: 22px; height: 22px; fill: currentColor; }
+.tab-btn:active { transform: scale(0.92); }
+
+/* ═══ PROFILE HERO ═══ */
 .hero {
   min-height: 100vh; min-height: 100dvh;
   display: flex; flex-direction: column; align-items: center; justify-content: center;
-  padding: 100px 24px 40px; text-align: center; position: relative;
-  background: linear-gradient(180deg, var(--warm) 0%, var(--pink) 60%, var(--pink-deep) 100%);
-  overflow: hidden;
+  padding: calc(var(--nav-h) + 20px) 24px 40px; text-align: center;
+  background: linear-gradient(180deg, var(--warm) 0%, var(--pink) 55%, var(--pink-deep) 100%);
+  position: relative; overflow: hidden;
 }
 .hero::before {
   content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
@@ -65,22 +99,20 @@ input, select { font-family: var(--font-body); }
   animation: shimmer 8s ease-in-out infinite;
 }
 @keyframes shimmer {
-  0%, 100% { transform: scale(1) rotate(0deg); opacity: 0.6; }
-  50% { transform: scale(1.1) rotate(3deg); opacity: 1; }
+  0%, 100% { transform: scale(1); opacity: 0.6; }
+  50% { transform: scale(1.1) rotate(2deg); opacity: 1; }
 }
 
 .avatar-wrap {
-  position: relative; z-index: 2; margin-bottom: 28px; cursor: pointer;
+  position: relative; z-index: 2; margin-bottom: 20px; cursor: pointer;
   -webkit-tap-highlight-color: transparent;
 }
 .avatar-ring {
-  width: 180px; height: 180px; border-radius: 50%;
-  padding: 4px;
+  width: 160px; height: 160px; border-radius: 50%; padding: 3px;
   background: linear-gradient(135deg, var(--gold), var(--gold-light), var(--gold));
   box-shadow: 0 8px 40px rgba(212,168,83,0.3);
   animation: pulse-ring 3s ease-in-out infinite;
-  transition: all 0.4s ease;
-  position: relative;
+  transition: all 0.4s ease; position: relative;
 }
 @keyframes pulse-ring {
   0%, 100% { box-shadow: 0 8px 40px rgba(212,168,83,0.3); }
@@ -90,19 +122,15 @@ input, select { font-family: var(--font-body); }
   width: 100%; height: 100%; border-radius: 50%; object-fit: cover;
   border: 3px solid var(--white);
 }
-
-/* ── Voice-active avatar states ── */
 .avatar-wrap.voice-active .avatar-ring {
   animation: voice-ring 1.5s ease-in-out infinite;
 }
 @keyframes voice-ring {
-  0%, 100% { box-shadow: 0 0 30px rgba(212,168,83,0.5), 0 0 0 0px rgba(212,168,83,0.3); }
+  0%, 100% { box-shadow: 0 0 30px rgba(212,168,83,0.5), 0 0 0 0 rgba(212,168,83,0.3); }
   50% { box-shadow: 0 0 50px rgba(212,168,83,0.7), 0 0 0 14px rgba(212,168,83,0.15); }
 }
-
-/* Sound wave rings behind avatar when active */
 .avatar-wave {
-  position: absolute; top: 50%; left: 50%; width: 180px; height: 180px;
+  position: absolute; top: 50%; left: 50%; width: 160px; height: 160px;
   border-radius: 50%; transform: translate(-50%, -50%);
   pointer-events: none; opacity: 0; transition: opacity 0.4s;
 }
@@ -115,426 +143,669 @@ input, select { font-family: var(--font-body); }
 .avatar-wave::after { animation-delay: 1s; }
 @keyframes wave-expand {
   0% { transform: scale(1); opacity: 0.6; }
-  100% { transform: scale(1.5); opacity: 0; }
+  100% { transform: scale(1.6); opacity: 0; }
 }
-
-/* Status label below avatar */
 .avatar-status {
-  position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%);
+  position: absolute; bottom: -6px; left: 50%; transform: translateX(-50%);
   background: var(--charcoal); color: var(--white);
-  font-size: 11px; font-weight: 700; letter-spacing: 0.5px;
-  padding: 5px 14px; border-radius: 20px;
-  white-space: nowrap; transition: all 0.3s;
-  box-shadow: 0 3px 12px rgba(0,0,0,0.2);
+  font-size: 11px; font-weight: 700; letter-spacing: 0.3px;
+  padding: 5px 14px; border-radius: 20px; white-space: nowrap;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.2); transition: all 0.3s;
 }
-.avatar-wrap.voice-active .avatar-status {
-  background: var(--gold);
-}
+.avatar-wrap.voice-active .avatar-status { background: var(--gold); }
 
-.hero-title {
-  font-family: var(--font-display); font-size: 44px; font-weight: 800;
+.profile-name {
+  font-family: var(--font-display); font-size: 36px; font-weight: 800;
   color: var(--charcoal); z-index: 2; position: relative; line-height: 1.1;
 }
-.hero-title em { font-style: normal; color: var(--gold); }
-.hero-sub {
-  font-size: 16px; color: #666; margin-top: 12px; z-index: 2; position: relative;
-  max-width: 320px; line-height: 1.5;
+.profile-name em { font-style: normal; color: var(--gold); }
+.profile-verified {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 13px; font-weight: 700; color: var(--green); margin-top: 4px; z-index: 2;
+}
+.profile-verified svg { width: 14px; height: 14px; fill: var(--green); }
+.profile-bio {
+  font-size: 14px; color: #777; margin-top: 8px; z-index: 2; position: relative;
+  max-width: 300px; line-height: 1.5;
 }
 
-/* ── Voice CTA ── */
-.voice-cta {
-  margin-top: 32px; z-index: 2; position: relative;
+/* Stats row */
+.stats-row {
+  display: flex; gap: 24px; margin-top: 20px; z-index: 2; position: relative;
 }
-.voice-btn {
-  display: flex; align-items: center; gap: 12px;
+.stat-item { text-align: center; }
+.stat-num {
+  font-family: var(--font-display); font-size: 24px; font-weight: 800; color: var(--charcoal);
+}
+.stat-label { font-size: 11px; font-weight: 700; color: var(--gray); text-transform: uppercase; letter-spacing: 0.5px; }
+
+/* Hero actions */
+.hero-actions {
+  display: flex; gap: 10px; margin-top: 24px; z-index: 2; position: relative;
+}
+.action-btn {
+  display: flex; align-items: center; gap: 8px;
+  padding: 14px 28px; border-radius: 50px; font-size: 15px; font-weight: 700;
+  transition: all 0.3s ease; position: relative; overflow: hidden;
+}
+.action-btn.primary {
   background: var(--charcoal); color: var(--white);
-  padding: 16px 36px; border-radius: 60px;
-  font-size: 17px; font-weight: 700; letter-spacing: 0.3px;
-  box-shadow: 0 6px 30px rgba(0,0,0,0.2);
-  transition: all 0.3s ease;
-  position: relative; overflow: hidden;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.2);
 }
-.voice-btn::before {
-  content: ''; position: absolute; inset: -2px;
-  background: linear-gradient(135deg, var(--gold), var(--gold-light), var(--gold));
-  border-radius: 62px; z-index: -1; opacity: 0; transition: opacity 0.3s;
+.action-btn.primary:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0,0,0,0.25); }
+.action-btn.primary:active { transform: scale(0.97); }
+.action-btn.secondary {
+  background: var(--white); color: var(--charcoal);
+  box-shadow: var(--shadow-md);
 }
-.voice-btn:hover::before { opacity: 1; }
-.voice-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 40px rgba(0,0,0,0.25); }
-.voice-btn:active { transform: scale(0.97); }
-.voice-btn .mic-icon {
-  width: 22px; height: 22px;
-  background: var(--gold); border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
+.action-btn.secondary:hover { background: var(--pink); }
+.action-btn .mic-dot {
+  width: 10px; height: 10px; border-radius: 50%; background: var(--gold);
   animation: mic-pulse 2s ease-in-out infinite;
 }
 @keyframes mic-pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.15); }
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.3); opacity: 0.7; }
 }
-.voice-btn .mic-icon svg { width: 12px; height: 12px; fill: var(--white); }
 
 .hero-badges {
-  display: flex; gap: 16px; margin-top: 24px; z-index: 2; position: relative;
-  font-size: 12px; font-weight: 600; color: var(--gray);
+  display: flex; gap: 12px; margin-top: 16px; z-index: 2; position: relative;
+  font-size: 11px; font-weight: 600; color: var(--gray); flex-wrap: wrap; justify-content: center;
 }
 .hero-badges .badge { display: flex; align-items: center; gap: 4px; }
-.hero-badges .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); }
+.hero-badges .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--green); }
 
-/* ── Section Shared ── */
-.section {
-  padding: 60px 24px; max-width: 600px; margin: 0 auto;
-}
+/* ═══ SECTION SHARED ═══ */
+.section { padding: 48px 20px; max-width: 600px; margin: 0 auto; }
+.section-header { margin-bottom: 20px; }
 .section-label {
-  font-size: 11px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase;
-  color: var(--gold); margin-bottom: 8px;
+  font-size: 10px; font-weight: 800; letter-spacing: 2.5px; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 6px;
 }
 .section-title {
-  font-family: var(--font-display); font-size: 28px; font-weight: 700;
+  font-family: var(--font-display); font-size: 26px; font-weight: 700;
   color: var(--charcoal); line-height: 1.2;
 }
+.section-sub { font-size: 13px; color: var(--gray); margin-top: 4px; line-height: 1.5; }
 
-/* ── Availability Strip ── */
-.avail-section {
-  padding: 48px 0 48px; background: var(--white);
-  border-top: 1px solid rgba(0,0,0,0.04);
+/* ═══ POPPY'S WORLD — CONTENT FEED ═══ */
+.feed-section { background: var(--white); padding: 48px 0; }
+.feed-header { padding: 0 20px 20px; max-width: 600px; margin: 0 auto; }
+.feed-scroll {
+  display: flex; gap: 14px; overflow-x: auto; scroll-snap-type: x mandatory;
+  padding: 0 20px 16px; -webkit-overflow-scrolling: touch; scrollbar-width: none;
 }
-.avail-header {
-  padding: 0 24px 24px; max-width: 600px; margin: 0 auto;
+.feed-scroll::-webkit-scrollbar { display: none; }
+
+.tip-card {
+  scroll-snap-align: start; flex-shrink: 0; width: 260px;
+  background: var(--warm); border-radius: 20px; padding: 24px 20px;
+  position: relative; overflow: hidden;
+  border: 1px solid rgba(0,0,0,0.04);
+  transition: transform 0.2s, box-shadow 0.2s;
 }
-.date-strip-wrap {
-  position: relative;
+.tip-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+.tip-card .tip-category {
+  font-size: 9px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 10px;
 }
+.tip-card .tip-icon { font-size: 28px; margin-bottom: 10px; }
+.tip-card .tip-title {
+  font-family: var(--font-display); font-size: 18px; font-weight: 700;
+  line-height: 1.3; margin-bottom: 8px;
+}
+.tip-card .tip-body { font-size: 13px; color: #666; line-height: 1.6; }
+.tip-card .tip-share {
+  margin-top: 16px; display: flex; align-items: center; gap: 6px;
+  font-size: 12px; font-weight: 700; color: var(--gold);
+  background: none; padding: 8px 14px; border-radius: 20px;
+  border: 1.5px solid var(--gold); transition: all 0.2s;
+}
+.tip-card .tip-share:hover { background: var(--gold); color: var(--white); }
+
+.tip-card.ask-card {
+  background: linear-gradient(135deg, var(--charcoal), #4a4a4a);
+  color: var(--white);
+}
+.tip-card.ask-card .tip-category { color: var(--gold-light); }
+.tip-card.ask-card .tip-body { color: rgba(255,255,255,0.7); }
+.tip-card.ask-card .tip-share {
+  border-color: var(--gold); color: var(--gold);
+}
+.tip-card.ask-card .tip-share:hover { background: var(--gold); color: var(--charcoal); }
+
+/* ═══ CALENDAR / BOOKING ═══ */
+.avail-section { padding: 48px 0; background: var(--warm); border-top: 1px solid rgba(0,0,0,0.04); }
+.avail-header { padding: 0 20px 20px; max-width: 600px; margin: 0 auto; }
 .date-strip {
-  display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory;
-  padding: 4px 24px 16px; -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
+  display: flex; gap: 10px; overflow-x: auto; scroll-snap-type: x mandatory;
+  padding: 4px 20px 16px; -webkit-overflow-scrolling: touch; scrollbar-width: none;
 }
 .date-strip::-webkit-scrollbar { display: none; }
 .day-pill {
-  scroll-snap-align: start; flex-shrink: 0;
-  width: 62px; padding: 14px 0; border-radius: 20px;
-  display: flex; flex-direction: column; align-items: center; gap: 6px;
-  background: var(--warm); border: 2px solid transparent;
+  scroll-snap-align: start; flex-shrink: 0; width: 56px; padding: 12px 0;
+  border-radius: 18px; display: flex; flex-direction: column; align-items: center; gap: 4px;
+  background: var(--white); border: 2px solid transparent;
   transition: all 0.25s ease; cursor: pointer;
   -webkit-tap-highlight-color: transparent;
 }
 .day-pill:hover { border-color: var(--gold); }
-.day-pill.available { background: var(--white); border-color: rgba(212,168,83,0.3); }
+.day-pill.available { border-color: rgba(212,168,83,0.3); }
 .day-pill.selected { background: var(--charcoal); border-color: var(--charcoal); }
 .day-pill.selected .day-name, .day-pill.selected .day-num { color: var(--white); }
 .day-pill.selected .avail-dot { background: var(--gold-light); }
 .day-name {
-  font-size: 10px; font-weight: 700; text-transform: uppercase;
-  letter-spacing: 1px; color: var(--gray);
+  font-size: 9px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.8px; color: var(--gray);
 }
-.day-num { font-size: 20px; font-weight: 800; color: var(--charcoal); }
-.avail-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); }
-.unavail-dot { width: 6px; height: 6px; border-radius: 50%; background: transparent; }
+.day-num { font-size: 18px; font-weight: 800; color: var(--charcoal); }
+.avail-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--green); }
+.unavail-dot { width: 5px; height: 5px; border-radius: 50%; background: transparent; }
 
-/* ── Booking Sheet ── */
+/* Booking Sheet */
 .book-sheet {
   max-height: 0; overflow: hidden; transition: max-height 0.4s ease, padding 0.4s ease;
-  background: var(--white); max-width: 600px; margin: 0 auto;
+  background: var(--white); border-radius: 20px; max-width: 560px; margin: 0 auto;
+  box-shadow: var(--shadow-md);
 }
-.book-sheet.open { max-height: 800px; padding: 0 24px 32px; }
-.book-sheet-inner { padding-top: 16px; }
+.book-sheet.open { max-height: 600px; padding: 24px; margin-top: 16px; }
 .book-date-label {
-  font-family: var(--font-display); font-size: 20px; font-weight: 700; margin-bottom: 20px;
+  font-family: var(--font-display); font-size: 18px; font-weight: 700; margin-bottom: 16px;
 }
-.time-slot-row {
-  display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px;
+.book-rate {
+  font-size: 13px; color: var(--gold); font-weight: 700; margin-bottom: 16px;
+  display: flex; align-items: center; gap: 6px;
 }
-.time-chip {
-  padding: 10px 18px; border-radius: 12px; font-size: 13px; font-weight: 700;
-  background: var(--warm); color: var(--charcoal); border: 2px solid transparent;
-  transition: all 0.2s; cursor: pointer;
-}
-.time-chip:hover, .time-chip.selected { border-color: var(--gold); background: rgba(212,168,83,0.1); }
 
-.pkg-cards { display: flex; gap: 10px; margin-bottom: 20px; }
-.pkg-card {
-  flex: 1; padding: 16px 12px; border-radius: 16px; text-align: center;
-  background: var(--warm); border: 2px solid transparent;
-  cursor: pointer; transition: all 0.2s;
+/* Auth-aware booking */
+.book-signed-in { display: none; }
+.book-signed-in .signed-in-greeting {
+  display: flex; align-items: center; gap: 12px;
+  padding: 14px 16px; background: var(--warm); border-radius: 14px; margin-bottom: 16px;
 }
-.pkg-card:hover, .pkg-card.selected { border-color: var(--gold); background: rgba(212,168,83,0.08); }
-.pkg-card .pkg-name { font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: var(--gold); }
-.pkg-card .pkg-hours { font-size: 13px; color: var(--gray); margin-top: 4px; }
-.pkg-card .pkg-price { font-size: 22px; font-weight: 800; margin-top: 8px; }
+.signed-in-greeting img {
+  width: 36px; height: 36px; border-radius: 50%; object-fit: cover;
+}
+.signed-in-greeting .greeting-text { font-size: 14px; font-weight: 600; }
+.signed-in-greeting .greeting-sub { font-size: 12px; color: var(--gray); }
 
-.form-row { display: flex; gap: 10px; margin-bottom: 12px; }
-.form-row input {
-  flex: 1; padding: 14px 16px; border-radius: 12px;
-  border: 2px solid #eee; font-size: 15px; background: var(--white);
-  transition: border-color 0.2s; outline: none;
+.book-guest .form-row { display: flex; gap: 8px; margin-bottom: 10px; }
+.book-guest .form-row input {
+  flex: 1; padding: 13px 16px; border-radius: 12px; border: 2px solid #eee;
+  font-size: 14px; background: var(--white); transition: border-color 0.2s; outline: none;
 }
-.form-row input:focus { border-color: var(--gold); }
+.book-guest .form-row input:focus { border-color: var(--gold); }
+
+.google-signin-row {
+  display: flex; align-items: center; gap: 12px; margin-bottom: 16px;
+}
+.google-btn {
+  display: flex; align-items: center; gap: 8px;
+  padding: 12px 20px; border-radius: 12px; font-size: 13px; font-weight: 700;
+  background: var(--white); border: 2px solid #eee; color: var(--charcoal);
+  transition: all 0.2s; flex: 1; justify-content: center;
+}
+.google-btn:hover { border-color: var(--gold); background: rgba(212,168,83,0.05); }
+.google-btn svg { width: 18px; height: 18px; }
+.or-divider { font-size: 12px; color: var(--gray); font-weight: 700; }
 
 .book-btn {
-  width: 100%; padding: 16px; border-radius: 16px; font-size: 16px; font-weight: 700;
-  background: var(--charcoal); color: var(--white);
-  transition: all 0.2s;
+  width: 100%; padding: 15px; border-radius: 14px; font-size: 15px; font-weight: 700;
+  background: var(--charcoal); color: var(--white); transition: all 0.2s;
 }
 .book-btn:hover { background: var(--gold); }
 .book-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-
 .book-msg {
   margin-top: 12px; padding: 12px 16px; border-radius: 12px;
-  font-size: 14px; font-weight: 600; text-align: center; display: none;
+  font-size: 13px; font-weight: 600; text-align: center; display: none;
 }
 .book-msg.success { display: block; background: #e8f5e9; color: #2e7d32; }
 .book-msg.error { display: block; background: #fce4ec; color: #c62828; }
 
-/* ── About ── */
-.about-section { background: var(--white); }
-.about-grid {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 24px;
+/* ═══ REVIEWS ═══ */
+.reviews-section { background: var(--white); }
+.reviews-scroll {
+  display: flex; gap: 14px; overflow-x: auto; scroll-snap-type: x mandatory;
+  padding: 0 20px 16px; scrollbar-width: none;
+  margin-top: 20px;
 }
-.about-card {
-  padding: 20px; border-radius: 16px; background: var(--warm);
+.reviews-scroll::-webkit-scrollbar { display: none; }
+.review-card {
+  scroll-snap-align: start; flex-shrink: 0; width: 240px;
+  background: var(--warm); border-radius: 18px; padding: 22px 18px;
+  border: 1px solid rgba(0,0,0,0.04);
 }
-.about-card .card-icon { font-size: 24px; margin-bottom: 8px; }
-.about-card .card-title { font-size: 14px; font-weight: 800; margin-bottom: 4px; }
-.about-card .card-desc { font-size: 12px; color: #888; line-height: 1.4; }
-.about-bio {
-  font-size: 15px; line-height: 1.7; color: #555; margin-top: 20px;
+.review-stars { color: var(--gold); font-size: 14px; letter-spacing: 2px; margin-bottom: 10px; }
+.review-text { font-size: 13px; color: #555; line-height: 1.6; font-style: italic; }
+.review-author { margin-top: 14px; font-size: 12px; font-weight: 700; color: var(--charcoal); }
+.review-kids { font-size: 11px; color: var(--gray); }
+
+/* ═══ SITTERS NETWORK ═══ */
+.sitters-section { background: var(--warm); }
+.sitter-card {
+  background: var(--white); border-radius: 20px; padding: 24px; margin-top: 20px;
+  box-shadow: var(--shadow-sm); display: flex; gap: 16px; align-items: center;
+}
+.sitter-card img {
+  width: 64px; height: 64px; border-radius: 50%; object-fit: cover;
+  border: 2px solid var(--gold);
+}
+.sitter-info { flex: 1; }
+.sitter-name { font-size: 16px; font-weight: 800; }
+.sitter-detail { font-size: 12px; color: var(--gray); margin-top: 2px; }
+.sitter-badges {
+  display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap;
+}
+.sitter-badge {
+  font-size: 10px; font-weight: 700; padding: 4px 10px; border-radius: 20px;
+  background: rgba(212,168,83,0.12); color: var(--gold);
+}
+.sitter-rate {
+  font-family: var(--font-display); font-size: 22px; font-weight: 800;
+  text-align: right;
+}
+.sitter-rate span { font-size: 12px; font-weight: 600; color: var(--gray); display: block; }
+
+.add-sitter-card {
+  background: var(--white); border-radius: 20px; padding: 24px; margin-top: 12px;
+  box-shadow: var(--shadow-sm); text-align: center;
+  border: 2px dashed rgba(212,168,83,0.3); cursor: pointer;
+  transition: all 0.2s;
+}
+.add-sitter-card:hover { border-color: var(--gold); background: rgba(212,168,83,0.04); }
+.add-sitter-card .add-icon {
+  width: 48px; height: 48px; border-radius: 50%; background: var(--warm);
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 24px; color: var(--gold); margin-bottom: 8px;
+}
+.add-sitter-card .add-title { font-size: 14px; font-weight: 700; }
+.add-sitter-card .add-sub { font-size: 12px; color: var(--gray); margin-top: 4px; }
+
+/* ═══ SHARE / INVITE ═══ */
+.share-section {
+  background: linear-gradient(135deg, var(--charcoal) 0%, #4a4a4a 100%);
+  color: var(--white);
+}
+.share-section .section-label { color: var(--gold-light); }
+.share-section .section-title { color: var(--white); }
+.share-section .section-sub { color: rgba(255,255,255,0.6); }
+
+.invite-preview {
+  background: rgba(255,255,255,0.08); border-radius: 20px; padding: 24px;
+  margin-top: 24px; text-align: center; border: 1px solid rgba(255,255,255,0.1);
+}
+.invite-preview .invite-emoji { font-size: 32px; margin-bottom: 8px; }
+.invite-preview .invite-title {
+  font-family: var(--font-display); font-size: 18px; font-weight: 700;
+}
+.invite-preview .invite-body {
+  font-size: 13px; color: rgba(255,255,255,0.6); margin-top: 6px; line-height: 1.5;
+}
+.invite-preview .invite-url {
+  font-size: 12px; color: var(--gold-light); margin-top: 12px;
+  padding: 8px 16px; background: rgba(255,255,255,0.06); border-radius: 8px;
+  display: inline-block; font-weight: 600;
 }
 
-/* ── Pricing ── */
-.pricing-section { background: var(--warm); }
-.pricing-scroll {
-  display: flex; gap: 16px; overflow-x: auto; padding: 24px 0 8px;
-  scroll-snap-type: x mandatory; scrollbar-width: none;
+.share-actions {
+  display: flex; gap: 10px; margin-top: 20px; justify-content: center;
 }
-.pricing-scroll::-webkit-scrollbar { display: none; }
-.price-card {
-  scroll-snap-align: start; flex-shrink: 0; width: 200px;
-  background: var(--white); border-radius: 20px; padding: 28px 20px;
-  text-align: center; box-shadow: 0 4px 20px rgba(0,0,0,0.04);
-  border: 2px solid transparent; transition: all 0.25s;
+.share-btn {
+  display: flex; align-items: center; gap: 8px;
+  padding: 14px 24px; border-radius: 14px; font-size: 14px; font-weight: 700;
+  transition: all 0.2s;
 }
-.price-card:hover { border-color: var(--gold); transform: translateY(-4px); box-shadow: 0 8px 30px rgba(0,0,0,0.08); }
-.price-card.featured { border-color: var(--gold); position: relative; }
-.price-card.featured::after {
-  content: 'Popular'; position: absolute; top: -10px; right: 16px;
-  background: var(--gold); color: var(--white); font-size: 10px; font-weight: 800;
-  padding: 4px 10px; border-radius: 8px; letter-spacing: 0.5px;
+.share-btn.text-share {
+  background: var(--gold); color: var(--charcoal);
 }
-.price-card .price-icon { font-size: 28px; margin-bottom: 12px; }
-.price-card .price-name { font-size: 16px; font-weight: 800; }
-.price-card .price-range { font-size: 12px; color: var(--gray); margin-top: 4px; }
-.price-card .price-amount {
-  font-family: var(--font-display); font-size: 32px; font-weight: 800;
-  margin-top: 16px; color: var(--charcoal);
+.share-btn.text-share:hover { background: var(--gold-light); }
+.share-btn.copy-share {
+  background: rgba(255,255,255,0.1); color: var(--white);
+  border: 1px solid rgba(255,255,255,0.2);
 }
-.price-card .price-rate { font-size: 12px; color: var(--gold); font-weight: 700; }
-.price-card .price-book {
-  margin-top: 16px; padding: 10px 24px; border-radius: 12px;
-  background: var(--charcoal); color: var(--white); font-size: 13px; font-weight: 700;
-  transition: background 0.2s; display: inline-block; text-decoration: none;
-}
-.price-card .price-book:hover { background: var(--gold); }
+.share-btn.copy-share:hover { background: rgba(255,255,255,0.15); }
 
-/* ── Footer ── */
+/* ═══ PRICING ═══ */
+.pricing-section { background: var(--white); }
+.price-spotlight {
+  text-align: center; margin-top: 24px;
+  background: var(--warm); border-radius: 24px; padding: 36px 32px;
+}
+.price-amount {
+  font-family: var(--font-display); font-size: 52px; font-weight: 800;
+  color: var(--charcoal); line-height: 1;
+}
+.price-note { font-size: 14px; font-weight: 700; color: var(--gold); margin-top: 4px; }
+.price-details { font-size: 12px; color: var(--gray); margin-top: 16px; line-height: 1.7; }
+
+/* ═══ FOOTER ═══ */
 .footer {
-  text-align: center; padding: 40px 24px calc(32px + var(--safe-bottom));
-  font-size: 13px; color: var(--gray);
+  text-align: center; padding: 32px 20px 16px; font-size: 12px; color: var(--gray);
+  background: var(--warm);
 }
-.footer a { color: var(--gold); text-decoration: none; }
+.footer a { color: var(--gold); }
 
-/* ── Admin Dashboard ── */
-.dashboard { display: none; padding: 80px 24px 40px; max-width: 600px; margin: 0 auto; }
+/* ═══ AUTH MODAL ═══ */
+.auth-overlay {
+  position: fixed; inset: 0; z-index: 300; background: rgba(0,0,0,0.5);
+  display: none; align-items: flex-end; justify-content: center;
+  backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+}
+.auth-overlay.show { display: flex; }
+.auth-sheet {
+  background: var(--white); border-radius: 24px 24px 0 0; padding: 32px 24px calc(24px + var(--safe-bottom));
+  width: 100%; max-width: 440px;
+  animation: sheet-up 0.35s ease-out;
+}
+@keyframes sheet-up {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+.auth-sheet h2 {
+  font-family: var(--font-display); font-size: 24px; font-weight: 700; margin-bottom: 8px;
+}
+.auth-sheet p { font-size: 14px; color: var(--gray); margin-bottom: 24px; line-height: 1.5; }
+.auth-google-btn {
+  width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px;
+  padding: 16px; border-radius: 14px; font-size: 16px; font-weight: 700;
+  background: var(--white); border: 2px solid #ddd; color: var(--charcoal);
+  transition: all 0.2s; margin-bottom: 12px;
+}
+.auth-google-btn:hover { border-color: var(--gold); box-shadow: var(--shadow-md); }
+.auth-google-btn svg { width: 20px; height: 20px; }
+.auth-skip {
+  width: 100%; text-align: center; padding: 12px;
+  font-size: 13px; font-weight: 600; color: var(--gray);
+  background: none; transition: color 0.2s;
+}
+.auth-skip:hover { color: var(--charcoal); }
+
+/* ═══ ADMIN DASHBOARD ═══ */
+.dashboard { display: none; padding: 80px 20px 40px; max-width: 600px; margin: 0 auto; }
 .dashboard.active { display: block; }
 .dash-section { margin-bottom: 32px; }
-.dash-section h3 { font-family: var(--font-display); font-size: 20px; margin-bottom: 16px; }
+.dash-section h3 { font-family: var(--font-display); font-size: 18px; margin-bottom: 14px; }
 .dash-btn {
-  padding: 10px 20px; border-radius: 12px; font-size: 13px; font-weight: 700;
+  padding: 10px 18px; border-radius: 12px; font-size: 13px; font-weight: 700;
   background: var(--charcoal); color: var(--white); margin: 4px;
 }
 .dash-input {
   padding: 10px 14px; border: 2px solid #eee; border-radius: 10px;
-  font-size: 14px; margin: 4px; outline: none;
+  font-size: 13px; margin: 4px; outline: none;
 }
 .dash-input:focus { border-color: var(--gold); }
 #adminBookingsTable, #adminParentsTable {
-  width: 100%; font-size: 12px; border-collapse: collapse; margin-top: 12px;
+  width: 100%; font-size: 11px; border-collapse: collapse; margin-top: 12px;
 }
 #adminBookingsTable th, #adminBookingsTable td,
 #adminParentsTable th, #adminParentsTable td {
   padding: 8px; text-align: left; border-bottom: 1px solid #eee;
 }
-.admin-login { text-align: center; padding: 100px 24px; }
-.admin-login input { padding: 14px 20px; border: 2px solid #eee; border-radius: 12px; font-size: 16px; width: 240px; outline:none; }
+.admin-login { text-align: center; padding: 100px 20px; }
+.admin-login input { padding: 14px 18px; border: 2px solid #eee; border-radius: 12px; font-size: 15px; width: 220px; outline:none; }
 .admin-login input:focus { border-color: var(--gold); }
-.admin-login button { margin-top: 12px; }
 
-/* ── ElevenLabs widget — hidden, triggered via avatar ── */
+/* ═══ TOAST ═══ */
+.toast {
+  position: fixed; bottom: calc(var(--bottom-h) + 16px); left: 50%; transform: translateX(-50%) translateY(20px);
+  background: var(--charcoal); color: var(--white); padding: 12px 24px;
+  border-radius: 14px; font-size: 13px; font-weight: 600; z-index: 200;
+  opacity: 0; transition: all 0.3s ease; pointer-events: none;
+  box-shadow: var(--shadow-lg); white-space: nowrap;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ═══ ElevenLabs widget — hidden ═══ */
 elevenlabs-convai {
   position: fixed !important; bottom: -9999px !important; right: -9999px !important;
   z-index: -1 !important; opacity: 0 !important; pointer-events: none !important;
   width: 0 !important; height: 0 !important; overflow: hidden !important;
 }
 
-/* ── Toast ── */
-.toast {
-  position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%) translateY(20px);
-  background: var(--charcoal); color: var(--white); padding: 14px 28px;
-  border-radius: 16px; font-size: 14px; font-weight: 600; z-index: 200;
-  opacity: 0; transition: all 0.3s ease; pointer-events: none;
-  box-shadow: 0 8px 30px rgba(0,0,0,0.2);
-}
-.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-
-/* ── Responsive ── */
+/* ═══ RESPONSIVE ═══ */
 @media (min-width: 768px) {
-  .hero-title { font-size: 56px; }
-  .avatar-ring { width: 220px; height: 220px; }
-  .avatar-wave { width: 220px; height: 220px; }
-  .about-grid { grid-template-columns: repeat(4, 1fr); }
-  .pricing-scroll { justify-content: center; }
-  .date-strip { justify-content: center; padding: 4px 24px 16px; }
+  .profile-name { font-size: 44px; }
+  .avatar-ring { width: 200px; height: 200px; }
+  .avatar-wave { width: 200px; height: 200px; }
+  .date-strip { justify-content: center; }
+  .feed-scroll { padding: 0 calc((100% - 600px) / 2) 16px; }
+  .reviews-scroll { padding: 0 calc((100% - 600px) / 2) 16px; }
+  .bottom-bar { max-width: 480px; left: 50%; transform: translateX(-50%); border-radius: 20px 20px 0 0; }
 }
 </style>
 </head>
 <body>
 
-<!-- Nav -->
+<!-- ═══ TOP NAV ═══ -->
 <nav class="nav" id="nav">
   <a href="#" class="nav-logo"><span>&#9733;</span> Tiny Tots</a>
-  <div class="nav-links">
-    <a href="#about">About</a>
-    <a href="#avail">Schedule</a>
-    <a href="#pricing">Pricing</a>
-    <a href="#avail" class="cta">Book</a>
+  <div class="nav-right">
+    <img class="nav-user" id="navUserPic" onclick="openAuthModal()">
+    <button class="nav-btn" onclick="scrollTo('#avail')">Book</button>
+    <button class="nav-btn primary" id="navAuthBtn" onclick="openAuthModal()">Sign In</button>
   </div>
 </nav>
 
-<!-- Hero -->
+<!-- ═══ PROFILE HERO ═══ -->
 <section class="hero" id="hero">
   <div class="avatar-wrap" id="avatarWrap" onclick="toggleVoice()">
     <div class="avatar-wave"></div>
     <div class="avatar-ring">
-      <img src="poppy-photo.jpg"
-           alt="Poppy Wilbert"
+      <img src="poppy-photo.jpg" alt="Poppy Wilbert"
            onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 200 200%22><circle cx=%22100%22 cy=%22100%22 r=%22100%22 fill=%22%23F5E0DC%22/><text x=%2250%25%22 y=%2255%25%22 text-anchor=%22middle%22 font-size=%2272%22>P</text></svg>'">
     </div>
     <div class="avatar-status" id="avatarStatus">Tap to talk</div>
   </div>
 
-  <h1 class="hero-title">Ask <em>Poppy</em></h1>
-  <p class="hero-sub">Your go-to babysitter. Got kid questions? I've got answers.</p>
+  <h1 class="profile-name">Ask <em>Poppy</em></h1>
+  <div class="profile-verified">
+    <svg viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+    Red Cross Certified · Age 12
+  </div>
+  <p class="profile-bio">Your go-to babysitter. Got kid questions? I've got answers. Tap my face — let's talk.</p>
 
-  <div class="voice-cta">
-    <button class="voice-btn" id="voiceBtn" onclick="toggleVoice()">
-      <span class="mic-icon"><svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm-1-9c0-.55.45-1 1-1s1 .45 1 1v6c0 .55-.45 1-1 1s-1-.45-1-1V5zm6 6c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg></span>
+  <div class="stats-row">
+    <div class="stat-item"><div class="stat-num">47</div><div class="stat-label">Sits</div></div>
+    <div class="stat-item"><div class="stat-num">12</div><div class="stat-label">Families</div></div>
+    <div class="stat-item"><div class="stat-num">4.9</div><div class="stat-label">Rating</div></div>
+  </div>
+
+  <div class="hero-actions">
+    <button class="action-btn primary" onclick="toggleVoice()">
+      <span class="mic-dot"></span>
       <span id="voiceBtnText">Talk to Poppy</span>
     </button>
+    <button class="action-btn secondary" onclick="scrollTo('#avail')">Book Now</button>
   </div>
 
   <div class="hero-badges">
-    <div class="badge"><span class="dot"></span> Red Cross Certified</div>
+    <div class="badge"><span class="dot"></span> Available This Week</div>
     <div class="badge">&#9733; $12/hr</div>
-    <div class="badge">Ages 0–12</div>
     <div class="badge">Apple Pay or Cash</div>
   </div>
 </section>
 
-<!-- Availability Strip -->
+<!-- ═══ POPPY'S WORLD — AI CONTENT FEED ═══ -->
+<section class="feed-section" id="feed">
+  <div class="feed-header">
+    <p class="section-label">Poppy's World</p>
+    <h2 class="section-title">Tips & Tricks</h2>
+    <p class="section-sub">Parenting hacks from Poppy (and friends). Share your favorites.</p>
+  </div>
+  <div class="feed-scroll" id="feedScroll">
+    <!-- Tip cards rendered by JS -->
+  </div>
+</section>
+
+<!-- ═══ CALENDAR / BOOKING ═══ -->
 <section class="avail-section" id="avail">
   <div class="avail-header">
     <p class="section-label">Schedule</p>
     <h2 class="section-title">Pick a Day</h2>
   </div>
-  <div class="date-strip-wrap">
-    <div class="date-strip" id="dateStrip"></div>
-  </div>
-  <div class="book-sheet" id="bookSheet">
-    <div class="book-sheet-inner">
+  <div class="date-strip" id="dateStrip"></div>
+  <div style="padding: 0 20px;">
+    <div class="book-sheet" id="bookSheet">
       <p class="book-date-label" id="bookDateLabel"></p>
+      <p class="book-rate">&#9733; $12/hr &middot; Apple Pay or cash</p>
 
-      <p style="font-size:14px;color:var(--gold);font-weight:700;margin-bottom:16px;">$12/hr &middot; Apple Pay or cash</p>
+      <!-- Signed-in booking (one tap) -->
+      <div class="book-signed-in" id="bookSignedIn">
+        <div class="signed-in-greeting">
+          <img id="bookUserPic" src="" alt="">
+          <div>
+            <div class="greeting-text" id="bookUserName">Hey!</div>
+            <div class="greeting-sub">Tap below to book instantly</div>
+          </div>
+        </div>
+        <div class="form-row" style="display:flex;gap:8px;margin-bottom:10px;">
+          <input type="text" id="kidNameSigned" placeholder="Child's name" style="flex:1;padding:13px 16px;border-radius:12px;border:2px solid #eee;font-size:14px;outline:none;">
+        </div>
+        <button class="book-btn" onclick="submitBooking()">Book Poppy</button>
+      </div>
 
-      <div class="form-row">
-        <input type="text" id="parentName" placeholder="Your name" required>
-      </div>
-      <div class="form-row">
-        <input type="tel" id="parentPhone" placeholder="Phone number" required>
-        <input type="email" id="parentEmail" placeholder="Email (optional)">
-      </div>
-      <div class="form-row">
-        <input type="text" id="kidName" placeholder="Child's name" required>
+      <!-- Guest booking -->
+      <div class="book-guest" id="bookGuest">
+        <div class="google-signin-row">
+          <button class="google-btn" onclick="openAuthModal()">
+            <svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+            Continue with Google
+          </button>
+          <span class="or-divider">or</span>
+        </div>
+        <div class="form-row">
+          <input type="text" id="parentName" placeholder="Your name" required>
+        </div>
+        <div class="form-row">
+          <input type="tel" id="parentPhone" placeholder="Phone number" required>
+          <input type="email" id="parentEmail" placeholder="Email (optional)">
+        </div>
+        <div class="form-row">
+          <input type="text" id="kidName" placeholder="Child's name" required>
+        </div>
+        <button class="book-btn" onclick="submitBooking()">Book Poppy</button>
       </div>
 
-      <button class="book-btn" id="bookBtn" onclick="submitBooking()">Book This Day</button>
       <div class="book-msg" id="bookMsg"></div>
     </div>
   </div>
 </section>
 
-<!-- About -->
-<section class="section about-section" id="about">
-  <p class="section-label">About</p>
-  <h2 class="section-title">Meet Poppy</h2>
-  <p class="about-bio">
-    I'm Poppy Wilbert — 12, Red Cross certified, and obsessed with making every babysitting visit an adventure.
-    Blanket forts, art projects, outdoor expeditions, homework help, or just hanging out. I'm available evenings
-    and weekends, up to 6 hours per visit, home by 9 PM.
-  </p>
-  <div class="about-grid">
-    <div class="about-card">
-      <div class="card-icon">&#127912;</div>
-      <div class="card-title">Arts & Crafts</div>
-      <div class="card-desc">Creative projects kids actually love</div>
-    </div>
-    <div class="about-card">
-      <div class="card-icon">&#128218;</div>
-      <div class="card-title">Storytime</div>
-      <div class="card-desc">Reading and imagination games</div>
-    </div>
-    <div class="about-card">
-      <div class="card-icon">&#127795;</div>
-      <div class="card-title">Outdoors</div>
-      <div class="card-desc">Fresh air, games, adventures</div>
-    </div>
-    <div class="about-card">
-      <div class="card-icon">&#128150;</div>
-      <div class="card-title">Safe & Caring</div>
-      <div class="card-desc">Safety is always #1</div>
-    </div>
+<!-- ═══ REVIEWS ═══ -->
+<section class="section reviews-section" id="reviews">
+  <div class="section-header">
+    <p class="section-label">From Parents</p>
+    <h2 class="section-title">What Families Say</h2>
+  </div>
+  <div class="reviews-scroll" id="reviewsScroll">
+    <!-- Rendered by JS -->
   </div>
 </section>
 
-<!-- Pricing -->
+<!-- ═══ PRICING ═══ -->
 <section class="section pricing-section" id="pricing">
-  <p class="section-label">Pricing</p>
-  <h2 class="section-title">Simple & Fair</h2>
-  <div style="text-align:center;margin-top:24px;">
-    <div style="display:inline-block;background:var(--white);border-radius:24px;padding:32px 48px;box-shadow:0 4px 20px rgba(0,0,0,0.04);">
-      <p style="font-size:48px;font-family:var(--font-display);font-weight:800;color:var(--charcoal);line-height:1;">$12</p>
-      <p style="font-size:14px;font-weight:700;color:var(--gold);margin-top:4px;">per hour (my age!)</p>
-      <p style="font-size:13px;color:var(--gray);margin-top:16px;">Apple Pay via text or cash</p>
-      <p style="font-size:12px;color:var(--gray);margin-top:4px;">Tips always appreciated if she's great</p>
-      <a href="#avail" style="display:inline-block;margin-top:20px;padding:12px 32px;background:var(--charcoal);color:var(--white);border-radius:14px;font-size:14px;font-weight:700;text-decoration:none;transition:background 0.2s;">Book Poppy</a>
+  <div class="section-header">
+    <p class="section-label">Pricing</p>
+    <h2 class="section-title">Simple & Fair</h2>
+  </div>
+  <div class="price-spotlight">
+    <div class="price-amount">$12</div>
+    <div class="price-note">per hour (my age!)</div>
+    <div class="price-details">
+      Apple Pay via text or cash<br>
+      Tips always appreciated if she's great
     </div>
+    <button class="action-btn primary" style="display:inline-flex;margin-top:20px;" onclick="scrollTo('#avail')">Book Poppy</button>
   </div>
 </section>
 
-<!-- Footer -->
+<!-- ═══ SITTER NETWORK ═══ -->
+<section class="section sitters-section" id="sitters">
+  <div class="section-header">
+    <p class="section-label">The Network</p>
+    <h2 class="section-title">Tiny Tots Sitters</h2>
+    <p class="section-sub">Trusted, certified sitters you can count on.</p>
+  </div>
+  <div id="sittersList">
+    <!-- Rendered by JS -->
+  </div>
+</section>
+
+<!-- ═══ SHARE / INVITE ═══ -->
+<section class="section share-section" id="share">
+  <div class="section-header">
+    <p class="section-label">Spread the Word</p>
+    <h2 class="section-title">Know a Family<br>That Needs Poppy?</h2>
+    <p class="section-sub">Share her link. Their kids will thank you.</p>
+  </div>
+  <div class="invite-preview">
+    <div class="invite-emoji">&#128150;</div>
+    <div class="invite-title">Meet Poppy — Babysitter Extraordinaire</div>
+    <div class="invite-body">Red Cross certified, $12/hr, and she has an AI voice assistant that actually answers your parenting questions.</div>
+    <div class="invite-url" id="inviteUrl">tinytots-v2.netlify.app</div>
+  </div>
+  <div class="share-actions">
+    <button class="share-btn text-share" onclick="shareViaText()">&#128172; Text a Friend</button>
+    <button class="share-btn copy-share" onclick="copyInviteLink()">&#128203; Copy Link</button>
+  </div>
+</section>
+
+<!-- ═══ FOOTER ═══ -->
 <footer class="footer">
   <p>&copy; 2026 Tiny Tots Babysitting &middot; Made with &#10084; by Poppy</p>
-  <p style="margin-top:8px;"><a href="#/dashboard">Dashboard</a></p>
+  <p style="margin-top:6px;"><a href="#/dashboard">Dashboard</a></p>
 </footer>
 
-<!-- Admin Dashboard (hidden, hash-routed) -->
+<!-- ═══ BOTTOM TAB BAR ═══ -->
+<div class="bottom-bar">
+  <button class="tab-btn active" onclick="tabNav('hero')">
+    <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+    Home
+  </button>
+  <button class="tab-btn" onclick="tabNav('avail')">
+    <svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-2 .9-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm0 16H5V8h14v11z"/></svg>
+    Book
+  </button>
+  <button class="tab-btn" onclick="toggleVoice()">
+    <svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.91-3c-.49 0-.9.36-.96.84C16.6 14.59 14.53 16.5 12 16.5s-4.6-1.91-4.95-4.66A.96.96 0 006.09 11c-.61 0-1.09.54-1 1.14.49 3 2.89 5.35 5.91 5.78V21h2v-3.08c3.02-.43 5.42-2.78 5.91-5.78.1-.6-.39-1.14-1-1.14z"/></svg>
+    Ask
+  </button>
+  <button class="tab-btn" onclick="tabNav('share')">
+    <svg viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/></svg>
+    Invite
+  </button>
+</div>
+
+<!-- ═══ AUTH MODAL ═══ -->
+<div class="auth-overlay" id="authOverlay" onclick="if(event.target===this)closeAuthModal()">
+  <div class="auth-sheet">
+    <h2>Join Poppy's Network</h2>
+    <p>Sign in once and book with one tap every time. Your info stays on file so you never fill forms again.</p>
+    <button class="auth-google-btn" onclick="signInWithGoogle()">
+      <svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+      Continue with Google
+    </button>
+    <button class="auth-skip" onclick="closeAuthModal()">Maybe later</button>
+  </div>
+</div>
+
+<!-- ═══ ADMIN DASHBOARD ═══ -->
 <div class="dashboard" id="dashboard">
   <div class="admin-login" id="adminLogin">
     <h2 style="font-family:var(--font-display);margin-bottom:20px;">Poppy's Dashboard</h2>
     <input type="password" id="adminPass" placeholder="Password" onkeydown="if(event.key==='Enter')adminAuth()">
-    <br><button class="dash-btn" onclick="adminAuth()">Enter</button>
+    <br><button class="dash-btn" style="margin-top:12px;" onclick="adminAuth()">Enter</button>
   </div>
   <div id="adminPanel" style="display:none;">
     <h2 style="font-family:var(--font-display);margin-bottom:24px;">Dashboard</h2>
+    <div class="dash-section">
+      <h3>Add a Sitter</h3>
+      <input class="dash-input" type="text" id="sitterName" placeholder="Sitter name">
+      <input class="dash-input" type="number" id="sitterAge" placeholder="Age">
+      <input class="dash-input" type="number" id="sitterRate" placeholder="$/hr" value="12">
+      <button class="dash-btn" onclick="addSitter()">Add to Network</button>
+      <div id="sitterAdminList" style="margin-top:12px;"></div>
+    </div>
     <div class="dash-section">
       <h3>Set Availability</h3>
       <input class="dash-input" type="date" id="availDate">
@@ -551,36 +822,252 @@ elevenlabs-convai {
       <h3>Parents</h3>
       <table id="adminParentsTable"></table>
     </div>
+    <div class="dash-section">
+      <h3>Invite Parents via Text</h3>
+      <input class="dash-input" type="tel" id="invitePhone" placeholder="Parent's phone number">
+      <input class="dash-input" type="text" id="inviteParentName" placeholder="Parent's name">
+      <button class="dash-btn" onclick="sendParentInvite()">Send Invite</button>
+    </div>
   </div>
 </div>
 
-<!-- Toast -->
+<!-- ═══ TOAST ═══ -->
 <div class="toast" id="toast"></div>
 
-<!-- Supabase -->
+<!-- ═══ SUPABASE ═══ -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-/* ── Config ── */
+/* ═══ CONFIG ═══ */
 const SUPABASE_URL = 'https://udhgdtiezzzudczckaaw.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVkaGdkdGllenp6dWRjemNrYWF3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA1NDcwNzIsImV4cCI6MjEwNjEyMzA3Mn0.sg5CssfPktk11ytdaPJpWyfQj7JvVdxIKdVvITA_X18';
 const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+/* ═══ STATE ═══ */
+let currentUser = null;
 let availabilityData = {};
 let selectedDate = null;
+let voiceActive = false;
 
-/* ── Nav scroll effect ── */
-window.addEventListener('scroll', () => {
-  document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 20);
-});
+/* ═══ SITTER DATA ═══ */
+const sitters = [
+  {
+    name: 'Poppy Wilbert', age: 12, slug: 'poppy', photo: 'poppy-photo.jpg',
+    bio: 'Arts & crafts, outdoor adventures, blanket fort architect',
+    rate: 12, certs: ['Red Cross', 'First Aid'],
+    stats: { sits: 47, families: 12, rating: 4.9 },
+    schedule: { 2: '3:45–8 PM', 4: '3:45–8 PM', 6: '4–11 PM' }
+  }
+];
 
-/* ── Date Strip ── */
+/* ═══ CONTENT FEED (Claude-powered, delivered as Poppy) ═══ */
+const tips = [
+  {
+    icon: '🧠', category: 'Behavior', title: 'The 5-Minute Warning',
+    body: 'Always give kids a 5-minute heads up before any transition — leaving the park, dinner time, bedtime. It cuts meltdowns dramatically because they feel in control.',
+  },
+  {
+    icon: '🏰', category: 'Activities', title: 'The Ultimate Blanket Fort',
+    body: 'Pro tip: use binder clips on chair backs to hold sheets. Add fairy lights, a stack of books, and declare it a "reading kingdom." Works every single time.',
+  },
+  {
+    icon: '✨', category: 'Behavior', title: "Say 'Let's' Not 'Don't'",
+    body: '"Don\'t run" becomes "Let\'s walk like astronauts on the moon!" Positive redirects work 3x better because kids hear what TO do instead of what not to.',
+  },
+  {
+    icon: '📚', category: 'Bedtime', title: 'The 3-Book Rule',
+    body: 'Let them pick exactly 3 books. They feel in charge of the choice, you control the time. After book 3: lights out, no negotiations. Routine = magic.',
+  },
+  {
+    icon: '🌿', category: 'Activities', title: 'The Adventure Jar',
+    body: 'Write 20 activities on paper strips and put them in a jar. When kids say "I\'m bored," they pull one out. They pick their own adventure — and it actually works.',
+  },
+  {
+    icon: '🆘', category: 'Safety', title: 'The Emergency Card',
+    body: 'Every parent should have a card in their wallet: kid\'s full name, age, allergies, meds, pediatrician number, and one emergency contact. Takes 5 min. Could save a life.',
+  },
+  {
+    icon: '🎨', category: 'Activities', title: 'Mess-Free Painting',
+    body: 'Put paint inside a gallon ziplock bag, tape it to the table. Kids "paint" by pressing the bag — all the fun, zero mess. Especially great for toddlers.',
+  }
+];
+
+const reviews = [
+  { parent: 'Sarah M.', text: "Poppy is incredible with our kids. They literally ask for her every weekend. She brings art supplies and plans activities — she's more prepared than most adults.", rating: 5, kids: '2 kids, ages 4 & 7' },
+  { parent: 'The Rodriguez Family', text: "Most responsible 12-year-old we've ever met. Red Cross certified. Our son has food allergies and she handles it perfectly.", rating: 5, kids: '1 kid, age 3' },
+  { parent: 'Jennifer K.', text: "Worth every penny. Our daughter shows us the art projects Poppy helped her make. We've recommended her to four other families already.", rating: 5, kids: '2 kids, ages 5 & 9' },
+  { parent: 'Mike & Lisa T.', text: "The fact that she has a website and a voice AI blew our minds. This kid is going places. Oh, and she's a fantastic babysitter too.", rating: 5, kids: '3 kids, ages 2, 5 & 8' },
+];
+
+/* ═══ DEFAULT SCHEDULE ═══ */
+const defaultSchedule = {
+  2: { start_time: '15:45', end_time: '20:00' },
+  4: { start_time: '15:45', end_time: '20:00' },
+  6: { start_time: '16:00', end_time: '23:00' }
+};
+
+/* ═══ INIT ═══ */
+function init() {
+  checkRoute();
+  checkAuth();
+  renderFeed();
+  renderReviews();
+  renderSitters();
+  loadAvailability();
+
+  // Nav scroll effect
+  window.addEventListener('scroll', () => {
+    document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 20);
+  });
+
+  // Bottom tab active state
+  const sections = ['hero', 'avail', 'feed', 'share'];
+  window.addEventListener('scroll', () => {
+    const tabs = document.querySelectorAll('.tab-btn');
+    let current = 0;
+    sections.forEach((id, i) => {
+      const el = document.getElementById(id);
+      if (el && window.scrollY >= el.offsetTop - 200) current = i;
+    });
+    tabs.forEach((t, i) => t.classList.toggle('active', i === current));
+  });
+
+  // Check for referral
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('ref')) {
+    localStorage.setItem('tt_ref', params.get('ref'));
+  }
+}
+
+/* ═══ AUTH ═══ */
+async function checkAuth() {
+  const { data: { session } } = await db.auth.getSession();
+  if (session) {
+    setUser(session.user);
+  }
+  db.auth.onAuthStateChange((event, session) => {
+    if (session) setUser(session.user);
+    else clearUser();
+  });
+}
+
+function setUser(user) {
+  currentUser = user;
+  const name = user.user_metadata?.full_name || user.email?.split('@')[0] || 'Friend';
+  const pic = user.user_metadata?.avatar_url || '';
+
+  // Update nav
+  document.getElementById('navAuthBtn').style.display = 'none';
+  const navPic = document.getElementById('navUserPic');
+  if (pic) { navPic.src = pic; navPic.style.display = 'block'; }
+
+  // Update booking form
+  document.getElementById('bookGuest').style.display = 'none';
+  document.getElementById('bookSignedIn').style.display = 'block';
+  document.getElementById('bookUserName').textContent = 'Hey, ' + name.split(' ')[0] + '!';
+  if (pic) document.getElementById('bookUserPic').src = pic;
+}
+
+function clearUser() {
+  currentUser = null;
+  document.getElementById('navAuthBtn').style.display = '';
+  document.getElementById('navUserPic').style.display = 'none';
+  document.getElementById('bookGuest').style.display = '';
+  document.getElementById('bookSignedIn').style.display = 'none';
+}
+
+async function signInWithGoogle() {
+  closeAuthModal();
+  const { error } = await db.auth.signInWithOAuth({
+    provider: 'google',
+    options: { redirectTo: window.location.origin }
+  });
+  if (error) {
+    showToast('Google Sign-In setup in progress — use the form for now!');
+  }
+}
+
+function openAuthModal() {
+  if (currentUser) return; // Already signed in
+  document.getElementById('authOverlay').classList.add('show');
+}
+function closeAuthModal() {
+  document.getElementById('authOverlay').classList.remove('show');
+}
+
+/* ═══ RENDER FEED ═══ */
+function renderFeed() {
+  const scroll = document.getElementById('feedScroll');
+  const today = new Date().getDay();
+  // Rotate tips based on day, show 5 cards + "Ask" card
+  const ordered = [...tips.slice(today % tips.length), ...tips.slice(0, today % tips.length)].slice(0, 5);
+
+  scroll.innerHTML = ordered.map(tip => `
+    <div class="tip-card">
+      <div class="tip-icon">${tip.icon}</div>
+      <div class="tip-category">${tip.category}</div>
+      <div class="tip-title">${tip.title}</div>
+      <div class="tip-body">${tip.body}</div>
+      <button class="tip-share" onclick="shareTip('${tip.title.replace(/'/g,"\\'")}', '${tip.body.replace(/'/g,"\\'").replace(/\n/g,' ')}')">
+        &#8599; Share This Tip
+      </button>
+    </div>
+  `).join('') + `
+    <div class="tip-card ask-card" onclick="toggleVoice()">
+      <div class="tip-icon">🎙</div>
+      <div class="tip-category">Ask Anything</div>
+      <div class="tip-title">Got a Kid Question?</div>
+      <div class="tip-body">Bedtime struggles? Picky eaters? Activity ideas? Tap here and ask Poppy — she'll talk you through it.</div>
+      <button class="tip-share" onclick="toggleVoice()">
+        &#127908; Talk to Poppy
+      </button>
+    </div>
+  `;
+}
+
+/* ═══ RENDER REVIEWS ═══ */
+function renderReviews() {
+  document.getElementById('reviewsScroll').innerHTML = reviews.map(r => `
+    <div class="review-card">
+      <div class="review-stars">${'★'.repeat(r.rating)}</div>
+      <div class="review-text">"${r.text}"</div>
+      <div class="review-author">${r.parent}</div>
+      <div class="review-kids">${r.kids}</div>
+    </div>
+  `).join('');
+}
+
+/* ═══ RENDER SITTERS ═══ */
+function renderSitters() {
+  const el = document.getElementById('sittersList');
+  el.innerHTML = sitters.map(s => `
+    <div class="sitter-card">
+      <img src="${s.photo}" alt="${s.name}"
+           onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2250%22 fill=%22%23F5E0DC%22/><text x=%2250%25%22 y=%2255%25%22 text-anchor=%22middle%22 font-size=%2236%22>${s.name[0]}</text></svg>'">
+      <div class="sitter-info">
+        <div class="sitter-name">${s.name}</div>
+        <div class="sitter-detail">${s.bio}</div>
+        <div class="sitter-badges">
+          ${s.certs.map(c => `<span class="sitter-badge">${c}</span>`).join('')}
+          <span class="sitter-badge">${s.stats.rating} ★</span>
+        </div>
+      </div>
+      <div class="sitter-rate">$${s.rate}<span>/hr</span></div>
+    </div>
+  `).join('') + `
+    <div class="add-sitter-card" onclick="scrollTo('#sitters')">
+      <div class="add-icon">+</div>
+      <div class="add-title">Know a great sitter?</div>
+      <div class="add-sub">Poppy can add friends to the Tiny Tots network. Ask her!</div>
+    </div>
+  `;
+}
+
+/* ═══ DATE STRIP ═══ */
 function buildDateStrip() {
   const strip = document.getElementById('dateStrip');
   strip.innerHTML = '';
   const today = new Date();
   const dayNames = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
-  const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-
   for (let i = 0; i < 21; i++) {
     const d = new Date(today); d.setDate(today.getDate() + i);
     const key = d.toISOString().split('T')[0];
@@ -593,30 +1080,26 @@ function buildDateStrip() {
       <span class="day-num">${d.getDate()}</span>
       ${avail ? '<span class="avail-dot"></span>' : '<span class="unavail-dot"></span>'}
     `;
-    pill.addEventListener('click', () => selectDay(key, d, pill));
+    pill.addEventListener('click', () => selectDay(key, pill));
     strip.appendChild(pill);
   }
 }
 
-function selectDay(key, dateObj, pill) {
+function selectDay(key, pill) {
   document.querySelectorAll('.day-pill').forEach(p => p.classList.remove('selected'));
   pill.classList.add('selected');
   selectedDate = key;
   const avail = availabilityData[key];
-  const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-  const dayNames = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
   const d = new Date(key + 'T12:00:00');
+  const dayNames = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
   const label = `${dayNames[d.getDay()]}, ${monthNames[d.getMonth()]} ${d.getDate()}`;
 
-  function formatTime12(t) {
-    const [h,m] = t.split(':').map(Number);
-    const ampm = h >= 12 ? 'PM' : 'AM';
-    return `${h > 12 ? h-12 : h || 12}:${String(m).padStart(2,'0')} ${ampm}`;
-  }
+  const fmt = t => { const [h,m] = t.split(':').map(Number); const ap = h>=12?'PM':'AM'; return `${h>12?h-12:h||12}:${String(m).padStart(2,'0')} ${ap}`; };
 
   if (avail) {
     document.getElementById('bookDateLabel').innerHTML = label +
-      `<span style="display:block;font-family:var(--font-body);font-size:14px;font-weight:600;color:var(--gold);margin-top:4px;">${formatTime12(avail.start_time)} – ${formatTime12(avail.end_time)}</span>`;
+      `<span style="display:block;font-family:var(--font-body);font-size:13px;font-weight:600;color:var(--gold);margin-top:4px;">${fmt(avail.start_time)} – ${fmt(avail.end_time)}</span>`;
   } else {
     document.getElementById('bookDateLabel').textContent = label;
   }
@@ -630,37 +1113,20 @@ function selectDay(key, dateObj, pill) {
   }
 }
 
-function scrollToBook() {
-  document.getElementById('avail').scrollIntoView({ behavior: 'smooth' });
-}
-
-/* ── Default recurring schedule (Tue/Thu 3:45-8:00, Sat 4:00-11:00) ── */
-const defaultSchedule = {
-  2: { start_time: '15:45', end_time: '20:00' }, // Tuesday
-  4: { start_time: '15:45', end_time: '20:00' }, // Thursday
-  6: { start_time: '16:00', end_time: '23:00' }  // Saturday
-};
-
 function applyDefaultAvailability() {
   const today = new Date();
   for (let i = 0; i < 21; i++) {
     const d = new Date(today); d.setDate(today.getDate() + i);
     const key = d.toISOString().split('T')[0];
-    const dow = d.getDay();
-    if (!availabilityData[key] && defaultSchedule[dow]) {
-      availabilityData[key] = { ...defaultSchedule[dow], recurring: true };
+    if (!availabilityData[key] && defaultSchedule[d.getDay()]) {
+      availabilityData[key] = { ...defaultSchedule[d.getDay()], recurring: true };
     }
   }
 }
 
-/* ── Load Availability ── */
 async function loadAvailability() {
   const today = new Date().toISOString().split('T')[0];
-  const { data, error } = await db
-    .from('availability')
-    .select('*')
-    .gte('date', today)
-    .order('date');
+  const { data, error } = await db.from('availability').select('*').gte('date', today).order('date');
   availabilityData = {};
   if (!error && data) {
     data.forEach(r => { availabilityData[r.date] = { start_time: r.start_time, end_time: r.end_time, id: r.id }; });
@@ -669,117 +1135,95 @@ async function loadAvailability() {
   buildDateStrip();
 }
 
-/* ── Submit Booking ── */
+/* ═══ BOOKING ═══ */
 async function submitBooking() {
-  const parentName = document.getElementById('parentName').value.trim();
-  const parentPhone = document.getElementById('parentPhone').value.trim();
-  const parentEmail = document.getElementById('parentEmail').value.trim();
-  const kidName = document.getElementById('kidName').value.trim();
-  const msgEl = document.getElementById('bookMsg');
-  msgEl.className = 'book-msg'; msgEl.style.display = 'none';
+  let parentName, parentPhone, parentEmail, kidName;
 
-  if (!parentName || !parentPhone || !kidName || !selectedDate) {
-    msgEl.textContent = 'Please fill in all required fields.';
-    msgEl.className = 'book-msg error'; msgEl.style.display = 'block'; return;
+  if (currentUser) {
+    parentName = currentUser.user_metadata?.full_name || currentUser.email;
+    parentPhone = currentUser.phone || '';
+    parentEmail = currentUser.email || '';
+    kidName = document.getElementById('kidNameSigned').value.trim();
+    if (!kidName) { showToast("What's your child's name?"); return; }
+  } else {
+    parentName = document.getElementById('parentName').value.trim();
+    parentPhone = document.getElementById('parentPhone').value.trim();
+    parentEmail = document.getElementById('parentEmail').value.trim();
+    kidName = document.getElementById('kidName').value.trim();
+    if (!parentName || !parentPhone || !kidName || !selectedDate) {
+      showToast('Please fill in all required fields.'); return;
+    }
   }
 
-  const btn = document.getElementById('bookBtn');
-  btn.disabled = true; btn.textContent = 'Booking...';
+  if (!selectedDate) { showToast('Pick a day first!'); return; }
+
+  const msgEl = document.getElementById('bookMsg');
+  msgEl.className = 'book-msg'; msgEl.style.display = 'none';
+  const btns = document.querySelectorAll('.book-btn');
+  btns.forEach(b => { b.disabled = true; b.textContent = 'Booking...'; });
 
   const avail = availabilityData[selectedDate];
   const startTime = avail ? avail.start_time : '15:00';
   const endTime = avail ? avail.end_time : '21:00';
-  // Calculate price at $12/hr
-  const [sh, sm] = startTime.split(':').map(Number);
-  const [eh, em] = endTime.split(':').map(Number);
-  const hours = Math.max(1, Math.round(((eh * 60 + em) - (sh * 60 + sm)) / 60));
+  const [sh,sm] = startTime.split(':').map(Number);
+  const [eh,em] = endTime.split(':').map(Number);
+  const hours = Math.max(1, Math.round(((eh*60+em)-(sh*60+sm))/60));
   const priceCents = hours * 1200;
 
   try {
-    // Find or create parent
-    const { data: existingParents } = await db
-      .from('parents').select('id').eq('phone', parentPhone).limit(1);
+    const { data: existing } = await db.from('parents').select('id').eq('phone', parentPhone).limit(1);
     let parentId;
-    if (existingParents && existingParents.length > 0) {
-      parentId = existingParents[0].id;
+    if (existing && existing.length > 0) {
+      parentId = existing[0].id;
       await db.from('parents').update({ full_name: parentName, email: parentEmail || null }).eq('id', parentId);
     } else {
-      const { data: newParent, error: parentErr } = await db
-        .from('parents').insert({ full_name: parentName, phone: parentPhone, email: parentEmail || null }).select().single();
-      if (parentErr) throw parentErr;
-      parentId = newParent.id;
+      const { data: newP, error: pErr } = await db.from('parents').insert({ full_name: parentName, phone: parentPhone, email: parentEmail || null }).select().single();
+      if (pErr) throw pErr;
+      parentId = newP.id;
     }
 
-    // Create kid
-    const { error: kidErr } = await db
-      .from('kids').insert({ parent_id: parentId, name: kidName }).select().single();
+    await db.from('kids').insert({ parent_id: parentId, name: kidName }).select().single();
+    const { error: bErr } = await db.from('bookings').insert({
+      parent_id: parentId, date: selectedDate, start_time: startTime, end_time: endTime,
+      package: 'hourly', price_cents: priceCents, status: 'confirmed'
+    });
+    if (bErr) throw bErr;
 
-    // Create booking
-    const { error: bookErr } = await db
-      .from('bookings').insert({
-        parent_id: parentId,
-        date: selectedDate,
-        start_time: startTime,
-        end_time: endTime,
-        package: 'hourly',
-        price_cents: priceCents,
-        status: 'confirmed'
-      });
-    if (bookErr) throw bookErr;
-
-    msgEl.textContent = "You're booked! Poppy will see you soon.";
+    msgEl.textContent = "You're booked! Poppy will see you soon. 🎉";
     msgEl.className = 'book-msg success'; msgEl.style.display = 'block';
-    showToast("Booking confirmed!");
+    showToast('Booking confirmed!');
 
-    // Fire SMS
     fetch(SUPABASE_URL + '/functions/v1/send-booking-sms', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + SUPABASE_KEY },
-      body: JSON.stringify({ parentName, parentPhone, kidName, date: selectedDate, startTime, endTime, packageName: 'Hourly', price: '$' + (priceCents / 100) })
-    }).catch(e => console.warn('SMS notification failed:', e));
+      body: JSON.stringify({ parentName, parentPhone, kidName, date: selectedDate, startTime, endTime, packageName: 'Hourly', price: '$' + (priceCents/100) })
+    }).catch(() => {});
 
-    // Reset form
-    document.getElementById('parentName').value = '';
-    document.getElementById('parentPhone').value = '';
-    document.getElementById('parentEmail').value = '';
-    document.getElementById('kidName').value = '';
+    // Clear form
+    ['parentName','parentPhone','parentEmail','kidName','kidNameSigned'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = '';
+    });
   } catch (err) {
     msgEl.textContent = 'Something went wrong. Please try again.';
     msgEl.className = 'book-msg error'; msgEl.style.display = 'block';
     console.error(err);
   }
-  btn.disabled = false; btn.textContent = 'Book This Day';
+  btns.forEach(b => { b.disabled = false; b.textContent = 'Book Poppy'; });
 }
 
-/* ── Voice: Avatar is the live interface ── */
-let voiceActive = false;
-let widgetReady = false;
-
+/* ═══ VOICE (ElevenLabs via Avatar) ═══ */
 function toggleVoice() {
   const widget = document.querySelector('elevenlabs-convai');
   if (!widget) return;
-
-  // Temporarily make widget interactive so we can click its internal button
   widget.style.cssText = 'position:fixed!important;bottom:-200px!important;right:-200px!important;z-index:-1!important;opacity:0!important;pointer-events:auto!important;width:auto!important;height:auto!important;overflow:visible!important;';
-
   setTimeout(() => {
     const shadow = widget.shadowRoot;
     if (shadow) {
-      // Find the toggle/start button inside the shadow DOM
-      const btns = shadow.querySelectorAll('button');
-      for (const btn of btns) {
-        btn.click();
-        break;
-      }
-    } else {
-      widget.click();
-    }
-    // Hide widget again
-    setTimeout(() => {
-      widget.style.cssText = '';
-    }, 100);
-
-    // Toggle visual state
+      const btn = shadow.querySelector('button');
+      if (btn) btn.click();
+    } else { widget.click(); }
+    setTimeout(() => { widget.style.cssText = ''; }, 100);
     voiceActive = !voiceActive;
     updateVoiceUI();
   }, 50);
@@ -789,11 +1233,12 @@ function updateVoiceUI() {
   const wrap = document.getElementById('avatarWrap');
   const status = document.getElementById('avatarStatus');
   const btnText = document.getElementById('voiceBtnText');
-
   if (voiceActive) {
     wrap.classList.add('voice-active');
     status.textContent = 'Listening...';
     btnText.textContent = 'End Call';
+    // Scroll to top to see avatar
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   } else {
     wrap.classList.remove('voice-active');
     status.textContent = 'Tap to talk';
@@ -801,65 +1246,104 @@ function updateVoiceUI() {
   }
 }
 
-// Monitor ElevenLabs widget for call state changes
-function watchWidgetState() {
+// Watch widget state
+setTimeout(() => {
   const widget = document.querySelector('elevenlabs-convai');
-  if (!widget) {
-    setTimeout(watchWidgetState, 500);
-    return;
-  }
-  widgetReady = true;
-
-  // Listen for custom events the widget may fire
-  widget.addEventListener('elevenlabs-convai:call', (e) => {
-    if (e.detail && e.detail.status === 'connected') {
-      voiceActive = true;
-      updateVoiceUI();
-    }
+  if (!widget) return;
+  widget.addEventListener('elevenlabs-convai:call', e => {
+    if (e.detail?.status === 'connected') { voiceActive = true; updateVoiceUI(); }
   });
   widget.addEventListener('elevenlabs-convai:call-end', () => {
-    voiceActive = false;
-    updateVoiceUI();
+    voiceActive = false; updateVoiceUI();
   });
+}, 2000);
 
-  // Also use a MutationObserver on the shadow DOM for state detection
-  const checkShadow = () => {
-    const shadow = widget.shadowRoot;
-    if (!shadow) { setTimeout(checkShadow, 500); return; }
-
-    const observer = new MutationObserver(() => {
-      // Check if widget shows an active call state
-      const allText = shadow.textContent || '';
-      if (allText.includes('End') || allText.includes('Connected') || allText.includes('Listening')) {
-        if (!voiceActive) { voiceActive = true; updateVoiceUI(); }
-      } else if (voiceActive && (allText.includes('Start') || allText.includes('Call ended'))) {
-        voiceActive = false; updateVoiceUI();
-      }
-    });
-    observer.observe(shadow, { childList: true, subtree: true, characterData: true });
-  };
-  checkShadow();
+/* ═══ SHARING / VIRAL ═══ */
+function generateInviteCode() {
+  return 'tt' + Math.random().toString(36).substr(2, 6);
 }
-setTimeout(watchWidgetState, 1000);
 
-/* ── Toast ── */
+function getInviteUrl() {
+  const code = localStorage.getItem('tt_my_code') || generateInviteCode();
+  localStorage.setItem('tt_my_code', code);
+  return window.location.origin + '?ref=' + code;
+}
+
+function shareViaText() {
+  const url = getInviteUrl();
+  const text = `Hey! Check out Poppy — she's the best babysitter. Red Cross certified, $12/hr, and she even has an AI that answers your parenting questions 😂\n\n${url}`;
+  if (navigator.share) {
+    navigator.share({ title: 'Meet Poppy — Babysitter Extraordinaire', text, url });
+  } else {
+    window.open(`sms:?body=${encodeURIComponent(text)}`);
+  }
+}
+
+function copyInviteLink() {
+  const url = getInviteUrl();
+  navigator.clipboard.writeText(url).then(() => showToast('Link copied!')).catch(() => {
+    showToast(url); // fallback: show the URL
+  });
+}
+
+function shareTip(title, body) {
+  const text = `💡 Poppy's Tip: ${title}\n\n${body}\n\nMore tips at `;
+  const url = window.location.origin;
+  if (navigator.share) {
+    navigator.share({ title: `Poppy's Tip: ${title}`, text, url });
+  } else {
+    navigator.clipboard.writeText(text + url).then(() => showToast('Tip copied!'));
+  }
+}
+
+function sendParentInvite() {
+  const phone = document.getElementById('invitePhone').value.trim();
+  const name = document.getElementById('inviteParentName').value.trim();
+  if (!phone) return;
+  const url = getInviteUrl() + '&name=' + encodeURIComponent(name);
+  const msg = `Hi${name ? ' ' + name : ''}! Poppy Wilbert here 👋 I babysit on weekday evenings and Saturdays. Check out my page: ${url}`;
+
+  // Try to send via Twilio edge function (if configured)
+  fetch(SUPABASE_URL + '/functions/v1/send-booking-sms', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + SUPABASE_KEY },
+    body: JSON.stringify({ parentName: name, parentPhone: phone, kidName: '', date: '', startTime: '', endTime: '', packageName: 'Invite', price: msg })
+  }).then(() => showToast('Invite sent to ' + (name || phone) + '!'))
+    .catch(() => {
+      // Fallback: open SMS
+      window.open(`sms:${phone}?body=${encodeURIComponent(msg)}`);
+    });
+
+  document.getElementById('invitePhone').value = '';
+  document.getElementById('inviteParentName').value = '';
+}
+
+/* ═══ NAVIGATION ═══ */
+function tabNav(sectionId) {
+  const el = document.getElementById(sectionId);
+  if (el) el.scrollIntoView({ behavior: 'smooth' });
+}
+function scrollTo(selector) {
+  const el = document.querySelector(selector);
+  if (el) el.scrollIntoView({ behavior: 'smooth' });
+}
+
+/* ═══ TOAST ═══ */
 function showToast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg; t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 3000);
 }
 
-/* ── Dashboard (hash route) ── */
+/* ═══ DASHBOARD ═══ */
 function checkRoute() {
   const hash = window.location.hash;
   const dash = document.getElementById('dashboard');
-  const main = document.querySelectorAll('.hero, .avail-section, .about-section, .pricing-section, .footer');
+  const main = document.querySelectorAll('.hero, .feed-section, .avail-section, .reviews-section, .pricing-section, .sitters-section, .share-section, .footer, .bottom-bar');
   if (hash === '#/dashboard') {
-    dash.classList.add('active');
-    main.forEach(el => el.style.display = 'none');
+    dash.classList.add('active'); main.forEach(el => el.style.display = 'none');
   } else {
-    dash.classList.remove('active');
-    main.forEach(el => el.style.display = '');
+    dash.classList.remove('active'); main.forEach(el => el.style.display = '');
   }
 }
 window.addEventListener('hashchange', checkRoute);
@@ -868,9 +1352,7 @@ function adminAuth() {
   if (document.getElementById('adminPass').value === 'poppy2026') {
     document.getElementById('adminLogin').style.display = 'none';
     document.getElementById('adminPanel').style.display = 'block';
-    loadAdminBookings();
-    loadAdminParents();
-    loadAdminAvail();
+    loadAdminBookings(); loadAdminParents(); loadAdminAvail();
   }
 }
 
@@ -879,10 +1361,7 @@ async function addAvailability() {
   const start = document.getElementById('availStart').value;
   const end = document.getElementById('availEnd').value;
   if (!date) return;
-  const { error } = await db.from('availability').upsert(
-    { date, start_time: start, end_time: end },
-    { onConflict: 'date' }
-  );
+  const { error } = await db.from('availability').upsert({ date, start_time: start, end_time: end }, { onConflict: 'date' });
   if (!error) { showToast('Availability added!'); loadAdminAvail(); loadAvailability(); }
 }
 
@@ -892,43 +1371,52 @@ async function removeAvail(id) {
 }
 
 async function loadAdminAvail() {
-  const { data, error } = await db.from('availability').select('*').order('date');
-  if (error) return;
-  const el = document.getElementById('availList');
-  el.innerHTML = data.map(r => `
+  const { data } = await db.from('availability').select('*').order('date');
+  if (!data) return;
+  document.getElementById('availList').innerHTML = data.map(r => `
     <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #eee;">
-      <span style="font-size:13px;font-weight:600;">${r.date} &middot; ${r.start_time}–${r.end_time}</span>
-      <button onclick="removeAvail('${r.id}')" style="background:none;border:none;color:var(--red-soft);font-weight:700;cursor:pointer;">Remove</button>
+      <span style="font-size:12px;font-weight:600;">${r.date} · ${r.start_time}–${r.end_time}</span>
+      <button onclick="removeAvail('${r.id}')" style="background:none;border:none;color:var(--red-soft);font-weight:700;cursor:pointer;font-size:12px;">Remove</button>
     </div>
   `).join('');
 }
 
 async function loadAdminBookings() {
-  const { data, error } = await db.from('bookings').select('*, parents(full_name, phone)').order('date', { ascending: false }).limit(20);
-  if (error) return;
-  let html = '<tr><th>Date</th><th>Parent</th><th>Package</th><th>Status</th></tr>';
-  (data || []).forEach(b => {
-    html += `<tr><td>${b.date}</td><td>${b.parents?.full_name || '—'}</td><td>${b.package}</td><td>${b.status}</td></tr>`;
-  });
+  const { data } = await db.from('bookings').select('*, parents(full_name, phone)').order('date', { ascending: false }).limit(20);
+  let html = '<tr><th>Date</th><th>Parent</th><th>Status</th></tr>';
+  (data || []).forEach(b => { html += `<tr><td>${b.date}</td><td>${b.parents?.full_name || '—'}</td><td>${b.status}</td></tr>`; });
   document.getElementById('adminBookingsTable').innerHTML = html;
 }
 
 async function loadAdminParents() {
-  const { data, error } = await db.from('parents').select('*').order('created_at', { ascending: false }).limit(20);
-  if (error) return;
+  const { data } = await db.from('parents').select('*').order('created_at', { ascending: false }).limit(20);
   let html = '<tr><th>Name</th><th>Phone</th><th>Email</th></tr>';
-  (data || []).forEach(p => {
-    html += `<tr><td>${p.full_name}</td><td>${p.phone}</td><td>${p.email || '—'}</td></tr>`;
-  });
+  (data || []).forEach(p => { html += `<tr><td>${p.full_name}</td><td>${p.phone}</td><td>${p.email || '—'}</td></tr>`; });
   document.getElementById('adminParentsTable').innerHTML = html;
 }
 
-/* ── Init ── */
-checkRoute();
-loadAvailability();
+function addSitter() {
+  const name = document.getElementById('sitterName').value.trim();
+  const age = document.getElementById('sitterAge').value;
+  const rate = document.getElementById('sitterRate').value || 12;
+  if (!name) return;
+  sitters.push({
+    name, age: parseInt(age), slug: name.toLowerCase().replace(/\s+/g,'-'),
+    photo: '', bio: 'New Tiny Tots sitter', rate: parseInt(rate),
+    certs: [], stats: { sits: 0, families: 0, rating: 0 },
+    schedule: {}
+  });
+  renderSitters();
+  showToast(name + ' added to the network!');
+  document.getElementById('sitterName').value = '';
+  document.getElementById('sitterAge').value = '';
+}
+
+/* ═══ GO ═══ */
+init();
 </script>
 
-<!-- ElevenLabs Conversational AI — Ask Poppy -->
+<!-- ElevenLabs Conversational AI — hidden, triggered via avatar -->
 <elevenlabs-convai agent-id="agent_9201m47wf1t0e7wt6djfassmqy6t"></elevenlabs-convai>
 <script src="https://elevenlabs.io/convai-widget/index.js" async type="text/javascript"></script>
 </body>
