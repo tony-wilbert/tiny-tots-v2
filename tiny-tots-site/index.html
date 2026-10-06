@@ -2021,12 +2021,23 @@ elevenlabs-convai {
 @keyframes heroFadeIn {
   to { opacity: 1; transform: translateY(0); }
 }
-.hero .avatar-wrap { animation-delay: 0s; }
+.hero .avatar-wrap { animation-delay: 0s; animation-name: heroAvatarIn; }
+@keyframes heroAvatarIn {
+  0% { opacity: 0; transform: scale(0.85) translateY(20px); }
+  60% { opacity: 1; transform: scale(1.03) translateY(-2px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+.hero .welcome-back-badge { animation-delay: 0.08s; }
+.hero .hero-greeting { animation-delay: 0.1s; }
 .hero .profile-name { animation-delay: 0.12s; }
+.hero .quick-rebook { animation-delay: 0.15s; }
 .hero .profile-verified { animation-delay: 0.18s; }
 .hero .profile-bio { animation-delay: 0.24s; }
 .hero .stats-row { animation-delay: 0.32s; }
 .hero .hero-actions { animation-delay: 0.4s; }
+.hero .next-avail-card { animation-delay: 0.46s; }
+.hero .social-proof-strip { animation-delay: 0.52s; }
+.hero .hero-badges { animation-delay: 0.58s; }
 .hero .hero-badges { animation-delay: 0.5s; }
 
 /* ═══ ACTIVITY TICKER ═══ */
@@ -5952,26 +5963,34 @@ function animateCounter(el) {
   const target = parseFloat(el.dataset.count);
   const decimals = parseInt(el.dataset.decimals || '0');
   const suffix = el.dataset.suffix || '';
-  const duration = 1200;
-  const start = performance.now();
-  el.classList.add('counting');
-
-  function tick(now) {
-    const elapsed = now - start;
-    const progress = Math.min(elapsed / duration, 1);
-    // Ease out cubic for satisfying deceleration
-    const eased = 1 - Math.pow(1 - progress, 3);
-    const current = eased * target;
-    el.textContent = (decimals > 0 ? current.toFixed(decimals) : Math.round(current)) + suffix;
-    if (progress < 1) {
-      requestAnimationFrame(tick);
-    } else {
-      el.textContent = (decimals > 0 ? target.toFixed(decimals) : target) + suffix;
-      el.classList.remove('counting');
-      el.classList.add('counted');
+  const duration = 1400;
+  // Stagger each counter by its position
+  const siblings = [...el.closest('.stats-row')?.querySelectorAll('.stat-num[data-count]') || [el]];
+  const idx = siblings.indexOf(el);
+  const delay = idx * 120;
+  setTimeout(() => {
+    const start = performance.now();
+    el.classList.add('counting');
+    function tick(now) {
+      const elapsed = now - start;
+      const progress = Math.min(elapsed / duration, 1);
+      // Spring physics: overshoot then settle
+      const t = progress;
+      const eased = t < 0.8
+        ? 1.15 * (1 - Math.pow(1 - t / 0.8, 3))
+        : 1.15 - 0.15 * ((t - 0.8) / 0.2);
+      const current = Math.min(eased, 1.0) * target;
+      el.textContent = (decimals > 0 ? current.toFixed(decimals) : Math.round(current)) + suffix;
+      if (progress < 1) {
+        requestAnimationFrame(tick);
+      } else {
+        el.textContent = (decimals > 0 ? target.toFixed(decimals) : target) + suffix;
+        el.classList.remove('counting');
+        el.classList.add('counted');
+      }
     }
-  }
-  requestAnimationFrame(tick);
+    requestAnimationFrame(tick);
+  }, delay);
 }
 
 /* Touch ripple on interactive elements */
