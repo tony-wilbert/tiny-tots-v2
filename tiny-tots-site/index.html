@@ -896,9 +896,25 @@ body.dark-mode .wave-divider.hero-wave { color: #1B1B1F; }
 .book-guest .form-row { display: flex; gap: 8px; margin-bottom: 10px; }
 .book-guest .form-row input {
   flex: 1; padding: 13px 16px; border-radius: 12px; border: 2px solid #eee;
-  font-size: 14px; background: var(--white); transition: border-color 0.2s; outline: none;
+  font-size: 14px; background: var(--white); transition: border-color 0.25s, box-shadow 0.25s, background 0.25s; outline: none;
 }
-.book-guest .form-row input:focus { border-color: var(--gold); }
+.book-guest .form-row input:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 4px rgba(212,168,83,0.12);
+}
+.book-guest .form-row input.field-valid {
+  border-color: var(--green);
+  background: rgba(92,184,92,0.03);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%235CB85C' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6L9 17l-5-5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 16px;
+  padding-right: 36px;
+}
+.book-guest .form-row input.field-invalid {
+  border-color: var(--red-soft);
+  box-shadow: 0 0 0 4px rgba(232,139,139,0.1);
+}
 
 .google-signin-row {
   display: flex; align-items: center; gap: 12px; margin-bottom: 16px;
@@ -917,10 +933,27 @@ body.dark-mode .wave-divider.hero-wave { color: #1B1B1F; }
   width: 100%; padding: 15px; border-radius: 14px; font-size: 15px; font-weight: 700;
   background: var(--charcoal); color: var(--white); transition: all 0.25s;
   box-shadow: 0 4px 16px rgba(58,58,58,0.25);
+  display: flex; align-items: center; justify-content: center; gap: 8px;
 }
 .book-btn:hover { background: var(--gold); box-shadow: 0 4px 20px rgba(212,168,83,0.35); }
 .book-btn:active { transform: scale(0.96); }
 .book-btn:disabled { opacity: 0.4; cursor: not-allowed; box-shadow: none; }
+.book-btn.form-ready {
+  background: var(--gold); box-shadow: 0 4px 20px rgba(212,168,83,0.35);
+  animation: btn-pulse 2.5s ease-in-out infinite;
+}
+.book-btn.loading {
+  pointer-events: none; opacity: 0.85;
+  background: var(--charcoal);
+}
+.book-btn .btn-spinner {
+  width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: var(--white); border-radius: 50%;
+  animation: spinBtn 0.6s linear infinite; display: none;
+}
+.book-btn.loading .btn-spinner { display: block; }
+.book-btn.loading .btn-text { display: none; }
+@keyframes spinBtn { to { transform: rotate(360deg); } }
 .book-msg {
   margin-top: 12px; padding: 12px 16px; border-radius: 12px;
   font-size: 13px; font-weight: 600; text-align: center; display: none;
@@ -2300,6 +2333,9 @@ body.dark-mode .comm-promise-sub { color: #9E9A92; }
 body.dark-mode .swipe-hint { color: #9E9A92; }
 body.dark-mode .book-guest .form-row input { background: #2A2A2E; border-color: #3A3A3E; color: #F0EDE8; }
 body.dark-mode .book-guest .form-row input::placeholder { color: #777; }
+body.dark-mode .book-guest .form-row input:focus { border-color: var(--gold); box-shadow: 0 0 0 4px rgba(212,168,83,0.15); }
+body.dark-mode .book-guest .form-row input.field-valid { border-color: var(--green); background: rgba(92,184,92,0.08); }
+body.dark-mode .book-guest .form-row input.field-invalid { border-color: var(--red-soft); }
 
 /* Swipe hint for horizontal scrollers */
 .swipe-hint {
@@ -2697,7 +2733,7 @@ body.dark-mode .scenario-pick:hover, body.dark-mode .scenario-pick.active { bord
         <div class="form-row" style="display:flex;gap:8px;margin-bottom:10px;">
           <input type="text" id="kidNameSigned" placeholder="Child's name" style="flex:1;padding:13px 16px;border-radius:12px;border:2px solid #eee;font-size:14px;outline:none;">
         </div>
-        <button class="book-btn" onclick="submitBooking()">Book Poppy</button>
+        <button class="book-btn" onclick="submitBooking()"><span class="btn-spinner"></span><span class="btn-text">Book Poppy</span></button>
       </div>
 
       <!-- Guest booking -->
@@ -2717,7 +2753,7 @@ body.dark-mode .scenario-pick:hover, body.dark-mode .scenario-pick.active { bord
           <input type="text" id="kidName" placeholder="Child's name" required>
           <input type="email" id="parentEmail" placeholder="Email (optional)" style="font-size:13px;">
         </div>
-        <button class="book-btn" onclick="submitBooking()">Book Poppy</button>
+        <button class="book-btn" onclick="submitBooking()"><span class="btn-spinner"></span><span class="btn-text">Book Poppy</span></button>
       </div>
 
       <div class="trust-micros">
@@ -3778,6 +3814,7 @@ function selectDay(key, pill) {
     pricePreview.style.display = 'none';
     timePicker.style.display = 'none';
   }
+  if (typeof updateBookBtnState === 'function') updateBookBtnState();
 }
 
 function populateTimePicker(startTime, endTime) {
@@ -4368,7 +4405,7 @@ async function submitBooking() {
   const msgEl = document.getElementById('bookMsg');
   msgEl.className = 'book-msg'; msgEl.style.display = 'none';
   const btns = document.querySelectorAll('.book-btn');
-  btns.forEach(b => { b.disabled = true; b.textContent = 'Booking...'; });
+  btns.forEach(b => { b.disabled = true; b.classList.add('loading'); });
 
   const avail = availabilityData[selectedDate];
   // Use selected time range from picker, not full availability window
@@ -4431,14 +4468,15 @@ async function submitBooking() {
     // Clear form
     ['parentName','parentPhone','parentEmail','kidName','kidNameSigned'].forEach(id => {
       const el = document.getElementById(id);
-      if (el) el.value = '';
+      if (el) { el.value = ''; el.classList.remove('field-valid', 'field-invalid'); }
     });
+    document.querySelectorAll('.book-btn').forEach(b => b.classList.remove('form-ready'));
   } catch (err) {
     msgEl.textContent = 'Something went wrong. Please try again.';
     msgEl.className = 'book-msg error'; msgEl.style.display = 'block';
     console.error(err);
   }
-  btns.forEach(b => { b.disabled = false; b.textContent = 'Book Poppy'; });
+  btns.forEach(b => { b.disabled = false; b.classList.remove('loading'); });
 }
 
 /* ═══ VOICE (ElevenLabs via Avatar Modal) ═══ */
@@ -5212,6 +5250,72 @@ document.addEventListener('touchstart', function(e) {
   if (el) addTouchRipple(el, e);
 }, { passive: true });
 
+/* ═══ FORM VALIDATION & PHONE FORMATTING (Loop 41) ═══ */
+function initFormValidation() {
+  const phoneEl = document.getElementById('parentPhone');
+  const nameEl = document.getElementById('parentName');
+  const kidEl = document.getElementById('kidName');
+  const emailEl = document.getElementById('parentEmail');
+  if (!phoneEl) return;
+
+  // Phone auto-format: (xxx) xxx-xxxx
+  phoneEl.addEventListener('input', function() {
+    let digits = this.value.replace(/\D/g, '');
+    if (digits.length > 10) digits = digits.slice(0, 10);
+    let formatted = '';
+    if (digits.length > 0) formatted += '(' + digits.slice(0, 3);
+    if (digits.length >= 3) formatted += ') ';
+    if (digits.length > 3) formatted += digits.slice(3, 6);
+    if (digits.length >= 6) formatted += '-' + digits.slice(6);
+    this.value = formatted;
+    validateField(this, digits.length === 10);
+    updateBookBtnState();
+  });
+
+  // Name validation
+  if (nameEl) nameEl.addEventListener('input', function() {
+    validateField(this, this.value.trim().length >= 2);
+    updateBookBtnState();
+  });
+  if (nameEl) nameEl.addEventListener('blur', function() {
+    if (this.value.trim().length > 0 && this.value.trim().length < 2) this.classList.add('field-invalid');
+  });
+
+  // Kid name validation
+  if (kidEl) kidEl.addEventListener('input', function() {
+    validateField(this, this.value.trim().length >= 1);
+    updateBookBtnState();
+  });
+
+  // Email validation (optional field)
+  if (emailEl) emailEl.addEventListener('input', function() {
+    if (this.value.trim().length === 0) {
+      this.classList.remove('field-valid', 'field-invalid');
+    } else {
+      validateField(this, /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.value.trim()));
+    }
+  });
+}
+
+function validateField(el, isValid) {
+  el.classList.toggle('field-valid', isValid);
+  el.classList.remove('field-invalid');
+}
+
+function updateBookBtnState() {
+  const name = document.getElementById('parentName');
+  const phone = document.getElementById('parentPhone');
+  const kid = document.getElementById('kidName');
+  if (!name || !phone || !kid) return;
+  const ready = name.value.trim().length >= 2 &&
+    phone.value.replace(/\D/g, '').length === 10 &&
+    kid.value.trim().length >= 1 &&
+    selectedDate;
+  document.querySelectorAll('#bookGuest .book-btn').forEach(btn => {
+    btn.classList.toggle('form-ready', ready);
+  });
+}
+
 /* Button ripple on click */
 function initRipples() {
   document.querySelectorAll('.action-btn, .book-btn, .sticky-cta-btn, .quick-rebook-btn').forEach(btn => {
@@ -5544,6 +5648,7 @@ requestAnimationFrame(() => {
   idle(() => {
     initCardTilt();
     initRipples();
+    initFormValidation();
     initScrollProgress();
     initParallax();
     initScrollMotion();
