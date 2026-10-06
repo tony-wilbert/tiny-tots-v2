@@ -1889,6 +1889,92 @@ elevenlabs-convai {
   .confirm-overlay .action-btn { display: none; }
 }
 
+/* ═══ MICRO-INTERACTIONS ═══ */
+/* Animated counter shimmer */
+.stat-num[data-count] {
+  display: inline-block;
+  background: linear-gradient(90deg, var(--charcoal) 40%, var(--gold) 50%, var(--charcoal) 60%);
+  background-size: 200% 100%;
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: none;
+}
+.stat-num.counting {
+  animation: counterShimmer 0.8s ease-out forwards;
+}
+@keyframes counterShimmer {
+  0% { background-position: 100% 0; }
+  100% { background-position: -100% 0; }
+}
+.stat-num.counted {
+  background: none; -webkit-background-clip: unset; background-clip: unset;
+  -webkit-text-fill-color: unset; color: var(--charcoal);
+}
+
+/* Card 3D tilt */
+.tilt-card {
+  transform-style: preserve-3d; perspective: 800px;
+  transition: transform 0.15s ease-out;
+}
+.tilt-card > * { transform: translateZ(0); }
+
+/* Button magnetic effect */
+.magnetic-btn {
+  transition: transform 0.2s cubic-bezier(.22,1,.36,1);
+}
+
+/* Ripple burst on click */
+@keyframes rippleBurst {
+  0% { transform: translate(-50%,-50%) scale(0); opacity: 0.5; }
+  100% { transform: translate(-50%,-50%) scale(4); opacity: 0; }
+}
+.ripple-circle {
+  position: absolute; width: 40px; height: 40px; border-radius: 50%;
+  background: rgba(255,255,255,0.4); pointer-events: none;
+  animation: rippleBurst 0.5s ease-out forwards;
+}
+
+/* Staggered card entrance */
+.stagger-1 { transition-delay: 0.05s !important; }
+.stagger-2 { transition-delay: 0.12s !important; }
+.stagger-3 { transition-delay: 0.19s !important; }
+.stagger-4 { transition-delay: 0.26s !important; }
+.stagger-5 { transition-delay: 0.33s !important; }
+.stagger-6 { transition-delay: 0.40s !important; }
+
+/* Floating animation for hero elements */
+@keyframes floatGentle {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+.hero-badges .badge:nth-child(1) { animation: floatGentle 4s ease-in-out infinite; }
+.hero-badges .badge:nth-child(2) { animation: floatGentle 4s ease-in-out 0.5s infinite; }
+.hero-badges .badge:nth-child(3) { animation: floatGentle 4s ease-in-out 1s infinite; }
+
+/* Reduced motion: kill all fancy animations */
+@media (prefers-reduced-motion: reduce) {
+  .stat-num.counting { animation: none; }
+  .tilt-card { transform: none !important; }
+  .magnetic-btn { transform: none !important; }
+  .ripple-circle { animation: none; display: none; }
+  .hero-badges .badge { animation: none !important; }
+  .hero-blob { animation: none !important; }
+}
+
+/* Scroll progress bar */
+.scroll-progress {
+  position: fixed; top: var(--nav-h); left: 0; height: 2px; z-index: 101;
+  background: var(--gradient-gold); width: 0%; transition: width 0.1s linear;
+  pointer-events: none;
+}
+
+/* Glow pulse on available badge */
+@keyframes glowPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(212,168,83,0.3); }
+  50% { box-shadow: 0 0 12px 4px rgba(212,168,83,0.15); }
+}
+.badge:has(.dot) { animation: glowPulse 3s ease-in-out infinite; }
+
 /* ═══ NOSCRIPT STYLES ═══ */
 .noscript-notice {
   text-align: center; padding: 40px 20px; margin-top: 80px;
@@ -1971,6 +2057,9 @@ body.dark-mode .auth-overlay .auth-modal { background: #2A2A2E; color: #F0EDE8; 
 body.dark-mode .auth-overlay input { background: #333338; color: #F0EDE8; border-color: rgba(255,255,255,0.1); }
 body.dark-mode .confirm-overlay .confirm-modal { background: #2A2A2E; }
 body.dark-mode .badge { background: rgba(255,255,255,0.06); color: #9E9A92; }
+body.dark-mode .stat-num.counted { color: #F0EDE8; }
+body.dark-mode .scroll-progress { background: linear-gradient(90deg, var(--gold) 0%, var(--gold-light) 100%); }
+body.dark-mode .ripple-circle { background: rgba(212,168,83,0.3); }
 
 @media (prefers-color-scheme: dark) {
   body:not(.light-mode) {
@@ -2064,6 +2153,7 @@ body.dark-mode .badge { background: rgba(255,255,255,0.06); color: #9E9A92; }
     <button class="nav-btn primary" id="navAuthBtn" onclick="openAuthModal()">Sign In</button>
   </div>
 </nav>
+<div class="scroll-progress" id="scrollProgress"></div>
 
 <!-- ═══ PROFILE HERO ═══ -->
 <main>
@@ -2107,9 +2197,9 @@ body.dark-mode .badge { background: rgba(255,255,255,0.06); color: #9E9A92; }
   <p class="profile-bio hero-enter" id="heroBio">Hi! I'm the sitter your kids will actually be excited about. Arts &amp; crafts, science experiments, dance parties — I bring the fun. Parents, tap my face and ask me anything.</p>
 
   <div class="stats-row hero-enter">
-    <div class="stat-item"><div class="stat-num">47</div><div class="stat-label">Sits</div></div>
-    <div class="stat-item"><div class="stat-num">12</div><div class="stat-label">Families</div></div>
-    <div class="stat-item"><div class="stat-num">4.9</div><div class="stat-label">Rating</div></div>
+    <div class="stat-item"><div class="stat-num" data-count="47" data-suffix="">0</div><div class="stat-label">Sits</div></div>
+    <div class="stat-item"><div class="stat-num" data-count="12" data-suffix="">0</div><div class="stat-label">Families</div></div>
+    <div class="stat-item"><div class="stat-num" data-count="4.9" data-suffix="" data-decimals="1">0</div><div class="stat-label">Rating</div></div>
   </div>
 
   <div class="hero-actions hero-enter">
@@ -4426,6 +4516,126 @@ function initScrollReveal() {
   document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 }
 
+/* ═══ MICRO-INTERACTIONS ENGINE ═══ */
+
+/* Animated stat counters */
+function initCounters() {
+  const counters = document.querySelectorAll('.stat-num[data-count]');
+  const cObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        animateCounter(entry.target);
+        cObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.5 });
+  counters.forEach(el => cObserver.observe(el));
+}
+
+function animateCounter(el) {
+  const target = parseFloat(el.dataset.count);
+  const decimals = parseInt(el.dataset.decimals || '0');
+  const suffix = el.dataset.suffix || '';
+  const duration = 1200;
+  const start = performance.now();
+  el.classList.add('counting');
+
+  function tick(now) {
+    const elapsed = now - start;
+    const progress = Math.min(elapsed / duration, 1);
+    // Ease out cubic for satisfying deceleration
+    const eased = 1 - Math.pow(1 - progress, 3);
+    const current = eased * target;
+    el.textContent = (decimals > 0 ? current.toFixed(decimals) : Math.round(current)) + suffix;
+    if (progress < 1) {
+      requestAnimationFrame(tick);
+    } else {
+      el.textContent = (decimals > 0 ? target.toFixed(decimals) : target) + suffix;
+      el.classList.remove('counting');
+      el.classList.add('counted');
+    }
+  }
+  requestAnimationFrame(tick);
+}
+
+/* Button ripple on click */
+function initRipples() {
+  document.querySelectorAll('.action-btn, .book-btn, .sticky-cta-btn, .quick-rebook-btn').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+      const rect = this.getBoundingClientRect();
+      const circle = document.createElement('span');
+      circle.className = 'ripple-circle';
+      circle.style.left = (e.clientX - rect.left) + 'px';
+      circle.style.top = (e.clientY - rect.top) + 'px';
+      this.appendChild(circle);
+      setTimeout(() => circle.remove(), 500);
+    });
+    // Track mouse for radial gradient ripple
+    btn.addEventListener('mousemove', function(e) {
+      const rect = this.getBoundingClientRect();
+      const x = ((e.clientX - rect.left) / rect.width * 100).toFixed(0);
+      const y = ((e.clientY - rect.top) / rect.height * 100).toFixed(0);
+      this.style.setProperty('--ripple-x', x + '%');
+      this.style.setProperty('--ripple-y', y + '%');
+    });
+  });
+}
+
+/* Card tilt on hover (desktop only) */
+function initCardTilt() {
+  if (window.matchMedia('(hover: none)').matches) return; // skip touch devices
+  document.querySelectorAll('.adventure-card, .review-card, .tip-card').forEach(card => {
+    card.classList.add('tilt-card');
+    card.addEventListener('mousemove', function(e) {
+      const rect = this.getBoundingClientRect();
+      const x = (e.clientX - rect.left) / rect.width - 0.5;
+      const y = (e.clientY - rect.top) / rect.height - 0.5;
+      this.style.transform = `perspective(800px) rotateY(${x * 8}deg) rotateX(${-y * 8}deg) translateY(-4px)`;
+    });
+    card.addEventListener('mouseleave', function() {
+      this.style.transform = '';
+    });
+  });
+}
+
+/* Scroll progress bar */
+function initScrollProgress() {
+  const bar = document.getElementById('scrollProgress');
+  if (!bar) return;
+  let ticking = false;
+  window.addEventListener('scroll', () => {
+    if (!ticking) {
+      requestAnimationFrame(() => {
+        const scrollTop = window.scrollY;
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        bar.style.width = (docHeight > 0 ? (scrollTop / docHeight * 100) : 0) + '%';
+        ticking = false;
+      });
+      ticking = true;
+    }
+  }, { passive: true });
+}
+
+/* Parallax hero blobs on scroll */
+function initParallax() {
+  const blobs = document.querySelectorAll('.hero-blob');
+  if (!blobs.length || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  let ticking = false;
+  window.addEventListener('scroll', () => {
+    if (!ticking) {
+      requestAnimationFrame(() => {
+        const y = window.scrollY;
+        blobs.forEach((blob, i) => {
+          const speed = 0.15 + i * 0.08;
+          blob.style.transform = `translate(${blob.classList.contains('hero-blob-1') ? '-50%' : blob.classList.contains('hero-blob-2') ? '20%' : '-30%'}, ${blob.classList.contains('hero-blob-1') ? '-50%' : blob.classList.contains('hero-blob-2') ? '-20%' : '10%'}) translateY(${y * speed}px)`;
+        });
+        ticking = false;
+      });
+      ticking = true;
+    }
+  }, { passive: true });
+}
+
 /* ═══ HERO ENTRANCE ═══ */
 function animateHeroEntrance() {
   const els = document.querySelectorAll('.hero-enter');
@@ -4592,6 +4802,10 @@ requestAnimationFrame(() => {
   setTimeout(animateCountUp, 600);
   animateBioTyping();
   initCardTilt();
+  initCounters();
+  initRipples();
+  initScrollProgress();
+  initParallax();
   setTimeout(initChatLogging, 2000);
 });
 </script>
