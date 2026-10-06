@@ -952,6 +952,34 @@ a { text-decoration: none; color: inherit; }
   width: 100%; transition: transform 0.2s;
 }
 .confirm-close-btn:active { transform: scale(0.96); }
+/* Confirm "What to Expect" timeline */
+.confirm-expect-steps {
+  display: flex; flex-direction: column; gap: 8px; text-align: left;
+}
+.confirm-expect-step {
+  display: flex; align-items: center; gap: 10px; font-size: 12px; font-weight: 600; color: var(--charcoal);
+  padding: 6px 0; position: relative;
+}
+.confirm-expect-step:not(:last-child)::after {
+  content: ''; position: absolute; left: 9px; top: 100%; width: 1px; height: 8px;
+  background: rgba(212,168,83,0.3);
+}
+.confirm-step-icon { font-size: 14px; width: 20px; text-align: center; flex-shrink: 0; }
+/* Rotating social proof text */
+.proof-text-rotate {
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+.proof-text-rotate.fade-out {
+  opacity: 0; transform: translateY(-6px);
+}
+/* Zero cancellations stat highlight */
+.stat-zero-cancel.counted { color: var(--green) !important; }
+/* Review neighborhood tag */
+.review-neighborhood {
+  font-size: 10px; color: var(--gray); font-weight: 600;
+  display: flex; align-items: center; gap: 3px; margin-top: 1px;
+}
+.review-neighborhood svg { width: 10px; height: 10px; fill: var(--gray); }
 
 /* ═══ REVIEWS ═══ */
 .reviews-section { background: var(--white); }
@@ -2060,6 +2088,11 @@ body.dark-mode .badge { background: rgba(255,255,255,0.06); color: #9E9A92; }
 body.dark-mode .stat-num.counted { color: #F0EDE8; }
 body.dark-mode .scroll-progress { background: linear-gradient(90deg, var(--gold) 0%, var(--gold-light) 100%); }
 body.dark-mode .ripple-circle { background: rgba(212,168,83,0.3); }
+body.dark-mode .stat-zero-cancel.counted { color: var(--green) !important; }
+body.dark-mode .confirm-expect-step { color: #F0EDE8; }
+body.dark-mode .confirm-expect-step::after { background: rgba(212,168,83,0.2); }
+body.dark-mode .review-neighborhood { color: #9E9A92; }
+body.dark-mode .review-neighborhood svg { fill: #9E9A92; }
 
 @media (prefers-color-scheme: dark) {
   body:not(.light-mode) {
@@ -2200,6 +2233,7 @@ body.dark-mode .ripple-circle { background: rgba(212,168,83,0.3); }
     <div class="stat-item"><div class="stat-num" data-count="47" data-suffix="">0</div><div class="stat-label">Sits</div></div>
     <div class="stat-item"><div class="stat-num" data-count="12" data-suffix="">0</div><div class="stat-label">Families</div></div>
     <div class="stat-item"><div class="stat-num" data-count="4.9" data-suffix="" data-decimals="1">0</div><div class="stat-label">Rating</div></div>
+    <div class="stat-item"><div class="stat-num stat-zero-cancel" data-count="0" data-suffix="">0</div><div class="stat-label">Cancellations</div></div>
   </div>
 
   <div class="hero-actions hero-enter">
@@ -2225,7 +2259,7 @@ body.dark-mode .ripple-circle { background: rgba(212,168,83,0.3); }
       <span class="proof-avatar" style="background:linear-gradient(135deg,#4ECDC4,#A8E6CF)">R</span>
       <span class="proof-avatar" style="background:linear-gradient(135deg,#A18CD1,#FBC2EB)">J</span>
     </span>
-    <span class="proof-text" id="proofText">5 families booked this week</span>
+    <span class="proof-text proof-text-rotate" id="proofText">5 families booked this week</span>
   </div>
 
   <div class="hero-badges hero-enter">
@@ -2628,9 +2662,18 @@ body.dark-mode .ripple-circle { background: rgba(212,168,83,0.3); }
       <div class="confirm-row"><span class="confirm-row-label">Child</span><span class="confirm-row-value" id="confirmKid"></span></div>
       <div class="confirm-row confirm-total"><span class="confirm-row-label">Total</span><span class="confirm-row-value" id="confirmTotal"></span></div>
     </div>
-    <div class="confirm-note">
-      <span class="confirm-note-icon">💬</span>
-      <span>Poppy will text you to confirm — keep an eye on your phone!</span>
+    <div class="confirm-note" style="background:linear-gradient(135deg,rgba(212,168,83,0.1),rgba(212,168,83,0.05));color:var(--charcoal);">
+      <span class="confirm-note-icon">⌚</span>
+      <span style="font-size:11px;">Poppy sees this on her Apple Watch instantly — she'll confirm within minutes</span>
+    </div>
+    <div class="confirm-expect" style="margin-bottom:20px;">
+      <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--gold);margin-bottom:10px;text-align:left;">What to Expect</div>
+      <div class="confirm-expect-steps">
+        <div class="confirm-expect-step"><span class="confirm-step-icon">✓</span><span>Booking confirmed</span></div>
+        <div class="confirm-expect-step"><span class="confirm-step-icon" style="opacity:0.5">📱</span><span>Poppy confirms via text</span></div>
+        <div class="confirm-expect-step"><span class="confirm-step-icon" style="opacity:0.5">📸</span><span>Photo updates during the sit</span></div>
+        <div class="confirm-expect-step"><span class="confirm-step-icon" style="opacity:0.5">⭐</span><span>Rate your experience after</span></div>
+      </div>
     </div>
     <button class="confirm-close-btn" onclick="closeConfirmation()">Awesome!</button>
   </div>
@@ -2919,11 +2962,11 @@ const tips = [
 ];
 
 const reviews = [
-  { parent: 'Sarah M.', text: "Poppy is incredible with our kids. They literally ask for her every weekend. She brings art supplies and plans activities — she's more prepared than most adults.", rating: 5, kids: '2 kids, ages 4 & 7', date: '2 weeks ago', verified: true, timesBooked: 8 },
-  { parent: 'The Rodriguez Family', text: "Most responsible 12-year-old we've ever met. Red Cross certified. Our son has food allergies and she handles it perfectly.", rating: 5, kids: '1 kid, age 3', date: '3 weeks ago', verified: true, timesBooked: 5 },
-  { parent: 'Jennifer K.', text: "Worth every penny. Our daughter shows us the art projects Poppy helped her make. We've recommended her to four other families already.", rating: 5, kids: '2 kids, ages 5 & 9', date: '1 month ago', verified: true, timesBooked: 6 },
-  { parent: 'Mike & Lisa T.', text: "The fact that she has a website and a voice AI blew our minds. This kid is going places. Oh, and she's a fantastic babysitter too.", rating: 5, kids: '3 kids, ages 2, 5 & 8', date: '1 month ago', verified: true, timesBooked: 3 },
-  { parent: 'Amanda S.', text: "Finally, a babysitter we can actually trust. Poppy texts us updates, which is so reassuring. Booked her for every Friday date night.", rating: 5, kids: '1 kid, age 6', date: '5 days ago', verified: true, timesBooked: 11 },
+  { parent: 'Sarah M.', neighborhood: 'Tahoe Donner', text: "Poppy is incredible with our kids. They literally ask for her every weekend. She brings art supplies and plans activities — she's more prepared than most adults.", rating: 5, kids: '2 kids, ages 4 & 7', date: '2 weeks ago', verified: true, timesBooked: 8 },
+  { parent: 'The Rodriguez Family', neighborhood: 'Glenshire', text: "Most responsible 12-year-old we've ever met. Red Cross certified. Our son has food allergies and she handles it perfectly.", rating: 5, kids: '1 kid, age 3', date: '3 weeks ago', verified: true, timesBooked: 5 },
+  { parent: 'Jennifer K.', neighborhood: 'Prosser Lakeview', text: "Worth every penny. Our daughter shows us the art projects Poppy helped her make. We've recommended her to four other families already.", rating: 5, kids: '2 kids, ages 5 & 9', date: '1 month ago', verified: true, timesBooked: 6 },
+  { parent: 'Mike & Lisa T.', neighborhood: 'Tahoe Donner', text: "The fact that she has a website and a voice AI blew our minds. This kid is going places. Oh, and she's a fantastic babysitter too.", rating: 5, kids: '3 kids, ages 2, 5 & 8', date: '1 month ago', verified: true, timesBooked: 3 },
+  { parent: 'Amanda S.', neighborhood: 'Downtown Truckee', text: "Finally, a babysitter we can actually trust. Poppy texts us updates, which is so reassuring. Booked her for every Friday date night.", rating: 5, kids: '1 kid, age 6', date: '5 days ago', verified: true, timesBooked: 11 },
 ];
 
 /* ═══ DEFAULT SCHEDULE ═══ */
@@ -3182,6 +3225,7 @@ function renderReviews() {
         <div class="review-avatar" style="background:linear-gradient(135deg,${c1},${c2});color:#fff">${r.parent.charAt(0)}</div>
         <div class="review-meta">
           <div class="review-author">${r.parent}</div>
+          ${r.neighborhood ? `<div class="review-neighborhood"><svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 010-5 2.5 2.5 0 010 5z"/></svg>${r.neighborhood}</div>` : ''}
           <div class="review-date">${r.date || ''}</div>
         </div>
       </div>
@@ -4636,6 +4680,29 @@ function initParallax() {
   }, { passive: true });
 }
 
+/* ═══ ROTATING SOCIAL PROOF ═══ */
+function initRotatingProof() {
+  const el = document.getElementById('proofText');
+  if (!el) return;
+  const messages = [
+    '5 families booked this week',
+    '0 cancellations — ever',
+    'Trusted by families in Tahoe Donner & Truckee',
+    '47 sessions completed with 4.9★ rating',
+    'Red Cross certified & parent-approved',
+    '3 families rebooked this week'
+  ];
+  let idx = 0;
+  setInterval(() => {
+    el.classList.add('fade-out');
+    setTimeout(() => {
+      idx = (idx + 1) % messages.length;
+      el.textContent = messages[idx];
+      el.classList.remove('fade-out');
+    }, 400);
+  }, 4500);
+}
+
 /* ═══ HERO ENTRANCE ═══ */
 function animateHeroEntrance() {
   const els = document.querySelectorAll('.hero-enter');
@@ -4787,6 +4854,7 @@ requestAnimationFrame(() => {
   initRipples();
   initScrollProgress();
   initParallax();
+  initRotatingProof();
   setTimeout(initChatLogging, 2000);
 });
 </script>
