@@ -2093,6 +2093,54 @@ body.dark-mode .confirm-expect-step { color: #F0EDE8; }
 body.dark-mode .confirm-expect-step::after { background: rgba(212,168,83,0.2); }
 body.dark-mode .review-neighborhood { color: #9E9A92; }
 body.dark-mode .review-neighborhood svg { fill: #9E9A92; }
+body.dark-mode .comm-promise { background: rgba(42,42,46,0.9); border-color: rgba(212,168,83,0.15); }
+body.dark-mode .comm-promise-text { color: #F0EDE8; }
+body.dark-mode .comm-promise-sub { color: #9E9A92; }
+body.dark-mode .swipe-hint { color: #9E9A92; }
+body.dark-mode .book-guest .form-row input { background: #2A2A2E; border-color: #3A3A3E; color: #F0EDE8; }
+body.dark-mode .book-guest .form-row input::placeholder { color: #777; }
+
+/* Swipe hint for horizontal scrollers */
+.swipe-hint {
+  display: none; text-align: center; font-size: 11px; color: var(--gray);
+  margin-top: 4px; animation: swipeHintPulse 2s ease-in-out 1;
+  pointer-events: none;
+}
+@media (max-width: 767px) {
+  .swipe-hint { display: block; }
+}
+@keyframes swipeHintPulse {
+  0%, 100% { opacity: 0; transform: translateX(0); }
+  20% { opacity: 1; transform: translateX(0); }
+  50% { opacity: 1; transform: translateX(8px); }
+  80% { opacity: 1; transform: translateX(0); }
+  100% { opacity: 0; }
+}
+/* Communication Promise strip */
+.comm-promise {
+  display: flex; align-items: center; gap: 12px;
+  padding: 14px 18px; border-radius: 16px; margin: 0 0 16px;
+  background: linear-gradient(135deg, rgba(212,168,83,0.08), rgba(78,205,196,0.06));
+  border: 1px solid rgba(212,168,83,0.15);
+}
+.comm-promise-icon {
+  width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(135deg, var(--gold), #E8C547);
+  font-size: 16px; box-shadow: 0 2px 8px rgba(212,168,83,0.3);
+}
+.comm-promise-content { flex: 1; }
+.comm-promise-text { font-size: 13px; font-weight: 700; color: var(--charcoal); line-height: 1.3; }
+.comm-promise-sub { font-size: 11px; color: var(--gray); margin-top: 2px; }
+/* Enhanced form focus glow */
+.book-guest .form-row input:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(212,168,83,0.15);
+}
+#kidNameSigned:focus {
+  border-color: var(--gold) !important;
+  box-shadow: 0 0 0 3px rgba(212,168,83,0.15);
+}
 
 @media (prefers-color-scheme: dark) {
   body:not(.light-mode) {
@@ -2305,6 +2353,13 @@ body.dark-mode .review-neighborhood svg { fill: #9E9A92; }
   <div class="quick-slots reveal" id="quickSlots" style="display:none;"></div>
   <div class="date-strip" id="dateStrip"></div>
   <div style="padding: 0 20px;">
+    <div class="comm-promise reveal">
+      <div class="comm-promise-icon">💬</div>
+      <div class="comm-promise-content">
+        <div class="comm-promise-text">Poppy texts you within 5 minutes</div>
+        <div class="comm-promise-sub">Every booking — confirmation, updates during the session, and a wrap-up text when you're on your way home</div>
+      </div>
+    </div>
     <div class="book-sheet" id="bookSheet">
       <p class="book-date-label" id="bookDateLabel"></p>
       <p class="book-rate">&#9733; $12/hr &middot; Apple Pay or cash</p>
@@ -2397,6 +2452,7 @@ body.dark-mode .review-neighborhood svg { fill: #9E9A92; }
   <div class="feed-scroll" id="feedScroll">
     <!-- Tip cards rendered by JS -->
   </div>
+  <div class="swipe-hint">swipe for more ›</div>
 </section>
 
 <!-- ═══ ADVENTURES WITH POPPY ═══ -->
@@ -2493,6 +2549,7 @@ body.dark-mode .review-neighborhood svg { fill: #9E9A92; }
     <!-- Rendered by JS -->
   </div>
   <div class="review-dots" id="reviewDots"></div>
+  <div class="swipe-hint" id="reviewSwipeHint">swipe for more ›</div>
 </section>
 
 <!-- ═══ MEET POPPY ═══ -->
@@ -2623,6 +2680,10 @@ body.dark-mode .review-neighborhood svg { fill: #9E9A92; }
   <div class="share-actions">
     <button class="share-btn text-share" onclick="shareViaText()">&#128172; Text a Friend</button>
     <button class="share-btn copy-share" onclick="copyInviteLink()">&#128203; Copy Link</button>
+  </div>
+  <div class="share-stats reveal reveal-delay-2" style="display:flex;justify-content:center;gap:24px;margin-top:18px;font-size:12px;color:rgba(255,255,255,0.5);">
+    <span>📤 Shared 23 times</span>
+    <span>👨‍👩‍👧 4 families joined via referral</span>
   </div>
 </section>
 </main>
@@ -3244,6 +3305,7 @@ function renderReviews() {
     ).join('');
     // Scroll-snap dot sync
     const scroll = document.getElementById('reviewsScroll');
+    const swipeHint = document.getElementById('reviewSwipeHint');
     scroll.addEventListener('scroll', () => {
       const cards = scroll.querySelectorAll('.review-card');
       const scrollLeft = scroll.scrollLeft;
@@ -3252,6 +3314,7 @@ function renderReviews() {
       dotsEl.querySelectorAll('.review-dot').forEach((d, i) =>
         d.classList.toggle('active', i === idx)
       );
+      if (swipeHint && scrollLeft > 20) swipeHint.style.display = 'none';
     });
     // Dot click scrolls to card
     dotsEl.addEventListener('click', (e) => {
@@ -3850,6 +3913,11 @@ async function submitBooking() {
     document.getElementById('confirmKid').textContent = kidName;
     document.getElementById('confirmTotal').textContent = `$${priceCents/100}`;
     document.getElementById('confirmOverlay').classList.add('active');
+    // Stagger "What to Expect" steps
+    document.querySelectorAll('.confirm-expect-step').forEach((s, i) => {
+      s.style.opacity = '0'; s.style.transform = 'translateX(-10px)';
+      setTimeout(() => { s.style.transition = 'opacity 0.4s ease, transform 0.4s ease'; s.style.opacity = '1'; s.style.transform = 'translateX(0)'; }, 400 + i * 200);
+    });
     launchConfetti();
 
     // Save parent info for returning visitor recognition
