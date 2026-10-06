@@ -5847,11 +5847,11 @@ async function submitBooking() {
     parentEmail = document.getElementById('parentEmail').value.trim();
     kidName = document.getElementById('kidName').value.trim();
     if (!parentName || !parentPhone || !kidName || !selectedDate) {
-      showToast('Please fill in all required fields.'); return;
+      showToast('Almost there — just need your name, number, and kiddo\'s name!'); return;
     }
   }
 
-  if (!selectedDate) { showToast('Pick a day first!'); return; }
+  if (!selectedDate) { showToast('Tap a highlighted day on the calendar to pick your date!'); return; }
 
   const msgEl = document.getElementById('bookMsg');
   msgEl.className = 'book-msg'; msgEl.style.display = 'none';
@@ -5951,7 +5951,7 @@ async function submitBooking() {
     });
     document.querySelectorAll('.book-btn').forEach(b => b.classList.remove('form-ready'));
   } catch (err) {
-    msgEl.textContent = 'Something went wrong. Please try again.';
+    msgEl.textContent = 'Oops, something hiccupped! Give it another try — Poppy\'s still here.';
     msgEl.className = 'book-msg error'; msgEl.style.display = 'block';
     console.error(err);
   }
@@ -6003,7 +6003,7 @@ function addToCalendar() {
   document.body.appendChild(a); a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
-  showToast('Calendar event downloaded!');
+  showToast('Added to your calendar — see you then!');
 }
 
 /* ═══ VOICE (ElevenLabs via Avatar Modal) ═══ */
@@ -6238,7 +6238,7 @@ function copyInviteLink() {
     const txt = document.getElementById('copyLinkText');
     btn.classList.add('copied');
     txt.textContent = 'Copied!';
-    showToast('Link copied to clipboard!');
+    showToast('Link copied — share the fun!');
     setTimeout(() => { btn.classList.remove('copied'); txt.textContent = 'Copy Link'; }, 2500);
   }).catch(() => showToast(url));
 }
@@ -6257,7 +6257,7 @@ function shareTip(title, body) {
   if (navigator.share) {
     navigator.share({ title: `Poppy's Tip: ${title}`, text, url });
   } else {
-    navigator.clipboard.writeText(text + url).then(() => showToast('Tip copied!'));
+    navigator.clipboard.writeText(text + url).then(() => showToast('Copied — pass it along!'));
   }
 }
 
@@ -6403,7 +6403,7 @@ function loadDashSitters() {
   const el = document.getElementById('dashSittersList');
   if (!el) return;
   if (sitters.length === 0) {
-    el.innerHTML = '<div class="dash-empty">No sitters yet. Add your first sitter below!</div>';
+    el.innerHTML = '<div class="dash-empty">Your sitter squad is empty — add your first team member below!</div>';
     return;
   }
   el.innerHTML = sitters.map((s, i) => `
@@ -6425,7 +6425,7 @@ async function addAvailability() {
   const end = document.getElementById('availEnd').value;
   if (!date) return;
   const { error } = await db.from('availability').upsert({ date, start_time: start, end_time: end }, { onConflict: 'date' });
-  if (!error) { showToast('Availability added!'); loadAdminAvail(); loadAvailability(); }
+  if (!error) { showToast('You\'re all set — parents can see this time now!'); loadAdminAvail(); loadAvailability(); }
 }
 
 async function removeAvail(id) {
@@ -6448,7 +6448,7 @@ async function loadAdminBookings() {
   const { data } = await db.from('bookings').select('*, parents(full_name, phone)').order('date', { ascending: false }).limit(30);
   const el = document.getElementById('dashBookingsList');
   if (!data || data.length === 0) {
-    el.innerHTML = '<div class="dash-empty">No bookings yet — share your link!</div>';
+    el.innerHTML = '<div class="dash-empty">No bookings yet — share your link and watch them roll in!</div>';
     return;
   }
   el.innerHTML = data.map(b => {
@@ -6476,7 +6476,7 @@ async function loadAdminParents() {
   const { data } = await db.from('parents').select('*').order('created_at', { ascending: false }).limit(20);
   const el = document.getElementById('dashParentsList');
   if (!data || data.length === 0) {
-    el.innerHTML = '<div class="dash-empty">No parents yet — invite some families!</div>';
+    el.innerHTML = '<div class="dash-empty">No families yet — your network grows with every booking!</div>';
     return;
   }
   el.innerHTML = data.map(p => `
@@ -6561,7 +6561,7 @@ async function loadChatLogs() {
   if (error || !data || data.length === 0) {
     el.innerHTML = `<div class="dash-empty">
       <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-bottom:8px;opacity:0.4;"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
-      <br>No conversations yet.<br><span style="font-size:11px;">When parents use the voice assistant, their chats will appear here.</span>
+      <br>No conversations yet!<br><span style="font-size:11px;">When parents chat with Daisy, you'll see their conversations right here.</span>
     </div>`;
     return;
   }
@@ -6606,7 +6606,7 @@ function escapeHtml(str) {
 async function loadInsightsData() {
   const { data: bookings } = await db.from('bookings').select('*');
   if (!bookings || bookings.length === 0) {
-    document.getElementById('insightsUpcoming').innerHTML = '<div class="dash-empty">No bookings data yet.</div>';
+    document.getElementById('insightsUpcoming').innerHTML = '<div class="dash-empty">Insights will appear once you start getting bookings!</div>';
     return;
   }
 
@@ -6659,7 +6659,7 @@ async function loadInsightsData() {
   upcoming.sort((a, b) => a.date.localeCompare(b.date));
   const upEl = document.getElementById('insightsUpcoming');
   if (upcoming.length === 0) {
-    upEl.innerHTML = '<div class="dash-empty">No upcoming bookings.</div>';
+    upEl.innerHTML = '<div class="dash-empty">Your schedule is wide open — time to share your link!</div>';
   } else {
     upEl.innerHTML = upcoming.slice(0, 5).map(b => {
       const d = new Date(b.date + 'T00:00:00');
@@ -6774,7 +6774,7 @@ function addSitter() {
     schedule: {}
   });
   renderSitters();
-  showToast(name + ' added to the network!');
+  showToast(name + ' just joined the crew — welcome aboard!');
   document.getElementById('sitterName').value = '';
   document.getElementById('sitterAge').value = '';
 }
