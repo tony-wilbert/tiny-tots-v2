@@ -697,6 +697,50 @@ a { text-decoration: none; color: inherit; }
   transition: width 1s cubic-bezier(.22,1,.36,1);
 }
 
+/* ═══ SAFETY PROMISE CARD ═══ */
+.safety-promise {
+  max-width: 440px; margin: 0 auto 20px; padding: 20px 22px;
+  background: linear-gradient(135deg, rgba(92,184,92,0.06), rgba(212,168,83,0.06));
+  border: 1.5px solid rgba(92,184,92,0.15);
+  border-radius: 20px; position: relative; overflow: hidden;
+}
+.safety-promise::before {
+  content: ''; position: absolute; top: -20px; right: -20px;
+  width: 80px; height: 80px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(92,184,92,0.1), transparent 70%);
+}
+.safety-promise-title {
+  font-size: 13px; font-weight: 800; text-transform: uppercase;
+  letter-spacing: 0.8px; color: var(--green); margin-bottom: 12px;
+  display: flex; align-items: center; gap: 6px;
+}
+.safety-promise-title svg { width: 16px; height: 16px; fill: var(--green); }
+.safety-items {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+}
+.safety-item {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 12px; font-weight: 600; color: var(--charcoal);
+  padding: 6px 0;
+}
+.safety-item-icon {
+  width: 28px; height: 28px; border-radius: 8px;
+  background: rgba(92,184,92,0.1); display: flex; align-items: center;
+  justify-content: center; font-size: 14px; flex-shrink: 0;
+}
+.safety-stats {
+  display: flex; gap: 16px; margin-top: 14px; padding-top: 14px;
+  border-top: 1px solid rgba(0,0,0,0.06);
+}
+.safety-stat {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 11px; font-weight: 700; color: var(--gray);
+}
+.safety-stat-num {
+  font-family: var(--font-display); font-size: 18px; font-weight: 800;
+  color: var(--charcoal); line-height: 1;
+}
+
 .reviews-scroll {
   display: flex; gap: 14px; overflow-x: auto; scroll-snap-type: x mandatory;
   padding: 0 20px 16px; scrollbar-width: none;
@@ -714,23 +758,23 @@ a { text-decoration: none; color: inherit; }
   display: flex; align-items: center; gap: 10px; margin-bottom: 12px;
 }
 .review-avatar {
-  width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, var(--pink), var(--pink-deep));
+  width: 40px; height: 40px; border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
-  font-weight: 800; font-size: 14px; color: var(--gold); flex-shrink: 0;
+  font-weight: 800; font-size: 16px; flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
 }
 .review-meta { flex: 1; }
 .review-author { font-size: 13px; font-weight: 700; color: var(--charcoal); }
 .review-date { font-size: 10px; color: var(--gray); }
-.review-stars { color: var(--gold); font-size: 12px; letter-spacing: 1.5px; margin-bottom: 8px; }
-.review-text { font-size: 13px; color: #555; line-height: 1.6; }
+.review-stars { color: var(--gold); font-size: 13px; letter-spacing: 1.5px; margin-bottom: 8px; }
+.review-text { font-size: 13px; color: #555; line-height: 1.6; font-style: italic; }
 .review-kids { font-size: 11px; color: var(--gray); margin-top: 10px; display: flex; align-items: center; gap: 4px; }
-.review-kids::before { content: '👶'; font-size: 12px; }
 .review-verified {
   position: absolute; top: 14px; right: 16px;
-  font-size: 9px; font-weight: 700; color: var(--green); letter-spacing: 0.5px;
+  font-size: 9px; font-weight: 700; color: var(--white); letter-spacing: 0.5px;
   display: flex; align-items: center; gap: 3px;
+  background: var(--green); padding: 3px 8px; border-radius: 10px;
 }
-.review-verified::before { content: '✓'; font-size: 10px; }
 
 /* ═══ SITTERS NETWORK ═══ */
 .sitters-section { background: var(--warm); }
@@ -1502,6 +1546,27 @@ elevenlabs-convai {
       <div class="trust-row"><span class="trust-row-label">1</span><div class="trust-row-bar"><div class="trust-row-fill" style="width:0%"></div></div></div>
     </div>
   </div>
+  <!-- Safety Promise Card -->
+  <div class="safety-promise reveal">
+    <div class="safety-promise-title">
+      <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
+      Poppy's Safety Promise
+    </div>
+    <div class="safety-items">
+      <div class="safety-item"><div class="safety-item-icon">🩹</div><span>Red Cross Certified</span></div>
+      <div class="safety-item"><div class="safety-item-icon">📱</div><span>Real-time updates</span></div>
+      <div class="safety-item"><div class="safety-item-icon">👨‍👩‍👧</div><span>Parent-approved</span></div>
+      <div class="safety-item"><div class="safety-item-icon">🏠</div><span>Neighborhood local</span></div>
+      <div class="safety-item"><div class="safety-item-icon">⏰</div><span>Always punctual</span></div>
+      <div class="safety-item"><div class="safety-item-icon">📋</div><span>Activity reports</span></div>
+    </div>
+    <div class="safety-stats">
+      <div class="safety-stat"><span class="safety-stat-num">50+</span> sessions</div>
+      <div class="safety-stat"><span class="safety-stat-num">&lt;5min</span> response</div>
+      <div class="safety-stat"><span class="safety-stat-num">100%</span> on-time</div>
+    </div>
+  </div>
+
   <div class="reviews-scroll" id="reviewsScroll">
     <!-- Rendered by JS -->
   </div>
@@ -2087,11 +2152,17 @@ function renderFeed() {
 
 /* ═══ RENDER REVIEWS ═══ */
 function renderReviews() {
-  document.getElementById('reviewsScroll').innerHTML = reviews.map(r => `
+  const avatarColors = [
+    ['#FF6B6B','#FFE66D'], ['#4ECDC4','#A8E6CF'], ['#A18CD1','#FBC2EB'],
+    ['#FF9A9E','#FECFEF'], ['#667eea','#764ba2'], ['#f093fb','#f5576c']
+  ];
+  document.getElementById('reviewsScroll').innerHTML = reviews.map((r, i) => {
+    const [c1, c2] = avatarColors[i % avatarColors.length];
+    return `
     <div class="review-card">
-      ${r.verified ? '<div class="review-verified">Verified</div>' : ''}
+      ${r.verified ? '<div class="review-verified">✓ Verified Parent</div>' : ''}
       <div class="review-header">
-        <div class="review-avatar">${r.parent.charAt(0)}</div>
+        <div class="review-avatar" style="background:linear-gradient(135deg,${c1},${c2});color:#fff">${r.parent.charAt(0)}</div>
         <div class="review-meta">
           <div class="review-author">${r.parent}</div>
           <div class="review-date">${r.date || ''}</div>
@@ -2099,9 +2170,9 @@ function renderReviews() {
       </div>
       <div class="review-stars">${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}</div>
       <div class="review-text">"${r.text}"</div>
-      <div class="review-kids">${r.kids}</div>
+      <div class="review-kids">👶 ${r.kids}</div>
     </div>
-  `).join('');
+  `}).join('');
 }
 
 /* ═══ RENDER SITTERS ═══ */
