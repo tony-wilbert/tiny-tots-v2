@@ -60,7 +60,9 @@ a { text-decoration: none; color: inherit; }
   border-bottom: 1px solid var(--glass-border);
   transition: box-shadow 0.3s;
 }
-.nav.scrolled { box-shadow: var(--shadow-sm); }
+.nav.scrolled { box-shadow: var(--shadow-sm); background: rgba(255,252,247,0.95); }
+.nav { transition: box-shadow 0.3s, background 0.3s, padding 0.3s; }
+.nav.scrolled { padding: 10px 20px; }
 .nav-logo {
   font-family: var(--font-display); font-size: 18px; font-weight: 700;
   color: var(--charcoal); display: flex; align-items: center; gap: 5px;
@@ -212,6 +214,13 @@ a { text-decoration: none; color: inherit; }
 }
 .action-btn.primary:hover { transform: translateY(-2px) scale(1.02); box-shadow: 0 12px 36px rgba(0,0,0,0.28); }
 .action-btn.primary:active { transform: scale(0.96); box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+.action-btn.primary.pulse {
+  animation: btn-pulse 2.5s ease-in-out infinite;
+}
+@keyframes btn-pulse {
+  0%, 100% { box-shadow: 0 6px 24px rgba(0,0,0,0.25); }
+  50% { box-shadow: 0 6px 24px rgba(0,0,0,0.25), 0 0 0 8px rgba(51,51,51,0.08); }
+}
 .action-btn.secondary {
   background: var(--white); color: var(--charcoal);
   box-shadow: var(--shadow-md); border: 1.5px solid rgba(0,0,0,0.06);
@@ -325,6 +334,13 @@ a { text-decoration: none; color: inherit; }
 .day-pill:not(.available) { opacity: 0.35; }
 .day-pill:not(.available):hover { border-color: transparent; cursor: default; }
 .day-pill.available:active { transform: scale(0.93); }
+.day-pill.available { transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), border-color 0.2s; }
+.day-pill.selected { animation: day-select 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
+@keyframes day-select {
+  0% { transform: scale(0.9); }
+  60% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
 
 /* Sticky CTA Bar — appears when scrolling past hero */
 .sticky-cta {
@@ -774,6 +790,18 @@ a { text-decoration: none; color: inherit; }
   font-size: 9px; font-weight: 700; color: var(--white); letter-spacing: 0.5px;
   display: flex; align-items: center; gap: 3px;
   background: var(--green); padding: 3px 8px; border-radius: 10px;
+}
+/* ═══ REVIEW CAROUSEL DOTS ═══ */
+.review-dots {
+  display: flex; justify-content: center; gap: 6px; margin-top: 12px; padding-bottom: 4px;
+}
+.review-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--gray-light); border: none; padding: 0; cursor: pointer;
+  transition: all 0.3s;
+}
+.review-dot.active {
+  width: 18px; border-radius: 3px; background: var(--gold);
 }
 
 /* ═══ SITTERS NETWORK ═══ */
@@ -1386,7 +1414,7 @@ elevenlabs-convai {
   </div>
 
   <div class="hero-actions hero-enter">
-    <button class="action-btn primary" onclick="toggleVoice()">
+    <button class="action-btn primary pulse" onclick="toggleVoice()">
       <span class="mic-dot"></span>
       <span id="voiceBtnText">Talk to Poppy</span>
     </button>
@@ -1570,6 +1598,7 @@ elevenlabs-convai {
   <div class="reviews-scroll" id="reviewsScroll">
     <!-- Rendered by JS -->
   </div>
+  <div class="review-dots" id="reviewDots"></div>
 </section>
 
 <!-- ═══ MEET POPPY ═══ -->
@@ -2173,6 +2202,33 @@ function renderReviews() {
       <div class="review-kids">👶 ${r.kids}</div>
     </div>
   `}).join('');
+
+  // Build dot indicators
+  const dotsEl = document.getElementById('reviewDots');
+  if (dotsEl) {
+    dotsEl.innerHTML = reviews.map((_, i) =>
+      `<button class="review-dot${i === 0 ? ' active' : ''}" data-idx="${i}" aria-label="Review ${i+1}"></button>`
+    ).join('');
+    // Scroll-snap dot sync
+    const scroll = document.getElementById('reviewsScroll');
+    scroll.addEventListener('scroll', () => {
+      const cards = scroll.querySelectorAll('.review-card');
+      const scrollLeft = scroll.scrollLeft;
+      const cardWidth = cards[0]?.offsetWidth + 14 || 274;
+      const idx = Math.round(scrollLeft / cardWidth);
+      dotsEl.querySelectorAll('.review-dot').forEach((d, i) =>
+        d.classList.toggle('active', i === idx)
+      );
+    });
+    // Dot click scrolls to card
+    dotsEl.addEventListener('click', (e) => {
+      const dot = e.target.closest('.review-dot');
+      if (!dot) return;
+      const idx = parseInt(dot.dataset.idx);
+      const cards = scroll.querySelectorAll('.review-card');
+      if (cards[idx]) cards[idx].scrollIntoView({ behavior: 'smooth', inline: 'start', block: 'nearest' });
+    });
+  }
 }
 
 /* ═══ RENDER SITTERS ═══ */
