@@ -112,7 +112,13 @@ a { text-decoration: none; color: inherit; }
   min-height: 80vh; min-height: 80dvh;
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   padding: calc(var(--nav-h) + 12px) 24px 28px; text-align: center;
-  background: linear-gradient(180deg, var(--warm) 0%, var(--pink) 55%, var(--pink-deep) 100%);
+  background:
+    radial-gradient(ellipse at 20% 50%, rgba(245,224,220,0.5) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, rgba(212,168,83,0.12) 0%, transparent 40%),
+    radial-gradient(ellipse at 60% 80%, rgba(234,205,198,0.35) 0%, transparent 50%),
+    linear-gradient(180deg, var(--warm) 0%, var(--pink) 55%, var(--pink-deep) 100%);
+  background-size: 200% 200%, 200% 200%, 200% 200%, 100% 100%;
+  animation: aurora 20s ease-in-out infinite;
   position: relative; overflow: hidden;
 }
 .hero::before {
@@ -124,6 +130,12 @@ a { text-decoration: none; color: inherit; }
   content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 120px;
   background: linear-gradient(to top, var(--warm) 0%, transparent 100%);
   z-index: 1; pointer-events: none;
+}
+@keyframes aurora {
+  0%, 100% { background-position: 0% 50%, 100% 50%, 50% 100%, 0 0; }
+  25% { background-position: 50% 0%, 0% 100%, 100% 50%, 0 0; }
+  50% { background-position: 100% 50%, 50% 0%, 0% 50%, 0 0; }
+  75% { background-position: 50% 100%, 100% 50%, 50% 0%, 0 0; }
 }
 @keyframes shimmer {
   0%, 100% { transform: scale(1); opacity: 0.6; }
@@ -171,12 +183,21 @@ a { text-decoration: none; color: inherit; }
 .avatar-ring {
   width: 160px; height: 160px; border-radius: 50%; padding: 3px;
   background: linear-gradient(135deg, var(--gold), var(--gold-light), var(--gold));
-  box-shadow: 0 8px 40px rgba(212,168,83,0.3);
+  box-shadow: 0 8px 40px rgba(212,168,83,0.3), 0 0 60px rgba(212,168,83,0.15);
   animation: pulse-ring 3s ease-in-out infinite;
   transition: all 0.4s ease; position: relative;
 }
+.avatar-ring::after {
+  content: ''; position: absolute; inset: -12px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(212,168,83,0.2) 0%, transparent 70%);
+  z-index: -1; animation: avatarGlow 4s ease-in-out infinite;
+}
+@keyframes avatarGlow {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50% { opacity: 0.9; transform: scale(1.15); }
+}
 @keyframes pulse-ring {
-  0%, 100% { box-shadow: 0 8px 40px rgba(212,168,83,0.3); }
+  0%, 100% { box-shadow: 0 8px 40px rgba(212,168,83,0.3), 0 0 60px rgba(212,168,83,0.15); }
   50% { box-shadow: 0 8px 60px rgba(212,168,83,0.5), 0 0 0 8px rgba(212,168,83,0.1); }
 }
 .avatar-ring img {
@@ -517,6 +538,18 @@ a { text-decoration: none; color: inherit; }
   padding: 2px 8px; margin-top: 6px;
 }
 
+/* ═══ WAVE DIVIDERS ═══ */
+.wave-divider {
+  position: relative; width: 100%; overflow: hidden;
+  line-height: 0; margin-top: -2px;
+}
+.wave-divider svg {
+  display: block; width: 100%; height: 48px;
+}
+.wave-divider.hero-wave { color: var(--warm); margin-top: -60px; position: relative; z-index: 2; }
+.wave-divider.section-wave { color: #222226; }
+body.dark-mode .wave-divider.hero-wave { color: #1B1B1F; }
+
 /* How It Works — 3 steps */
 .how-section {
   padding: 32px 20px 12px; max-width: 600px; margin: 0 auto;
@@ -581,10 +614,10 @@ a { text-decoration: none; color: inherit; }
 /* Booking Sheet */
 .book-sheet {
   max-height: 0; overflow: hidden; transition: max-height 0.4s ease, padding 0.4s ease;
-  background: rgba(255,255,255,0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-  border-radius: 20px; max-width: 560px; margin: 0 auto;
-  box-shadow: var(--shadow-md), inset 0 1px 0 rgba(255,255,255,0.6);
-  border: 1px solid rgba(255,255,255,0.4);
+  background: rgba(255,255,255,0.88); backdrop-filter: blur(28px) saturate(1.4); -webkit-backdrop-filter: blur(28px) saturate(1.4);
+  border-radius: 24px; max-width: 560px; margin: 0 auto;
+  box-shadow: var(--shadow-lg), inset 0 1px 0 rgba(255,255,255,0.7), 0 0 0 1px rgba(255,255,255,0.3);
+  border: 1px solid rgba(255,255,255,0.5);
 }
 .book-sheet.open { max-height: 1000px; padding: 24px; margin-top: 16px; }
 .book-date-label {
@@ -882,11 +915,12 @@ a { text-decoration: none; color: inherit; }
 
 .book-btn {
   width: 100%; padding: 15px; border-radius: 14px; font-size: 15px; font-weight: 700;
-  background: var(--charcoal); color: var(--white); transition: all 0.2s;
+  background: var(--charcoal); color: var(--white); transition: all 0.25s;
+  box-shadow: 0 4px 16px rgba(58,58,58,0.25);
 }
-.book-btn:hover { background: var(--gold); }
+.book-btn:hover { background: var(--gold); box-shadow: 0 4px 20px rgba(212,168,83,0.35); }
 .book-btn:active { transform: scale(0.96); }
-.book-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.book-btn:disabled { opacity: 0.4; cursor: not-allowed; box-shadow: none; }
 .book-msg {
   margin-top: 12px; padding: 12px 16px; border-radius: 12px;
   font-size: 13px; font-weight: 600; text-align: center; display: none;
@@ -1014,7 +1048,8 @@ a { text-decoration: none; color: inherit; }
   max-width: 440px; margin: 0 auto 20px; padding: 20px 22px;
   background: linear-gradient(135deg, rgba(92,184,92,0.06), rgba(212,168,83,0.06));
   border: 1.5px solid rgba(92,184,92,0.15);
-  border-radius: 20px; position: relative; overflow: hidden;
+  border-radius: 24px; position: relative; overflow: hidden;
+  box-shadow: 0 2px 16px rgba(92,184,92,0.06);
 }
 .safety-promise::before {
   content: ''; position: absolute; top: -20px; right: -20px;
@@ -1061,11 +1096,11 @@ a { text-decoration: none; color: inherit; }
 .reviews-scroll::-webkit-scrollbar { display: none; }
 .review-card {
   scroll-snap-align: start; flex-shrink: 0; width: 260px;
-  background: rgba(255,248,245,0.8); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-  border-radius: 20px; padding: 22px 20px;
-  border: 1px solid rgba(212,168,83,0.1); position: relative;
+  background: rgba(255,248,245,0.85); backdrop-filter: blur(16px) saturate(1.3); -webkit-backdrop-filter: blur(16px) saturate(1.3);
+  border-radius: 24px; padding: 22px 20px;
+  border: 1px solid rgba(212,168,83,0.12); position: relative;
   transition: transform 0.3s cubic-bezier(.22,1,.36,1), box-shadow 0.3s;
-  box-shadow: var(--shadow-sm), inset 0 1px 0 rgba(255,255,255,0.5);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.04), 0 8px 32px rgba(212,168,83,0.06), inset 0 1px 0 rgba(255,255,255,0.6);
 }
 .review-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg), inset 0 1px 0 rgba(255,255,255,0.5); }
 .review-header {
@@ -2133,12 +2168,20 @@ body.dark-mode .nav-btn { color: #F0EDE8; }
 body.dark-mode .nav-btn.primary { background: var(--gold); color: #1B1B1F; }
 body.dark-mode .dark-toggle { border-color: rgba(255,255,255,0.12); }
 body.dark-mode .dark-toggle:hover { background: rgba(255,255,255,0.08); }
-body.dark-mode .hero { background: linear-gradient(180deg, #2D2528 0%, #1B1B1F 100%); }
+body.dark-mode .hero {
+  background:
+    radial-gradient(ellipse at 25% 40%, rgba(212,168,83,0.1) 0%, transparent 50%),
+    radial-gradient(ellipse at 75% 60%, rgba(139,92,246,0.06) 0%, transparent 45%),
+    radial-gradient(ellipse at 50% 20%, rgba(245,224,220,0.05) 0%, transparent 40%),
+    linear-gradient(180deg, #2D2528 0%, #1F1D20 50%, #1B1B1F 100%);
+  background-size: 200% 200%, 200% 200%, 200% 200%, 100% 100%;
+  animation: aurora 25s ease-in-out infinite;
+}
 body.dark-mode .hero::after { background: linear-gradient(to top, #1B1B1F 0%, transparent 100%); }
-body.dark-mode .hero-blob { opacity: 0.08; }
+body.dark-mode .hero-blob { opacity: 0.15; }
 body.dark-mode .avatar-ring { border-color: rgba(212,168,83,0.3); }
 body.dark-mode .how-section { background: #222226; }
-body.dark-mode .book-sheet { background: #2A2A2E; border-color: rgba(255,255,255,0.06); }
+body.dark-mode .book-sheet { background: rgba(42,42,46,0.92); backdrop-filter: blur(28px); -webkit-backdrop-filter: blur(28px); border-color: rgba(255,255,255,0.08); box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.04); }
 body.dark-mode .day-pill { background: #2A2A2E; border-color: rgba(255,255,255,0.06); color: #F0EDE8; }
 body.dark-mode .day-pill.available { background: rgba(212,168,83,0.12); border-color: rgba(212,168,83,0.25); }
 body.dark-mode .day-pill.selected { background: var(--gold); color: #1B1B1F; }
@@ -2158,7 +2201,7 @@ body.dark-mode .adventure-card { border-color: rgba(255,255,255,0.06); }
 body.dark-mode .reviews-section { background: #222226; }
 body.dark-mode .safety-promise { background: #2A2A2E; border-color: rgba(255,255,255,0.06); }
 body.dark-mode .safety-promise-title { color: var(--green); }
-body.dark-mode .review-card { background: #2A2A2E; border-color: rgba(255,255,255,0.06); }
+body.dark-mode .review-card { background: rgba(42,42,46,0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-color: rgba(255,255,255,0.08); box-shadow: 0 2px 16px rgba(0,0,0,0.2); }
 body.dark-mode .meet-section { background: #1B1B1F; }
 body.dark-mode .meet-card { background: #2A2A2E; border-color: rgba(255,255,255,0.06); }
 body.dark-mode .meet-badge { background: #333338; color: #F0EDE8; }
@@ -2496,6 +2539,12 @@ body.dark-mode .scenario-pick:hover, body.dark-mode .scenario-pick.active { bord
     <div class="badge"><span class="dot"></span> <span id="availCountBadge">Available This Week</span></div>
   </div>
 </section>
+
+<div class="wave-divider hero-wave">
+  <svg viewBox="0 0 1440 48" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0,32 C240,48 480,8 720,24 C960,40 1200,12 1440,28 L1440,48 L0,48 Z" fill="currentColor"/>
+  </svg>
+</div>
 
 <!-- ═══ HOW IT WORKS ═══ -->
 <div class="how-section reveal">
