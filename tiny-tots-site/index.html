@@ -1,0 +1,2243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Tiny Tots — Poppy's Babysitting Network</title>
+<meta name="theme-color" content="#FFF8F5">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="description" content="Meet Poppy — your 12-year-old Red Cross certified babysitter. Talk to her, book instantly, get parenting tips. The babysitting service parents actually share.">
+<!-- Open Graph — beautiful previews on iMessage, WhatsApp, Instagram, Twitter -->
+<meta property="og:title" content="Meet Poppy — Babysitter Extraordinaire">
+<meta property="og:description" content="Red Cross certified, $12/hr, and she has an AI voice assistant. The babysitting service parents actually share with other parents.">
+<meta property="og:image" content="https://tinytots-v2.netlify.app/poppy-photo.jpg">
+<meta property="og:url" content="https://tinytots-v2.netlify.app">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Meet Poppy — Babysitter Extraordinaire">
+<meta name="twitter:description" content="Red Cross certified, $12/hr, AI-powered parenting tips. The babysitting service parents actually share.">
+<meta name="twitter:image" content="https://tinytots-v2.netlify.app/poppy-photo.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ═══ VARIABLES & RESET ═══ */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+:root {
+  --pink: #F5E0DC; --pink-deep: #EACDC6; --gold: #D4A853; --gold-light: #E8C97A;
+  --warm: #FFF8F5; --charcoal: #3A3A3A; --white: #FFFFFF; --gray: #999;
+  --green: #5CB85C; --red-soft: #E88B8B;
+  --glass: rgba(255,255,255,0.72); --glass-border: rgba(255,255,255,0.3);
+  --shadow-sm: 0 2px 8px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 20px rgba(0,0,0,0.06);
+  --shadow-lg: 0 12px 40px rgba(0,0,0,0.1);
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-body: 'Nunito', -apple-system, sans-serif;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --nav-h: 60px;
+  --bottom-h: 72px;
+}
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+body {
+  font-family: var(--font-body); color: var(--charcoal);
+  background: var(--warm); overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  padding-bottom: calc(var(--bottom-h) + var(--safe-bottom) + 8px);
+}
+button { font-family: var(--font-body); cursor: pointer; border: none; }
+input, select { font-family: var(--font-body); }
+a { text-decoration: none; color: inherit; }
+
+/* ═══ TOP NAV (glass) ═══ */
+.nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 20px; height: var(--nav-h);
+  background: var(--glass); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+  border-bottom: 1px solid var(--glass-border);
+  transition: box-shadow 0.3s;
+}
+.nav.scrolled { box-shadow: var(--shadow-sm); }
+.nav-logo {
+  font-family: var(--font-display); font-size: 18px; font-weight: 700;
+  color: var(--charcoal); display: flex; align-items: center; gap: 5px;
+}
+.nav-logo span { color: var(--gold); }
+.nav-right { display: flex; gap: 6px; align-items: center; }
+.nav-btn {
+  font-size: 12px; font-weight: 700; padding: 8px 14px; border-radius: 20px;
+  transition: all 0.2s; background: transparent; color: var(--charcoal);
+}
+.nav-btn:hover { background: var(--pink); }
+.nav-btn.primary { background: var(--charcoal); color: var(--white); }
+.nav-btn.primary:hover { background: var(--gold); }
+.nav-user {
+  width: 32px; height: 32px; border-radius: 50%; object-fit: cover;
+  border: 2px solid var(--gold); cursor: pointer; display: none;
+}
+
+/* ═══ BOTTOM TAB BAR ═══ */
+.bottom-bar {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
+  height: calc(var(--bottom-h) + var(--safe-bottom));
+  padding-bottom: var(--safe-bottom);
+  background: var(--glass); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+  border-top: 1px solid var(--glass-border);
+  display: flex; justify-content: space-around; align-items: center;
+}
+.tab-btn {
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  background: none; color: var(--gray); font-size: 10px; font-weight: 700;
+  padding: 8px 16px; border-radius: 12px; transition: all 0.2s;
+  letter-spacing: 0.3px;
+}
+.tab-btn.active { color: var(--gold); }
+.tab-btn svg { width: 22px; height: 22px; fill: currentColor; }
+.tab-btn:active { transform: scale(0.92); }
+
+/* ═══ PROFILE HERO ═══ */
+.hero {
+  min-height: 100vh; min-height: 100dvh;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: calc(var(--nav-h) + 20px) 24px 40px; text-align: center;
+  background: linear-gradient(180deg, var(--warm) 0%, var(--pink) 55%, var(--pink-deep) 100%);
+  position: relative; overflow: hidden;
+}
+.hero::before {
+  content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+  background: radial-gradient(circle at 50% 40%, rgba(212,168,83,0.08) 0%, transparent 60%);
+  animation: shimmer 8s ease-in-out infinite;
+}
+@keyframes shimmer {
+  0%, 100% { transform: scale(1); opacity: 0.6; }
+  50% { transform: scale(1.1) rotate(2deg); opacity: 1; }
+}
+
+.avatar-wrap {
+  position: relative; z-index: 2; margin-bottom: 20px; cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.avatar-ring {
+  width: 160px; height: 160px; border-radius: 50%; padding: 3px;
+  background: linear-gradient(135deg, var(--gold), var(--gold-light), var(--gold));
+  box-shadow: 0 8px 40px rgba(212,168,83,0.3);
+  animation: pulse-ring 3s ease-in-out infinite;
+  transition: all 0.4s ease; position: relative;
+}
+@keyframes pulse-ring {
+  0%, 100% { box-shadow: 0 8px 40px rgba(212,168,83,0.3); }
+  50% { box-shadow: 0 8px 60px rgba(212,168,83,0.5), 0 0 0 8px rgba(212,168,83,0.1); }
+}
+.avatar-ring img {
+  width: 100%; height: 100%; border-radius: 50%; object-fit: cover;
+  border: 3px solid var(--white);
+}
+.avatar-wrap.voice-active .avatar-ring {
+  animation: voice-ring 1.5s ease-in-out infinite;
+}
+@keyframes voice-ring {
+  0%, 100% { box-shadow: 0 0 30px rgba(212,168,83,0.5), 0 0 0 0 rgba(212,168,83,0.3); }
+  50% { box-shadow: 0 0 50px rgba(212,168,83,0.7), 0 0 0 14px rgba(212,168,83,0.15); }
+}
+.avatar-wave {
+  position: absolute; top: 50%; left: 50%; width: 160px; height: 160px;
+  border-radius: 50%; transform: translate(-50%, -50%);
+  pointer-events: none; opacity: 0; transition: opacity 0.4s;
+}
+.avatar-wrap.voice-active .avatar-wave { opacity: 1; }
+.avatar-wave::before, .avatar-wave::after {
+  content: ''; position: absolute; inset: -16px; border-radius: 50%;
+  border: 2px solid rgba(212,168,83,0.3);
+  animation: wave-expand 2s ease-out infinite;
+}
+.avatar-wave::after { animation-delay: 1s; }
+@keyframes wave-expand {
+  0% { transform: scale(1); opacity: 0.6; }
+  100% { transform: scale(1.6); opacity: 0; }
+}
+.avatar-status {
+  position: absolute; bottom: -6px; left: 50%; transform: translateX(-50%);
+  background: var(--charcoal); color: var(--white);
+  font-size: 11px; font-weight: 700; letter-spacing: 0.3px;
+  padding: 5px 14px; border-radius: 20px; white-space: nowrap;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.2); transition: all 0.3s;
+}
+.avatar-wrap.voice-active .avatar-status { background: var(--gold); }
+
+.profile-name {
+  font-family: var(--font-display); font-size: 36px; font-weight: 800;
+  color: var(--charcoal); z-index: 2; position: relative; line-height: 1.1;
+}
+.profile-name em { font-style: normal; color: var(--gold); }
+.profile-verified {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 13px; font-weight: 700; color: var(--green); margin-top: 4px; z-index: 2;
+}
+.profile-verified svg { width: 14px; height: 14px; fill: var(--green); }
+.profile-bio {
+  font-size: 14px; color: #777; margin-top: 8px; z-index: 2; position: relative;
+  max-width: 300px; line-height: 1.5;
+}
+
+/* Stats row */
+.stats-row {
+  display: flex; gap: 24px; margin-top: 20px; z-index: 2; position: relative;
+}
+.stat-item { text-align: center; }
+.stat-num {
+  font-family: var(--font-display); font-size: 24px; font-weight: 800; color: var(--charcoal);
+}
+.stat-label { font-size: 11px; font-weight: 700; color: var(--gray); text-transform: uppercase; letter-spacing: 0.5px; }
+
+/* Hero actions */
+.hero-actions {
+  display: flex; gap: 10px; margin-top: 24px; z-index: 2; position: relative;
+}
+.action-btn {
+  display: flex; align-items: center; gap: 8px;
+  padding: 14px 28px; border-radius: 50px; font-size: 15px; font-weight: 700;
+  transition: all 0.25s cubic-bezier(.22,1,.36,1); position: relative; overflow: hidden;
+}
+.action-btn::after {
+  content: ''; position: absolute; inset: 0; background: radial-gradient(circle at var(--ripple-x, 50%) var(--ripple-y, 50%), rgba(255,255,255,0.3), transparent 60%);
+  opacity: 0; transition: opacity 0.4s;
+}
+.action-btn:active::after { opacity: 1; transition: opacity 0s; }
+.action-btn.primary {
+  background: linear-gradient(135deg, #3A3A3A 0%, #2a2a2a 100%); color: var(--white);
+  box-shadow: 0 6px 24px rgba(0,0,0,0.2);
+}
+.action-btn.primary:hover { transform: translateY(-2px) scale(1.02); box-shadow: 0 12px 36px rgba(0,0,0,0.28); }
+.action-btn.primary:active { transform: scale(0.96); box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+.action-btn.secondary {
+  background: var(--white); color: var(--charcoal);
+  box-shadow: var(--shadow-md); border: 1.5px solid rgba(0,0,0,0.06);
+}
+.action-btn.secondary:hover { background: var(--pink); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(0,0,0,0.08); }
+.action-btn.secondary:active { transform: scale(0.97); }
+.action-btn .mic-dot {
+  width: 10px; height: 10px; border-radius: 50%; background: var(--gold);
+  animation: mic-pulse 2s ease-in-out infinite;
+}
+@keyframes mic-pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.3); opacity: 0.7; }
+}
+
+.hero-badges {
+  display: flex; gap: 12px; margin-top: 16px; z-index: 2; position: relative;
+  font-size: 11px; font-weight: 600; color: var(--gray); flex-wrap: wrap; justify-content: center;
+}
+.hero-badges .badge { display: flex; align-items: center; gap: 4px; }
+.hero-badges .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--green); }
+
+/* ═══ SECTION SHARED ═══ */
+.section { padding: 48px 20px; max-width: 600px; margin: 0 auto; }
+.section-header { margin-bottom: 20px; }
+.section-label {
+  font-size: 10px; font-weight: 800; letter-spacing: 2.5px; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 6px;
+}
+.section-title {
+  font-family: var(--font-display); font-size: 26px; font-weight: 700;
+  color: var(--charcoal); line-height: 1.2;
+}
+.section-sub { font-size: 13px; color: var(--gray); margin-top: 4px; line-height: 1.5; }
+
+/* ═══ POPPY'S WORLD — CONTENT FEED ═══ */
+.feed-section { background: var(--white); padding: 48px 0; }
+.feed-header { padding: 0 20px 20px; max-width: 600px; margin: 0 auto; }
+.feed-scroll {
+  display: flex; gap: 14px; overflow-x: auto; scroll-snap-type: x mandatory;
+  padding: 0 20px 16px; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+}
+.feed-scroll::-webkit-scrollbar { display: none; }
+
+.tip-card {
+  scroll-snap-align: start; flex-shrink: 0; width: 260px;
+  background: var(--warm); border-radius: 20px; padding: 24px 20px;
+  position: relative; overflow: hidden;
+  border: 1px solid rgba(0,0,0,0.04);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.tip-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+.tip-card .tip-category {
+  font-size: 9px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 10px;
+}
+.tip-card .tip-icon { font-size: 28px; margin-bottom: 10px; }
+.tip-card .tip-title {
+  font-family: var(--font-display); font-size: 18px; font-weight: 700;
+  line-height: 1.3; margin-bottom: 8px;
+}
+.tip-card .tip-body { font-size: 13px; color: #666; line-height: 1.6; }
+.tip-card .tip-share {
+  margin-top: 16px; display: flex; align-items: center; gap: 6px;
+  font-size: 12px; font-weight: 700; color: var(--gold);
+  background: none; padding: 8px 14px; border-radius: 20px;
+  border: 1.5px solid var(--gold); transition: all 0.2s;
+}
+.tip-card .tip-share:hover { background: var(--gold); color: var(--white); }
+
+.tip-card.ask-card {
+  background: linear-gradient(135deg, var(--charcoal), #4a4a4a);
+  color: var(--white);
+}
+.tip-card.ask-card .tip-category { color: var(--gold-light); }
+.tip-card.ask-card .tip-body { color: rgba(255,255,255,0.7); }
+.tip-card.ask-card .tip-share {
+  border-color: var(--gold); color: var(--gold);
+}
+.tip-card.ask-card .tip-share:hover { background: var(--gold); color: var(--charcoal); }
+
+/* ═══ CALENDAR / BOOKING ═══ */
+.avail-section { padding: 48px 0; background: var(--warm); border-top: 1px solid rgba(0,0,0,0.04); }
+.avail-header { padding: 0 20px 20px; max-width: 600px; margin: 0 auto; }
+.date-strip {
+  display: flex; gap: 10px; overflow-x: auto; scroll-snap-type: x mandatory;
+  padding: 4px 20px 16px; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+}
+.date-strip::-webkit-scrollbar { display: none; }
+.day-pill {
+  scroll-snap-align: start; flex-shrink: 0; width: 56px; padding: 12px 0;
+  border-radius: 18px; display: flex; flex-direction: column; align-items: center; gap: 4px;
+  background: var(--white); border: 2px solid transparent;
+  transition: all 0.25s ease; cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.day-pill:hover { border-color: var(--gold); }
+.day-pill.available { border-color: rgba(212,168,83,0.3); }
+.day-pill.selected { background: var(--charcoal); border-color: var(--charcoal); }
+.day-pill.selected .day-name, .day-pill.selected .day-num { color: var(--white); }
+.day-pill.selected .avail-dot { background: var(--gold-light); }
+.day-name {
+  font-size: 9px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.8px; color: var(--gray);
+}
+.day-num { font-size: 18px; font-weight: 800; color: var(--charcoal); }
+.avail-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--green); }
+.unavail-dot { width: 5px; height: 5px; border-radius: 50%; background: transparent; }
+
+/* Booking Sheet */
+.book-sheet {
+  max-height: 0; overflow: hidden; transition: max-height 0.4s ease, padding 0.4s ease;
+  background: var(--white); border-radius: 20px; max-width: 560px; margin: 0 auto;
+  box-shadow: var(--shadow-md);
+}
+.book-sheet.open { max-height: 700px; padding: 24px; margin-top: 16px; }
+.book-date-label {
+  font-family: var(--font-display); font-size: 18px; font-weight: 700; margin-bottom: 16px;
+}
+.book-rate {
+  font-size: 13px; color: var(--gold); font-weight: 700; margin-bottom: 16px;
+  display: flex; align-items: center; gap: 6px;
+}
+
+/* Dynamic price preview */
+.price-preview {
+  background: linear-gradient(135deg, #faf7f2 0%, #f5f0e8 100%);
+  border: 1.5px solid rgba(183,161,96,0.2);
+  border-radius: 14px; padding: 14px 16px; margin-bottom: 16px;
+  animation: priceSlideIn 0.35s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+@keyframes priceSlideIn {
+  from { opacity: 0; transform: translateY(-8px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.price-preview-row {
+  display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;
+}
+.price-preview-label {
+  font-family: var(--font-body); font-size: 14px; font-weight: 600; color: var(--charcoal);
+}
+.price-preview-calc {
+  font-family: var(--font-body); font-size: 13px; color: #888; font-weight: 500;
+}
+.price-preview-total {
+  display: flex; justify-content: space-between; align-items: center;
+  border-top: 1px dashed rgba(183,161,96,0.25); padding-top: 8px;
+}
+.price-total-label {
+  font-family: var(--font-body); font-size: 12px; color: #999; text-transform: uppercase;
+  letter-spacing: 0.5px; font-weight: 600;
+}
+.price-total-amount {
+  font-family: var(--font-display); font-size: 22px; font-weight: 800; color: var(--charcoal);
+  transition: all 0.3s ease;
+}
+.price-total-amount.updating {
+  animation: priceFlip 0.4s ease;
+}
+@keyframes priceFlip {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.15); color: var(--gold); }
+  100% { transform: scale(1); }
+}
+
+/* Auth-aware booking */
+.book-signed-in { display: none; }
+.book-signed-in .signed-in-greeting {
+  display: flex; align-items: center; gap: 12px;
+  padding: 14px 16px; background: var(--warm); border-radius: 14px; margin-bottom: 16px;
+}
+.signed-in-greeting img {
+  width: 36px; height: 36px; border-radius: 50%; object-fit: cover;
+}
+.signed-in-greeting .greeting-text { font-size: 14px; font-weight: 600; }
+.signed-in-greeting .greeting-sub { font-size: 12px; color: var(--gray); }
+
+.book-guest .form-row { display: flex; gap: 8px; margin-bottom: 10px; }
+.book-guest .form-row input {
+  flex: 1; padding: 13px 16px; border-radius: 12px; border: 2px solid #eee;
+  font-size: 14px; background: var(--white); transition: border-color 0.2s; outline: none;
+}
+.book-guest .form-row input:focus { border-color: var(--gold); }
+
+.google-signin-row {
+  display: flex; align-items: center; gap: 12px; margin-bottom: 16px;
+}
+.google-btn {
+  display: flex; align-items: center; gap: 8px;
+  padding: 12px 20px; border-radius: 12px; font-size: 13px; font-weight: 700;
+  background: var(--white); border: 2px solid #eee; color: var(--charcoal);
+  transition: all 0.2s; flex: 1; justify-content: center;
+}
+.google-btn:hover { border-color: var(--gold); background: rgba(212,168,83,0.05); }
+.google-btn svg { width: 18px; height: 18px; }
+.or-divider { font-size: 12px; color: var(--gray); font-weight: 700; }
+
+.book-btn {
+  width: 100%; padding: 15px; border-radius: 14px; font-size: 15px; font-weight: 700;
+  background: var(--charcoal); color: var(--white); transition: all 0.2s;
+}
+.book-btn:hover { background: var(--gold); }
+.book-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.book-msg {
+  margin-top: 12px; padding: 12px 16px; border-radius: 12px;
+  font-size: 13px; font-weight: 600; text-align: center; display: none;
+}
+.book-msg.success { display: block; background: #e8f5e9; color: #2e7d32; text-align: center; }
+.book-msg.error { display: block; background: #fce4ec; color: #c62828; }
+.success-check { width: 52px; height: 52px; margin: 0 auto 8px; }
+.success-check svg circle {
+  stroke-dasharray: 166; stroke-dashoffset: 166;
+  animation: checkCircle 0.6s ease-in-out forwards;
+}
+.success-check .check-path {
+  stroke-dasharray: 48; stroke-dashoffset: 48;
+  animation: checkDraw 0.4s 0.4s ease-in-out forwards;
+}
+@keyframes checkCircle { to { stroke-dashoffset: 0; } }
+@keyframes checkDraw { to { stroke-dashoffset: 0; } }
+
+/* ═══ REVIEWS ═══ */
+.reviews-section { background: var(--white); }
+/* Trust summary bar */
+.trust-bar {
+  display: flex; align-items: center; justify-content: center; gap: 20px;
+  padding: 16px 20px; margin: 0 auto 12px; max-width: 400px;
+}
+.trust-rating {
+  text-align: center;
+}
+.trust-big-num {
+  font-family: var(--font-display); font-size: 42px; font-weight: 800; color: var(--charcoal); line-height: 1;
+}
+.trust-stars { color: var(--gold); font-size: 16px; letter-spacing: 1px; margin-top: 2px; }
+.trust-count { font-size: 11px; color: var(--gray); margin-top: 4px; }
+.trust-breakdown { flex: 1; max-width: 180px; }
+.trust-row {
+  display: flex; align-items: center; gap: 6px; margin-bottom: 3px;
+}
+.trust-row-label { font-size: 10px; color: var(--gray); width: 12px; text-align: right; }
+.trust-row-bar {
+  flex: 1; height: 6px; background: #eee; border-radius: 3px; overflow: hidden;
+}
+.trust-row-fill {
+  height: 100%; background: var(--gold); border-radius: 3px;
+  transition: width 1s cubic-bezier(.22,1,.36,1);
+}
+
+.reviews-scroll {
+  display: flex; gap: 14px; overflow-x: auto; scroll-snap-type: x mandatory;
+  padding: 0 20px 16px; scrollbar-width: none;
+  margin-top: 16px;
+}
+.reviews-scroll::-webkit-scrollbar { display: none; }
+.review-card {
+  scroll-snap-align: start; flex-shrink: 0; width: 260px;
+  background: var(--warm); border-radius: 20px; padding: 22px 20px;
+  border: 1px solid rgba(0,0,0,0.04); position: relative;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.review-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+.review-header {
+  display: flex; align-items: center; gap: 10px; margin-bottom: 12px;
+}
+.review-avatar {
+  width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, var(--pink), var(--pink-deep));
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: 14px; color: var(--gold); flex-shrink: 0;
+}
+.review-meta { flex: 1; }
+.review-author { font-size: 13px; font-weight: 700; color: var(--charcoal); }
+.review-date { font-size: 10px; color: var(--gray); }
+.review-stars { color: var(--gold); font-size: 12px; letter-spacing: 1.5px; margin-bottom: 8px; }
+.review-text { font-size: 13px; color: #555; line-height: 1.6; }
+.review-kids { font-size: 11px; color: var(--gray); margin-top: 10px; display: flex; align-items: center; gap: 4px; }
+.review-kids::before { content: '👶'; font-size: 12px; }
+.review-verified {
+  position: absolute; top: 14px; right: 16px;
+  font-size: 9px; font-weight: 700; color: var(--green); letter-spacing: 0.5px;
+  display: flex; align-items: center; gap: 3px;
+}
+.review-verified::before { content: '✓'; font-size: 10px; }
+
+/* ═══ SITTERS NETWORK ═══ */
+.sitters-section { background: var(--warm); }
+.sitter-card {
+  background: var(--white); border-radius: 20px; padding: 24px; margin-top: 20px;
+  box-shadow: var(--shadow-sm); display: flex; gap: 16px; align-items: center;
+}
+.sitter-card img {
+  width: 64px; height: 64px; border-radius: 50%; object-fit: cover;
+  border: 2px solid var(--gold);
+}
+.sitter-info { flex: 1; }
+.sitter-name { font-size: 16px; font-weight: 800; }
+.sitter-detail { font-size: 12px; color: var(--gray); margin-top: 2px; }
+.sitter-badges {
+  display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap;
+}
+.sitter-badge {
+  font-size: 10px; font-weight: 700; padding: 4px 10px; border-radius: 20px;
+  background: rgba(212,168,83,0.12); color: var(--gold);
+}
+.sitter-rate {
+  font-family: var(--font-display); font-size: 22px; font-weight: 800;
+  text-align: right;
+}
+.sitter-rate span { font-size: 12px; font-weight: 600; color: var(--gray); display: block; }
+
+.add-sitter-card {
+  background: var(--white); border-radius: 20px; padding: 24px; margin-top: 12px;
+  box-shadow: var(--shadow-sm); text-align: center;
+  border: 2px dashed rgba(212,168,83,0.3); cursor: pointer;
+  transition: all 0.2s;
+}
+.add-sitter-card:hover { border-color: var(--gold); background: rgba(212,168,83,0.04); }
+.add-sitter-card .add-icon {
+  width: 48px; height: 48px; border-radius: 50%; background: var(--warm);
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 24px; color: var(--gold); margin-bottom: 8px;
+}
+.add-sitter-card .add-title { font-size: 14px; font-weight: 700; }
+.add-sitter-card .add-sub { font-size: 12px; color: var(--gray); margin-top: 4px; }
+
+/* ═══ SHARE / INVITE ═══ */
+.share-section {
+  background: linear-gradient(135deg, var(--charcoal) 0%, #4a4a4a 100%);
+  color: var(--white);
+}
+.share-section .section-label { color: var(--gold-light); }
+.share-section .section-title { color: var(--white); }
+.share-section .section-sub { color: rgba(255,255,255,0.6); }
+
+.invite-preview {
+  background: rgba(255,255,255,0.08); border-radius: 20px; padding: 24px;
+  margin-top: 24px; text-align: center; border: 1px solid rgba(255,255,255,0.1);
+}
+.invite-preview .invite-emoji { font-size: 32px; margin-bottom: 8px; }
+.invite-preview .invite-title {
+  font-family: var(--font-display); font-size: 18px; font-weight: 700;
+}
+.invite-preview .invite-body {
+  font-size: 13px; color: rgba(255,255,255,0.6); margin-top: 6px; line-height: 1.5;
+}
+.invite-preview .invite-url {
+  font-size: 12px; color: var(--gold-light); margin-top: 12px;
+  padding: 8px 16px; background: rgba(255,255,255,0.06); border-radius: 8px;
+  display: inline-block; font-weight: 600;
+}
+
+.share-actions {
+  display: flex; gap: 10px; margin-top: 20px; justify-content: center;
+}
+.share-btn {
+  display: flex; align-items: center; gap: 8px;
+  padding: 14px 24px; border-radius: 14px; font-size: 14px; font-weight: 700;
+  transition: all 0.2s;
+}
+.share-btn.text-share {
+  background: var(--gold); color: var(--charcoal);
+}
+.share-btn.text-share:hover { background: var(--gold-light); }
+.share-btn.copy-share {
+  background: rgba(255,255,255,0.1); color: var(--white);
+  border: 1px solid rgba(255,255,255,0.2);
+}
+.share-btn.copy-share:hover { background: rgba(255,255,255,0.15); }
+
+/* ═══ PRICING ═══ */
+.pricing-section { background: var(--white); }
+.price-spotlight {
+  text-align: center; margin-top: 24px;
+  background: var(--warm); border-radius: 24px; padding: 36px 32px;
+}
+.price-amount {
+  font-family: var(--font-display); font-size: 52px; font-weight: 800;
+  color: var(--charcoal); line-height: 1;
+}
+.price-note { font-size: 14px; font-weight: 700; color: var(--gold); margin-top: 4px; }
+.price-details { font-size: 12px; color: var(--gray); margin-top: 16px; line-height: 1.7; }
+
+/* ═══ FOOTER ═══ */
+.footer {
+  text-align: center; padding: 32px 20px 16px; font-size: 12px; color: var(--gray);
+  background: var(--warm);
+}
+.footer a { color: var(--gold); }
+
+/* ═══ AUTH MODAL ═══ */
+.auth-overlay {
+  position: fixed; inset: 0; z-index: 300; background: rgba(0,0,0,0.5);
+  display: none; align-items: flex-end; justify-content: center;
+  backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+}
+.auth-overlay.show { display: flex; }
+.auth-sheet {
+  background: var(--white); border-radius: 24px 24px 0 0; padding: 32px 24px calc(24px + var(--safe-bottom));
+  width: 100%; max-width: 440px;
+  animation: sheet-up 0.35s ease-out;
+}
+@keyframes sheet-up {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+.auth-sheet h2 {
+  font-family: var(--font-display); font-size: 24px; font-weight: 700; margin-bottom: 8px;
+}
+.auth-sheet p { font-size: 14px; color: var(--gray); margin-bottom: 24px; line-height: 1.5; }
+.auth-google-btn {
+  width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px;
+  padding: 16px; border-radius: 14px; font-size: 16px; font-weight: 700;
+  background: var(--white); border: 2px solid #ddd; color: var(--charcoal);
+  transition: all 0.2s; margin-bottom: 12px;
+}
+.auth-google-btn:hover { border-color: var(--gold); box-shadow: var(--shadow-md); }
+.auth-google-btn svg { width: 20px; height: 20px; }
+.auth-skip {
+  width: 100%; text-align: center; padding: 12px;
+  font-size: 13px; font-weight: 600; color: var(--gray);
+  background: none; transition: color 0.2s;
+}
+.auth-skip:hover { color: var(--charcoal); }
+
+/* ═══ ADMIN DASHBOARD ═══ */
+.dashboard { display: none; padding: 80px 20px 40px; max-width: 640px; margin: 0 auto; }
+.dashboard.active { display: block; }
+.dash-header {
+  display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px;
+}
+.dash-header h2 { font-family: var(--font-display); font-size: 28px; font-weight: 800; }
+.dash-header .dash-logout {
+  font-size: 12px; font-weight: 700; color: var(--gray); background: none; padding: 8px 14px;
+  border-radius: 20px; border: 1.5px solid #eee; transition: all 0.2s;
+}
+.dash-header .dash-logout:hover { border-color: var(--gold); color: var(--gold); }
+
+/* Revenue cards */
+.revenue-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 28px;
+}
+.rev-card {
+  background: var(--white); border-radius: 16px; padding: 18px 16px; text-align: center;
+  box-shadow: var(--shadow-sm); border: 1px solid rgba(0,0,0,0.04);
+}
+.rev-card .rev-label { font-size: 10px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; color: var(--gold); }
+.rev-card .rev-amount {
+  font-family: var(--font-display); font-size: 28px; font-weight: 800; color: var(--charcoal); margin-top: 4px;
+}
+.rev-card .rev-sub { font-size: 11px; color: var(--gray); margin-top: 2px; }
+.rev-card.highlight { background: var(--charcoal); }
+.rev-card.highlight .rev-label { color: var(--gold-light); }
+.rev-card.highlight .rev-amount { color: var(--white); }
+.rev-card.highlight .rev-sub { color: rgba(255,255,255,0.5); }
+
+/* Dashboard tabs */
+.dash-tabs {
+  display: flex; gap: 4px; margin-bottom: 20px; overflow-x: auto;
+  border-bottom: 2px solid #eee; padding-bottom: 0;
+}
+.dash-tab {
+  padding: 10px 16px; font-size: 13px; font-weight: 700; color: var(--gray);
+  background: none; border-bottom: 2px solid transparent; margin-bottom: -2px;
+  white-space: nowrap; transition: all 0.2s;
+}
+.dash-tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+.dash-tab:hover { color: var(--charcoal); }
+.dash-panel { display: none; }
+.dash-panel.active { display: block; }
+
+.dash-section { margin-bottom: 28px; }
+.dash-section h3 { font-family: var(--font-display); font-size: 18px; margin-bottom: 14px; }
+.dash-btn {
+  padding: 10px 18px; border-radius: 12px; font-size: 13px; font-weight: 700;
+  background: var(--charcoal); color: var(--white); margin: 4px; transition: all 0.2s;
+}
+.dash-btn:hover { background: var(--gold); }
+.dash-btn.small { padding: 6px 12px; font-size: 11px; margin: 2px; }
+.dash-btn.outline {
+  background: transparent; color: var(--charcoal); border: 1.5px solid #ddd;
+}
+.dash-btn.outline:hover { border-color: var(--gold); color: var(--gold); }
+.dash-input {
+  padding: 10px 14px; border: 2px solid #eee; border-radius: 10px;
+  font-size: 13px; margin: 4px; outline: none; transition: border-color 0.2s;
+}
+.dash-input:focus { border-color: var(--gold); }
+
+/* Booking row in dashboard */
+.dash-booking-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 14px 16px; background: var(--white); border-radius: 12px;
+  margin-bottom: 8px; box-shadow: var(--shadow-sm);
+}
+.dash-booking-info { flex: 1; }
+.dash-booking-name { font-size: 14px; font-weight: 700; }
+.dash-booking-detail { font-size: 12px; color: var(--gray); margin-top: 2px; }
+.dash-booking-amount {
+  font-family: var(--font-display); font-size: 18px; font-weight: 800; color: var(--green);
+}
+.dash-booking-status {
+  font-size: 10px; font-weight: 700; padding: 3px 10px; border-radius: 20px; margin-left: 8px;
+}
+.dash-booking-status.confirmed { background: #e8f5e9; color: #2e7d32; }
+.dash-booking-status.pending { background: #fff3e0; color: #e65100; }
+.dash-booking-status.cancelled { background: #fce4ec; color: #c62828; }
+.status-badge {
+  font-size: 10px; font-weight: 700; padding: 3px 10px; border-radius: 20px; white-space: nowrap;
+}
+.status-badge.confirmed { background: #e8f5e9; color: #2e7d32; }
+.status-badge.completed { background: #e3f2fd; color: #1565c0; }
+.status-badge.pending { background: #fff3e0; color: #e65100; }
+.dash-empty {
+  text-align: center; padding: 32px 16px; color: var(--gray); font-size: 13px;
+}
+
+/* Admin tables */
+#adminBookingsTable, #adminParentsTable {
+  width: 100%; font-size: 11px; border-collapse: collapse; margin-top: 12px;
+}
+#adminBookingsTable th, #adminBookingsTable td,
+#adminParentsTable th, #adminParentsTable td {
+  padding: 8px; text-align: left; border-bottom: 1px solid #eee;
+}
+
+/* Sitter management */
+.dash-sitter-card {
+  display: flex; align-items: center; gap: 12px; padding: 14px 16px;
+  background: var(--white); border-radius: 12px; margin-bottom: 8px; box-shadow: var(--shadow-sm);
+}
+.dash-sitter-avatar {
+  width: 40px; height: 40px; border-radius: 50%; background: var(--pink);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; font-weight: 800; color: var(--gold);
+}
+.dash-sitter-info { flex: 1; }
+.dash-sitter-name { font-size: 14px; font-weight: 700; }
+.dash-sitter-meta { font-size: 11px; color: var(--gray); }
+
+.admin-login { text-align: center; padding: 100px 20px; }
+.admin-login input { padding: 14px 18px; border: 2px solid #eee; border-radius: 12px; font-size: 15px; width: 220px; outline:none; }
+.admin-login input:focus { border-color: var(--gold); }
+
+/* Dashboard empty state */
+.dash-empty { text-align: center; padding: 32px; color: var(--gray); font-size: 13px; }
+
+/* ═══ TOAST ═══ */
+.toast {
+  position: fixed; bottom: calc(var(--bottom-h) + 16px); left: 50%; transform: translateX(-50%) translateY(20px);
+  background: var(--charcoal); color: var(--white); padding: 12px 24px;
+  border-radius: 14px; font-size: 13px; font-weight: 600; z-index: 200;
+  opacity: 0; transition: all 0.35s cubic-bezier(.22,1,.36,1); pointer-events: none;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.2); white-space: nowrap;
+  backdrop-filter: blur(12px); display: flex; align-items: center; gap: 8px;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.toast::before { content: '✓'; display: inline-flex; align-items: center; justify-content: center;
+  width: 20px; height: 20px; border-radius: 50%; background: var(--gold); color: var(--charcoal);
+  font-size: 11px; font-weight: 800; flex-shrink: 0; }
+
+/* ═══ ElevenLabs widget — hidden until voice modal ═══ */
+elevenlabs-convai {
+  position: fixed !important; bottom: -9999px !important; right: -9999px !important;
+  z-index: -1 !important; opacity: 0 !important; pointer-events: none !important;
+  width: 0 !important; height: 0 !important; overflow: hidden !important;
+}
+
+/* ═══ VOICE MODAL ═══ */
+.voice-modal-overlay {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.6); backdrop-filter: blur(12px);
+  z-index: 9000; opacity: 0; visibility: hidden; transition: all 0.3s ease;
+  display: flex; align-items: center; justify-content: center;
+}
+.voice-modal-overlay.active { opacity: 1; visibility: visible; }
+.voice-modal {
+  width: 92%; max-width: 380px; background: linear-gradient(160deg, #2a2a2a, #1a1a1a);
+  border-radius: 28px; padding: 36px 24px 28px; text-align: center;
+  transform: scale(0.9) translateY(20px); transition: transform 0.4s cubic-bezier(.22,1,.36,1);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.4); position: relative;
+}
+.voice-modal-overlay.active .voice-modal { transform: scale(1) translateY(0); }
+
+.voice-modal-close {
+  position: absolute; top: 12px; right: 16px; background: none;
+  color: rgba(255,255,255,0.4); font-size: 28px; line-height: 1; padding: 4px;
+  transition: color 0.2s;
+}
+.voice-modal-close:hover { color: #fff; }
+
+.voice-avatar-container {
+  width: 160px; height: 160px; margin: 0 auto 20px;
+  position: relative; border-radius: 50%;
+}
+.voice-avatar-ring {
+  width: 100%; height: 100%; border-radius: 50%;
+  border: 3px solid var(--gold); overflow: hidden;
+  position: relative; z-index: 2;
+}
+.voice-avatar-ring img {
+  width: 100%; height: 100%; object-fit: cover;
+}
+.voice-pulse {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+  width: 160px; height: 160px; border-radius: 50%; z-index: 1;
+  opacity: 0;
+}
+.voice-modal-overlay.active.speaking .voice-pulse {
+  animation: voicePulse 1.2s ease-in-out infinite;
+}
+@keyframes voicePulse {
+  0% { box-shadow: 0 0 0 0 rgba(212,168,83,0.5); }
+  50% { box-shadow: 0 0 0 20px rgba(212,168,83,0.15); }
+  100% { box-shadow: 0 0 0 30px rgba(212,168,83,0); }
+}
+
+.voice-modal-name {
+  font-family: var(--font-display); font-size: 24px; font-weight: 800;
+  color: #fff; margin-bottom: 4px;
+}
+.voice-modal-status {
+  font-size: 13px; color: rgba(255,255,255,0.5); margin-bottom: 24px;
+}
+.voice-modal-status.connected { color: var(--gold); }
+
+/* Waveform bars */
+.voice-waveform {
+  display: flex; align-items: center; justify-content: center; gap: 3px;
+  height: 40px; margin-bottom: 24px;
+}
+.voice-bar {
+  width: 4px; background: var(--gold); border-radius: 4px;
+  height: 8px; transition: height 0.1s ease;
+}
+.voice-modal-overlay.active.speaking .voice-bar {
+  animation: waveBar 0.8s ease-in-out infinite alternate;
+}
+.voice-bar:nth-child(1) { animation-delay: 0s; }
+.voice-bar:nth-child(2) { animation-delay: 0.1s; }
+.voice-bar:nth-child(3) { animation-delay: 0.2s; }
+.voice-bar:nth-child(4) { animation-delay: 0.3s; }
+.voice-bar:nth-child(5) { animation-delay: 0.15s; }
+.voice-bar:nth-child(6) { animation-delay: 0.25s; }
+.voice-bar:nth-child(7) { animation-delay: 0.05s; }
+.voice-bar:nth-child(8) { animation-delay: 0.35s; }
+.voice-bar:nth-child(9) { animation-delay: 0.12s; }
+@keyframes waveBar {
+  0% { height: 6px; opacity: 0.4; }
+  100% { height: 32px; opacity: 1; }
+}
+
+.voice-end-btn {
+  padding: 14px 32px; border-radius: 50px; font-size: 15px; font-weight: 700;
+  background: linear-gradient(135deg, #E88B8B, #c0392b); color: #fff;
+  box-shadow: 0 4px 16px rgba(192,57,43,0.3); transition: all 0.2s;
+  display: inline-flex; align-items: center; gap: 8px;
+}
+.voice-end-btn:hover { transform: scale(1.05); box-shadow: 0 6px 24px rgba(192,57,43,0.4); }
+
+.voice-modal-hint {
+  font-size: 11px; color: rgba(255,255,255,0.3); margin-top: 16px;
+}
+
+/* ═══ SCROLL REVEAL ═══ */
+.reveal {
+  opacity: 0; transform: translateY(32px);
+  transition: opacity 0.7s cubic-bezier(.22,1,.36,1), transform 0.7s cubic-bezier(.22,1,.36,1);
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+.reveal-delay-4 { transition-delay: 0.4s; }
+
+/* ═══ HERO ENTRANCE ═══ */
+.hero-enter { opacity: 0; transform: translateY(24px); }
+.hero-enter.animate-in {
+  animation: heroFadeIn 0.8s cubic-bezier(.22,1,.36,1) forwards;
+}
+@keyframes heroFadeIn {
+  to { opacity: 1; transform: translateY(0); }
+}
+.hero .avatar-wrap { animation-delay: 0s; }
+.hero .profile-name { animation-delay: 0.12s; }
+.hero .profile-verified { animation-delay: 0.18s; }
+.hero .profile-bio { animation-delay: 0.24s; }
+.hero .stats-row { animation-delay: 0.32s; }
+.hero .hero-actions { animation-delay: 0.4s; }
+.hero .hero-badges { animation-delay: 0.5s; }
+
+/* ═══ ACTIVITY TICKER ═══ */
+.activity-ticker {
+  position: fixed; top: calc(var(--nav-h) + 8px); left: 50%; z-index: 150;
+  transform: translateX(-50%) translateY(-120%);
+  background: var(--white); padding: 10px 18px; border-radius: 50px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+  font-size: 13px; font-weight: 600; color: var(--charcoal);
+  display: flex; align-items: center; gap: 8px; white-space: nowrap;
+  transition: transform 0.5s cubic-bezier(.22,1,.36,1), opacity 0.5s ease;
+  opacity: 0;
+}
+.activity-ticker.show {
+  transform: translateX(-50%) translateY(0); opacity: 1;
+}
+.activity-ticker .activity-dot {
+  width: 8px; height: 8px; border-radius: 50%; background: var(--green);
+  animation: activity-pulse 1.5s ease-in-out infinite;
+}
+@keyframes activity-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.7); }
+}
+
+/* ═══ CONFETTI CANVAS ═══ */
+#confettiCanvas {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  z-index: 999; pointer-events: none;
+}
+
+/* ═══ RESPONSIVE ═══ */
+@media (min-width: 768px) {
+  .profile-name { font-size: 44px; }
+  .avatar-ring { width: 200px; height: 200px; }
+  .avatar-wave { width: 200px; height: 200px; }
+  .date-strip { justify-content: center; }
+  .feed-scroll { padding: 0 calc((100% - 600px) / 2) 16px; }
+  .reviews-scroll { padding: 0 calc((100% - 600px) / 2) 16px; }
+  .bottom-bar { max-width: 480px; left: 50%; transform: translateX(-50%); border-radius: 20px 20px 0 0; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ TOP NAV ═══ -->
+<nav class="nav" id="nav">
+  <a href="#" class="nav-logo"><span>&#9733;</span> Tiny Tots</a>
+  <div class="nav-right">
+    <img class="nav-user" id="navUserPic" onclick="openAuthModal()">
+    <button class="nav-btn" onclick="scrollTo('#avail')">Book</button>
+    <button class="nav-btn primary" id="navAuthBtn" onclick="openAuthModal()">Sign In</button>
+  </div>
+</nav>
+
+<!-- ═══ PROFILE HERO ═══ -->
+<section class="hero" id="hero">
+  <div class="avatar-wrap hero-enter" id="avatarWrap" onclick="toggleVoice()">
+    <div class="avatar-wave"></div>
+    <div class="avatar-ring">
+      <img src="poppy-photo.jpg" alt="Poppy Wilbert"
+           onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 200 200%22><circle cx=%22100%22 cy=%22100%22 r=%22100%22 fill=%22%23F5E0DC%22/><text x=%2250%25%22 y=%2255%25%22 text-anchor=%22middle%22 font-size=%2272%22>P</text></svg>'">
+    </div>
+    <div class="avatar-status" id="avatarStatus">Tap to talk</div>
+  </div>
+
+  <h1 class="profile-name hero-enter">Ask <em>Poppy</em></h1>
+  <div class="profile-verified hero-enter">
+    <svg viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+    Red Cross Certified · Age 12
+  </div>
+  <p class="profile-bio hero-enter">Your go-to babysitter. Got kid questions? I've got answers. Tap my face — let's talk.</p>
+
+  <div class="stats-row hero-enter">
+    <div class="stat-item"><div class="stat-num">47</div><div class="stat-label">Sits</div></div>
+    <div class="stat-item"><div class="stat-num">12</div><div class="stat-label">Families</div></div>
+    <div class="stat-item"><div class="stat-num">4.9</div><div class="stat-label">Rating</div></div>
+  </div>
+
+  <div class="hero-actions hero-enter">
+    <button class="action-btn primary" onclick="toggleVoice()">
+      <span class="mic-dot"></span>
+      <span id="voiceBtnText">Talk to Poppy</span>
+    </button>
+    <button class="action-btn secondary" onclick="scrollTo('#avail')">Book Now</button>
+  </div>
+
+  <div class="hero-badges hero-enter">
+    <div class="badge"><span class="dot"></span> Available This Week</div>
+    <div class="badge">&#9733; $12/hr</div>
+    <div class="badge">Apple Pay or Cash</div>
+  </div>
+</section>
+
+<!-- ═══ POPPY'S WORLD — AI CONTENT FEED ═══ -->
+<section class="feed-section" id="feed">
+  <div class="feed-header reveal">
+    <p class="section-label">Poppy's World</p>
+    <h2 class="section-title">Tips & Tricks</h2>
+    <p class="section-sub">Parenting hacks from Poppy (and friends). Share your favorites.</p>
+  </div>
+  <div class="feed-scroll" id="feedScroll">
+    <!-- Tip cards rendered by JS -->
+  </div>
+</section>
+
+<!-- ═══ CALENDAR / BOOKING ═══ -->
+<section class="avail-section" id="avail">
+  <div class="avail-header reveal">
+    <p class="section-label">Schedule</p>
+    <h2 class="section-title">Pick a Day</h2>
+  </div>
+  <div class="date-strip" id="dateStrip"></div>
+  <div style="padding: 0 20px;">
+    <div class="book-sheet" id="bookSheet">
+      <p class="book-date-label" id="bookDateLabel"></p>
+      <p class="book-rate">&#9733; $12/hr &middot; Apple Pay or cash</p>
+
+      <!-- Dynamic price preview -->
+      <div class="price-preview" id="pricePreview" style="display:none;">
+        <div class="price-preview-row">
+          <span class="price-preview-label" id="priceHoursLabel">4 hours</span>
+          <span class="price-preview-calc" id="priceCalc">× $12/hr</span>
+        </div>
+        <div class="price-preview-total">
+          <span class="price-total-label">Session total</span>
+          <span class="price-total-amount" id="priceTotalAmount">$48</span>
+        </div>
+      </div>
+
+      <!-- Signed-in booking (one tap) -->
+      <div class="book-signed-in" id="bookSignedIn">
+        <div class="signed-in-greeting">
+          <img id="bookUserPic" src="" alt="">
+          <div>
+            <div class="greeting-text" id="bookUserName">Hey!</div>
+            <div class="greeting-sub">Tap below to book instantly</div>
+          </div>
+        </div>
+        <div class="form-row" style="display:flex;gap:8px;margin-bottom:10px;">
+          <input type="text" id="kidNameSigned" placeholder="Child's name" style="flex:1;padding:13px 16px;border-radius:12px;border:2px solid #eee;font-size:14px;outline:none;">
+        </div>
+        <button class="book-btn" onclick="submitBooking()">Book Poppy</button>
+      </div>
+
+      <!-- Guest booking -->
+      <div class="book-guest" id="bookGuest">
+        <div class="google-signin-row">
+          <button class="google-btn" onclick="openAuthModal()">
+            <svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+            Continue with Google
+          </button>
+          <span class="or-divider">or</span>
+        </div>
+        <div class="form-row">
+          <input type="text" id="parentName" placeholder="Your name" required>
+        </div>
+        <div class="form-row">
+          <input type="tel" id="parentPhone" placeholder="Phone number" required>
+          <input type="email" id="parentEmail" placeholder="Email (optional)">
+        </div>
+        <div class="form-row">
+          <input type="text" id="kidName" placeholder="Child's name" required>
+        </div>
+        <button class="book-btn" onclick="submitBooking()">Book Poppy</button>
+      </div>
+
+      <div class="book-msg" id="bookMsg"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ REVIEWS ═══ -->
+<section class="section reviews-section" id="reviews">
+  <div class="section-header reveal">
+    <p class="section-label">From Parents</p>
+    <h2 class="section-title">What Families Say</h2>
+  </div>
+  <div class="trust-bar reveal">
+    <div class="trust-rating">
+      <div class="trust-big-num">4.9</div>
+      <div class="trust-stars">★★★★★</div>
+      <div class="trust-count">12 reviews</div>
+    </div>
+    <div class="trust-breakdown">
+      <div class="trust-row"><span class="trust-row-label">5</span><div class="trust-row-bar"><div class="trust-row-fill" style="width:92%"></div></div></div>
+      <div class="trust-row"><span class="trust-row-label">4</span><div class="trust-row-bar"><div class="trust-row-fill" style="width:8%"></div></div></div>
+      <div class="trust-row"><span class="trust-row-label">3</span><div class="trust-row-bar"><div class="trust-row-fill" style="width:0%"></div></div></div>
+      <div class="trust-row"><span class="trust-row-label">2</span><div class="trust-row-bar"><div class="trust-row-fill" style="width:0%"></div></div></div>
+      <div class="trust-row"><span class="trust-row-label">1</span><div class="trust-row-bar"><div class="trust-row-fill" style="width:0%"></div></div></div>
+    </div>
+  </div>
+  <div class="reviews-scroll" id="reviewsScroll">
+    <!-- Rendered by JS -->
+  </div>
+</section>
+
+<!-- ═══ PRICING ═══ -->
+<section class="section pricing-section" id="pricing">
+  <div class="section-header reveal">
+    <p class="section-label">Pricing</p>
+    <h2 class="section-title">Simple & Fair</h2>
+  </div>
+  <div class="price-spotlight reveal reveal-delay-1">
+    <div class="price-amount">$12</div>
+    <div class="price-note">per hour (my age!)</div>
+    <div class="price-details">
+      Apple Pay via text or cash<br>
+      Tips always appreciated if she's great
+    </div>
+    <button class="action-btn primary" style="display:inline-flex;margin-top:20px;" onclick="scrollTo('#avail')">Book Poppy</button>
+  </div>
+</section>
+
+<!-- ═══ SITTER NETWORK ═══ -->
+<section class="section sitters-section" id="sitters">
+  <div class="section-header reveal">
+    <p class="section-label">The Network</p>
+    <h2 class="section-title">Tiny Tots Sitters</h2>
+    <p class="section-sub">Trusted, certified sitters you can count on.</p>
+  </div>
+  <div id="sittersList">
+    <!-- Rendered by JS -->
+  </div>
+</section>
+
+<!-- ═══ SHARE / INVITE ═══ -->
+<section class="section share-section" id="share">
+  <div class="section-header reveal">
+    <p class="section-label">Spread the Word</p>
+    <h2 class="section-title">Know a Family<br>That Needs Poppy?</h2>
+    <p class="section-sub">Share her link. Their kids will thank you.</p>
+  </div>
+  <div class="invite-preview reveal reveal-delay-1">
+    <div class="invite-emoji">&#128150;</div>
+    <div class="invite-title">Meet Poppy — Babysitter Extraordinaire</div>
+    <div class="invite-body">Red Cross certified, $12/hr, and she has an AI voice assistant that actually answers your parenting questions.</div>
+    <div class="invite-url" id="inviteUrl">tinytots-v2.netlify.app</div>
+  </div>
+  <div class="share-actions">
+    <button class="share-btn text-share" onclick="shareViaText()">&#128172; Text a Friend</button>
+    <button class="share-btn copy-share" onclick="copyInviteLink()">&#128203; Copy Link</button>
+  </div>
+</section>
+
+<!-- ═══ FOOTER ═══ -->
+<footer class="footer">
+  <p>&copy; 2026 Tiny Tots Babysitting &middot; Made with &#10084; by Poppy</p>
+  <p style="margin-top:6px;"><a href="#/dashboard">Dashboard</a></p>
+</footer>
+
+<!-- ═══ BOTTOM TAB BAR ═══ -->
+<div class="bottom-bar">
+  <button class="tab-btn active" onclick="tabNav('hero')">
+    <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+    Home
+  </button>
+  <button class="tab-btn" onclick="tabNav('avail')">
+    <svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-2 .9-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm0 16H5V8h14v11z"/></svg>
+    Book
+  </button>
+  <button class="tab-btn" onclick="toggleVoice()">
+    <svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.91-3c-.49 0-.9.36-.96.84C16.6 14.59 14.53 16.5 12 16.5s-4.6-1.91-4.95-4.66A.96.96 0 006.09 11c-.61 0-1.09.54-1 1.14.49 3 2.89 5.35 5.91 5.78V21h2v-3.08c3.02-.43 5.42-2.78 5.91-5.78.1-.6-.39-1.14-1-1.14z"/></svg>
+    Ask
+  </button>
+  <button class="tab-btn" onclick="tabNav('share')">
+    <svg viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/></svg>
+    Invite
+  </button>
+</div>
+
+<!-- ═══ AUTH MODAL ═══ -->
+<div class="auth-overlay" id="authOverlay" onclick="if(event.target===this)closeAuthModal()">
+  <div class="auth-sheet">
+    <h2>Join Poppy's Network</h2>
+    <p>Sign in once and book with one tap every time. Your info stays on file so you never fill forms again.</p>
+    <button class="auth-google-btn" onclick="signInWithGoogle()">
+      <svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+      Continue with Google
+    </button>
+    <button class="auth-skip" onclick="closeAuthModal()">Maybe later</button>
+  </div>
+</div>
+
+<!-- ═══ ADMIN DASHBOARD ═══ -->
+<div class="dashboard" id="dashboard">
+  <div class="admin-login" id="adminLogin">
+    <h2 style="font-family:var(--font-display);margin-bottom:8px;">Poppy's Dashboard</h2>
+    <p style="font-size:13px;color:var(--gray);margin-bottom:20px;">Your babysitting business, all in one place.</p>
+    <input type="password" id="adminPass" placeholder="Password" onkeydown="if(event.key==='Enter')adminAuth()">
+    <br><button class="dash-btn" style="margin-top:12px;" onclick="adminAuth()">Enter</button>
+  </div>
+  <div id="adminPanel" style="display:none;">
+    <div class="dash-header">
+      <h2>Hey, Poppy!</h2>
+      <button class="dash-logout" onclick="window.location.hash='';window.location.reload();">Back to Site</button>
+    </div>
+
+    <!-- Revenue Cards -->
+    <div class="revenue-grid">
+      <div class="rev-card highlight">
+        <div class="rev-label">Total Earned</div>
+        <div class="rev-amount" id="revTotal">$0</div>
+        <div class="rev-sub">all time</div>
+      </div>
+      <div class="rev-card">
+        <div class="rev-label">This Month</div>
+        <div class="rev-amount" id="revMonth">$0</div>
+        <div class="rev-sub" id="revMonthLabel">October</div>
+      </div>
+      <div class="rev-card">
+        <div class="rev-label">Upcoming</div>
+        <div class="rev-amount" id="revUpcoming">$0</div>
+        <div class="rev-sub" id="revUpcomingSits">0 sits</div>
+      </div>
+    </div>
+
+    <!-- Dashboard Tabs -->
+    <div class="dash-tabs">
+      <button class="dash-tab active" onclick="switchDashTab('bookings',this)">Bookings</button>
+      <button class="dash-tab" onclick="switchDashTab('schedule',this)">Schedule</button>
+      <button class="dash-tab" onclick="switchDashTab('sitters',this)">Sitters</button>
+      <button class="dash-tab" onclick="switchDashTab('parents',this)">Parents</button>
+      <button class="dash-tab" onclick="switchDashTab('invite',this)">Invite</button>
+    </div>
+
+    <!-- Bookings Panel -->
+    <div class="dash-panel active" id="dashBookings">
+      <div id="dashBookingsList">
+        <div class="dash-empty">Loading bookings...</div>
+      </div>
+    </div>
+
+    <!-- Schedule Panel -->
+    <div class="dash-panel" id="dashSchedule">
+      <div class="dash-section">
+        <h3>Set Availability</h3>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
+          <input class="dash-input" type="date" id="availDate">
+          <input class="dash-input" type="time" id="availStart" value="15:00">
+          <input class="dash-input" type="time" id="availEnd" value="21:00">
+          <button class="dash-btn" onclick="addAvailability()">Add</button>
+        </div>
+        <p style="font-size:11px;color:var(--gray);margin-top:8px;">Default: Tue & Thu 3:45–8 PM, Sat 4–11 PM</p>
+        <div id="availList" style="margin-top:12px;"></div>
+      </div>
+    </div>
+
+    <!-- Sitters Panel -->
+    <div class="dash-panel" id="dashSitters">
+      <div class="dash-section">
+        <h3>Your Sitter Network</h3>
+        <div id="dashSittersList"></div>
+        <div style="margin-top:16px;padding:16px;background:var(--white);border-radius:12px;border:2px dashed rgba(212,168,83,0.3);">
+          <h3 style="font-size:14px;margin-bottom:8px;">Add a Sitter</h3>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;">
+            <input class="dash-input" type="text" id="sitterName" placeholder="Name" style="flex:1;min-width:120px;">
+            <input class="dash-input" type="number" id="sitterAge" placeholder="Age" style="width:70px;">
+            <input class="dash-input" type="number" id="sitterRate" placeholder="$/hr" value="12" style="width:70px;">
+            <button class="dash-btn" onclick="addSitter()">Add</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Parents Panel -->
+    <div class="dash-panel" id="dashParents">
+      <div class="dash-section">
+        <h3>Your Families</h3>
+        <div id="dashParentsList">
+          <table id="adminParentsTable"></table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Invite Panel -->
+    <div class="dash-panel" id="dashInvite">
+      <div class="dash-section">
+        <h3>Invite Parents via Text</h3>
+        <p style="font-size:12px;color:var(--gray);margin-bottom:12px;">Send a personalized invite link to a parent. They'll see your page with their name in the greeting.</p>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+          <input class="dash-input" type="text" id="inviteParentName" placeholder="Parent's name" style="flex:1;">
+          <input class="dash-input" type="tel" id="invitePhone" placeholder="Phone number" style="flex:1;">
+          <button class="dash-btn" onclick="sendParentInvite()">Send Invite</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ ACTIVITY TICKER ═══ -->
+<div class="activity-ticker" id="activityTicker">
+  <span class="activity-dot"></span>
+  <span id="activityText"></span>
+</div>
+
+<!-- ═══ CONFETTI ═══ -->
+<canvas id="confettiCanvas"></canvas>
+
+<!-- ═══ TOAST ═══ -->
+<div class="toast" id="toast"></div>
+
+<!-- ═══ SUPABASE ═══ -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+/* ═══ CONFIG ═══ */
+const SUPABASE_URL = 'https://udhgdtiezzzudczckaaw.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVkaGdkdGllenp6dWRjemNrYWF3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA1NDcwNzIsImV4cCI6MjEwNjEyMzA3Mn0.sg5CssfPktk11ytdaPJpWyfQj7JvVdxIKdVvITA_X18';
+const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+/* ═══ STATE ═══ */
+let currentUser = null;
+let availabilityData = {};
+let selectedDate = null;
+let voiceActive = false;
+
+/* ═══ SITTER DATA ═══ */
+const sitters = [
+  {
+    name: 'Poppy Wilbert', age: 12, slug: 'poppy', photo: 'poppy-photo.jpg',
+    bio: 'Arts & crafts, outdoor adventures, blanket fort architect',
+    rate: 12, certs: ['Red Cross', 'First Aid'],
+    stats: { sits: 47, families: 12, rating: 4.9 },
+    schedule: { 2: '3:45–8 PM', 4: '3:45–8 PM', 6: '4–11 PM' }
+  }
+];
+
+/* ═══ CONTENT FEED (Claude-powered, delivered as Poppy) ═══ */
+const tips = [
+  {
+    icon: '🧠', category: 'Behavior', title: 'The 5-Minute Warning',
+    body: 'Always give kids a 5-minute heads up before any transition — leaving the park, dinner time, bedtime. It cuts meltdowns dramatically because they feel in control.',
+  },
+  {
+    icon: '🏰', category: 'Activities', title: 'The Ultimate Blanket Fort',
+    body: 'Pro tip: use binder clips on chair backs to hold sheets. Add fairy lights, a stack of books, and declare it a "reading kingdom." Works every single time.',
+  },
+  {
+    icon: '✨', category: 'Behavior', title: "Say 'Let's' Not 'Don't'",
+    body: '"Don\'t run" becomes "Let\'s walk like astronauts on the moon!" Positive redirects work 3x better because kids hear what TO do instead of what not to.',
+  },
+  {
+    icon: '📚', category: 'Bedtime', title: 'The 3-Book Rule',
+    body: 'Let them pick exactly 3 books. They feel in charge of the choice, you control the time. After book 3: lights out, no negotiations. Routine = magic.',
+  },
+  {
+    icon: '🌿', category: 'Activities', title: 'The Adventure Jar',
+    body: 'Write 20 activities on paper strips and put them in a jar. When kids say "I\'m bored," they pull one out. They pick their own adventure — and it actually works.',
+  },
+  {
+    icon: '🆘', category: 'Safety', title: 'The Emergency Card',
+    body: 'Every parent should have a card in their wallet: kid\'s full name, age, allergies, meds, pediatrician number, and one emergency contact. Takes 5 min. Could save a life.',
+  },
+  {
+    icon: '🎨', category: 'Activities', title: 'Mess-Free Painting',
+    body: 'Put paint inside a gallon ziplock bag, tape it to the table. Kids "paint" by pressing the bag — all the fun, zero mess. Especially great for toddlers.',
+  }
+];
+
+const reviews = [
+  { parent: 'Sarah M.', text: "Poppy is incredible with our kids. They literally ask for her every weekend. She brings art supplies and plans activities — she's more prepared than most adults.", rating: 5, kids: '2 kids, ages 4 & 7', date: '2 weeks ago', verified: true },
+  { parent: 'The Rodriguez Family', text: "Most responsible 12-year-old we've ever met. Red Cross certified. Our son has food allergies and she handles it perfectly.", rating: 5, kids: '1 kid, age 3', date: '3 weeks ago', verified: true },
+  { parent: 'Jennifer K.', text: "Worth every penny. Our daughter shows us the art projects Poppy helped her make. We've recommended her to four other families already.", rating: 5, kids: '2 kids, ages 5 & 9', date: '1 month ago', verified: true },
+  { parent: 'Mike & Lisa T.', text: "The fact that she has a website and a voice AI blew our minds. This kid is going places. Oh, and she's a fantastic babysitter too.", rating: 5, kids: '3 kids, ages 2, 5 & 8', date: '1 month ago', verified: true },
+  { parent: 'Amanda S.', text: "Finally, a babysitter we can actually trust. Poppy texts us updates, which is so reassuring. Booked her for every Friday date night.", rating: 5, kids: '1 kid, age 6', date: '5 days ago', verified: true },
+];
+
+/* ═══ DEFAULT SCHEDULE ═══ */
+const defaultSchedule = {
+  2: { start_time: '15:45', end_time: '20:00' },
+  4: { start_time: '15:45', end_time: '20:00' },
+  6: { start_time: '16:00', end_time: '23:00' }
+};
+
+/* ═══ INIT ═══ */
+function init() {
+  checkRoute();
+  checkAuth();
+  renderFeed();
+  renderReviews();
+  renderSitters();
+  loadAvailability();
+
+  // Nav scroll effect
+  window.addEventListener('scroll', () => {
+    document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 20);
+  });
+
+  // Bottom tab active state
+  const sections = ['hero', 'avail', 'feed', 'share'];
+  window.addEventListener('scroll', () => {
+    const tabs = document.querySelectorAll('.tab-btn');
+    let current = 0;
+    sections.forEach((id, i) => {
+      const el = document.getElementById(id);
+      if (el && window.scrollY >= el.offsetTop - 200) current = i;
+    });
+    tabs.forEach((t, i) => t.classList.toggle('active', i === current));
+  });
+
+  // Check for referral
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('ref')) {
+    localStorage.setItem('tt_ref', params.get('ref'));
+  }
+}
+
+/* ═══ AUTH ═══ */
+async function checkAuth() {
+  const { data: { session } } = await db.auth.getSession();
+  if (session) {
+    setUser(session.user);
+  }
+  db.auth.onAuthStateChange((event, session) => {
+    if (session) setUser(session.user);
+    else clearUser();
+  });
+}
+
+function setUser(user) {
+  currentUser = user;
+  const name = user.user_metadata?.full_name || user.email?.split('@')[0] || 'Friend';
+  const pic = user.user_metadata?.avatar_url || '';
+
+  // Update nav
+  document.getElementById('navAuthBtn').style.display = 'none';
+  const navPic = document.getElementById('navUserPic');
+  if (pic) { navPic.src = pic; navPic.style.display = 'block'; }
+
+  // Update booking form
+  document.getElementById('bookGuest').style.display = 'none';
+  document.getElementById('bookSignedIn').style.display = 'block';
+  document.getElementById('bookUserName').textContent = 'Hey, ' + name.split(' ')[0] + '!';
+  if (pic) document.getElementById('bookUserPic').src = pic;
+}
+
+function clearUser() {
+  currentUser = null;
+  document.getElementById('navAuthBtn').style.display = '';
+  document.getElementById('navUserPic').style.display = 'none';
+  document.getElementById('bookGuest').style.display = '';
+  document.getElementById('bookSignedIn').style.display = 'none';
+}
+
+async function signInWithGoogle() {
+  closeAuthModal();
+  const { error } = await db.auth.signInWithOAuth({
+    provider: 'google',
+    options: { redirectTo: window.location.origin }
+  });
+  if (error) {
+    showToast('Google Sign-In setup in progress — use the form for now!');
+  }
+}
+
+function openAuthModal() {
+  if (currentUser) return; // Already signed in
+  document.getElementById('authOverlay').classList.add('show');
+}
+function closeAuthModal() {
+  document.getElementById('authOverlay').classList.remove('show');
+}
+
+/* ═══ RENDER FEED ═══ */
+function renderFeed() {
+  const scroll = document.getElementById('feedScroll');
+  const today = new Date().getDay();
+  // Rotate tips based on day, show 5 cards + "Ask" card
+  const ordered = [...tips.slice(today % tips.length), ...tips.slice(0, today % tips.length)].slice(0, 5);
+
+  scroll.innerHTML = ordered.map(tip => `
+    <div class="tip-card">
+      <div class="tip-icon">${tip.icon}</div>
+      <div class="tip-category">${tip.category}</div>
+      <div class="tip-title">${tip.title}</div>
+      <div class="tip-body">${tip.body}</div>
+      <button class="tip-share" onclick="shareTip('${tip.title.replace(/'/g,"\\'")}', '${tip.body.replace(/'/g,"\\'").replace(/\n/g,' ')}')">
+        &#8599; Share This Tip
+      </button>
+    </div>
+  `).join('') + `
+    <div class="tip-card ask-card" onclick="toggleVoice()">
+      <div class="tip-icon">🎙</div>
+      <div class="tip-category">Ask Anything</div>
+      <div class="tip-title">Got a Kid Question?</div>
+      <div class="tip-body">Bedtime struggles? Picky eaters? Activity ideas? Tap here and ask Poppy — she'll talk you through it.</div>
+      <button class="tip-share" onclick="toggleVoice()">
+        &#127908; Talk to Poppy
+      </button>
+    </div>
+  `;
+}
+
+/* ═══ RENDER REVIEWS ═══ */
+function renderReviews() {
+  document.getElementById('reviewsScroll').innerHTML = reviews.map(r => `
+    <div class="review-card">
+      ${r.verified ? '<div class="review-verified">Verified</div>' : ''}
+      <div class="review-header">
+        <div class="review-avatar">${r.parent.charAt(0)}</div>
+        <div class="review-meta">
+          <div class="review-author">${r.parent}</div>
+          <div class="review-date">${r.date || ''}</div>
+        </div>
+      </div>
+      <div class="review-stars">${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}</div>
+      <div class="review-text">"${r.text}"</div>
+      <div class="review-kids">${r.kids}</div>
+    </div>
+  `).join('');
+}
+
+/* ═══ RENDER SITTERS ═══ */
+function renderSitters() {
+  const el = document.getElementById('sittersList');
+  el.innerHTML = sitters.map(s => `
+    <div class="sitter-card">
+      <img src="${s.photo}" alt="${s.name}"
+           onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2250%22 fill=%22%23F5E0DC%22/><text x=%2250%25%22 y=%2255%25%22 text-anchor=%22middle%22 font-size=%2236%22>${s.name[0]}</text></svg>'">
+      <div class="sitter-info">
+        <div class="sitter-name">${s.name}</div>
+        <div class="sitter-detail">${s.bio}</div>
+        <div class="sitter-badges">
+          ${s.certs.map(c => `<span class="sitter-badge">${c}</span>`).join('')}
+          <span class="sitter-badge">${s.stats.rating} ★</span>
+        </div>
+      </div>
+      <div class="sitter-rate">$${s.rate}<span>/hr</span></div>
+    </div>
+  `).join('') + `
+    <div class="add-sitter-card" onclick="scrollTo('#sitters')">
+      <div class="add-icon">+</div>
+      <div class="add-title">Know a great sitter?</div>
+      <div class="add-sub">Poppy can add friends to the Tiny Tots network. Ask her!</div>
+    </div>
+  `;
+}
+
+/* ═══ DATE STRIP ═══ */
+function buildDateStrip() {
+  const strip = document.getElementById('dateStrip');
+  strip.innerHTML = '';
+  const today = new Date();
+  const dayNames = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
+  for (let i = 0; i < 21; i++) {
+    const d = new Date(today); d.setDate(today.getDate() + i);
+    const key = d.toISOString().split('T')[0];
+    const avail = availabilityData[key];
+    const pill = document.createElement('div');
+    pill.className = 'day-pill' + (avail ? ' available' : '');
+    pill.dataset.date = key;
+    pill.innerHTML = `
+      <span class="day-name">${i === 0 ? 'TODAY' : dayNames[d.getDay()]}</span>
+      <span class="day-num">${d.getDate()}</span>
+      ${avail ? '<span class="avail-dot"></span>' : '<span class="unavail-dot"></span>'}
+    `;
+    pill.addEventListener('click', () => selectDay(key, pill));
+    strip.appendChild(pill);
+  }
+}
+
+function selectDay(key, pill) {
+  document.querySelectorAll('.day-pill').forEach(p => p.classList.remove('selected'));
+  pill.classList.add('selected');
+  selectedDate = key;
+  const avail = availabilityData[key];
+  const d = new Date(key + 'T12:00:00');
+  const dayNames = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const label = `${dayNames[d.getDay()]}, ${monthNames[d.getMonth()]} ${d.getDate()}`;
+
+  const fmt = t => { const [h,m] = t.split(':').map(Number); const ap = h>=12?'PM':'AM'; return `${h>12?h-12:h||12}:${String(m).padStart(2,'0')} ${ap}`; };
+
+  if (avail) {
+    document.getElementById('bookDateLabel').innerHTML = label +
+      `<span style="display:block;font-family:var(--font-body);font-size:13px;font-weight:600;color:var(--gold);margin-top:4px;">${fmt(avail.start_time)} – ${fmt(avail.end_time)}</span>`;
+  } else {
+    document.getElementById('bookDateLabel').textContent = label;
+  }
+
+  const sheet = document.getElementById('bookSheet');
+  const pricePreview = document.getElementById('pricePreview');
+  if (avail) {
+    sheet.classList.add('open');
+    // Show dynamic price
+    const [sh,sm] = avail.start_time.split(':').map(Number);
+    const [eh,em] = avail.end_time.split(':').map(Number);
+    const hrs = Math.max(1, Math.round(((eh*60+em)-(sh*60+sm))/60));
+    const total = hrs * 12;
+    document.getElementById('priceHoursLabel').textContent = hrs + (hrs === 1 ? ' hour' : ' hours');
+    document.getElementById('priceCalc').textContent = '× $12/hr';
+    const totalEl = document.getElementById('priceTotalAmount');
+    totalEl.textContent = '$' + total;
+    totalEl.classList.remove('updating');
+    void totalEl.offsetWidth;
+    totalEl.classList.add('updating');
+    pricePreview.style.display = 'block';
+    sheet.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  } else {
+    sheet.classList.remove('open');
+    pricePreview.style.display = 'none';
+  }
+}
+
+function applyDefaultAvailability() {
+  const today = new Date();
+  for (let i = 0; i < 21; i++) {
+    const d = new Date(today); d.setDate(today.getDate() + i);
+    const key = d.toISOString().split('T')[0];
+    if (!availabilityData[key] && defaultSchedule[d.getDay()]) {
+      availabilityData[key] = { ...defaultSchedule[d.getDay()], recurring: true };
+    }
+  }
+}
+
+async function loadAvailability() {
+  const today = new Date().toISOString().split('T')[0];
+  const { data, error } = await db.from('availability').select('*').gte('date', today).order('date');
+  availabilityData = {};
+  if (!error && data) {
+    data.forEach(r => { availabilityData[r.date] = { start_time: r.start_time, end_time: r.end_time, id: r.id }; });
+  }
+  applyDefaultAvailability();
+  buildDateStrip();
+}
+
+/* ═══ BOOKING ═══ */
+async function submitBooking() {
+  let parentName, parentPhone, parentEmail, kidName;
+
+  if (currentUser) {
+    parentName = currentUser.user_metadata?.full_name || currentUser.email;
+    parentPhone = currentUser.phone || '';
+    parentEmail = currentUser.email || '';
+    kidName = document.getElementById('kidNameSigned').value.trim();
+    if (!kidName) { showToast("What's your child's name?"); return; }
+  } else {
+    parentName = document.getElementById('parentName').value.trim();
+    parentPhone = document.getElementById('parentPhone').value.trim();
+    parentEmail = document.getElementById('parentEmail').value.trim();
+    kidName = document.getElementById('kidName').value.trim();
+    if (!parentName || !parentPhone || !kidName || !selectedDate) {
+      showToast('Please fill in all required fields.'); return;
+    }
+  }
+
+  if (!selectedDate) { showToast('Pick a day first!'); return; }
+
+  const msgEl = document.getElementById('bookMsg');
+  msgEl.className = 'book-msg'; msgEl.style.display = 'none';
+  const btns = document.querySelectorAll('.book-btn');
+  btns.forEach(b => { b.disabled = true; b.textContent = 'Booking...'; });
+
+  const avail = availabilityData[selectedDate];
+  const startTime = avail ? avail.start_time : '15:00';
+  const endTime = avail ? avail.end_time : '21:00';
+  const [sh,sm] = startTime.split(':').map(Number);
+  const [eh,em] = endTime.split(':').map(Number);
+  const hours = Math.max(1, Math.round(((eh*60+em)-(sh*60+sm))/60));
+  const priceCents = hours * 1200;
+
+  try {
+    const { data: existing } = await db.from('parents').select('id').eq('phone', parentPhone).limit(1);
+    let parentId;
+    if (existing && existing.length > 0) {
+      parentId = existing[0].id;
+      await db.from('parents').update({ full_name: parentName, email: parentEmail || null }).eq('id', parentId);
+    } else {
+      const { data: newP, error: pErr } = await db.from('parents').insert({ full_name: parentName, phone: parentPhone, email: parentEmail || null }).select().single();
+      if (pErr) throw pErr;
+      parentId = newP.id;
+    }
+
+    await db.from('kids').insert({ parent_id: parentId, name: kidName }).select().single();
+    const { error: bErr } = await db.from('bookings').insert({
+      parent_id: parentId, date: selectedDate, start_time: startTime, end_time: endTime,
+      package: 'hourly', price_cents: priceCents, status: 'confirmed'
+    });
+    if (bErr) throw bErr;
+
+    msgEl.innerHTML = '<div class="success-check"><svg viewBox="0 0 52 52"><circle cx="26" cy="26" r="25" fill="none" stroke="var(--green)" stroke-width="2"/><path fill="none" stroke="var(--green)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" d="M14.1 27.2l7.1 7.2 16.7-16.8" class="check-path"/></svg></div>You\'re booked! Poppy will see you soon.';
+    msgEl.className = 'book-msg success'; msgEl.style.display = 'block';
+    showToast('Booking confirmed! 🎉');
+    launchConfetti();
+
+    fetch(SUPABASE_URL + '/functions/v1/send-booking-sms', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + SUPABASE_KEY },
+      body: JSON.stringify({ parentName, parentPhone, kidName, date: selectedDate, startTime, endTime, packageName: 'Hourly', price: '$' + (priceCents/100) })
+    }).catch(() => {});
+
+    // Clear form
+    ['parentName','parentPhone','parentEmail','kidName','kidNameSigned'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = '';
+    });
+  } catch (err) {
+    msgEl.textContent = 'Something went wrong. Please try again.';
+    msgEl.className = 'book-msg error'; msgEl.style.display = 'block';
+    console.error(err);
+  }
+  btns.forEach(b => { b.disabled = false; b.textContent = 'Book Poppy'; });
+}
+
+/* ═══ VOICE (ElevenLabs via Avatar Modal) ═══ */
+function toggleVoice() {
+  if (voiceActive) { endVoiceCall(); return; }
+  // Open voice modal
+  const modal = document.getElementById('voiceModal');
+  const statusEl = document.getElementById('voiceModalStatus');
+  modal.classList.add('active');
+  modal.classList.remove('speaking');
+  statusEl.textContent = 'Connecting...';
+  statusEl.className = 'voice-modal-status';
+  document.body.style.overflow = 'hidden';
+
+  // Trigger ElevenLabs widget
+  const widget = document.querySelector('elevenlabs-convai');
+  if (!widget) return;
+  widget.style.cssText = 'position:fixed!important;bottom:-200px!important;right:-200px!important;z-index:-1!important;opacity:0!important;pointer-events:auto!important;width:auto!important;height:auto!important;overflow:visible!important;';
+  setTimeout(() => {
+    const shadow = widget.shadowRoot;
+    if (shadow) {
+      const btn = shadow.querySelector('button');
+      if (btn) btn.click();
+    } else { widget.click(); }
+    setTimeout(() => { widget.style.cssText = ''; }, 100);
+    voiceActive = true;
+    updateVoiceUI();
+  }, 50);
+}
+
+function endVoiceCall() {
+  // Close modal
+  const modal = document.getElementById('voiceModal');
+  modal.classList.remove('active', 'speaking');
+  document.body.style.overflow = '';
+
+  // Stop ElevenLabs
+  const widget = document.querySelector('elevenlabs-convai');
+  if (widget) {
+    widget.style.cssText = 'position:fixed!important;bottom:-200px!important;right:-200px!important;z-index:-1!important;opacity:0!important;pointer-events:auto!important;width:auto!important;height:auto!important;overflow:visible!important;';
+    setTimeout(() => {
+      const shadow = widget.shadowRoot;
+      if (shadow) {
+        const btn = shadow.querySelector('button');
+        if (btn) btn.click();
+      }
+      setTimeout(() => { widget.style.cssText = ''; }, 100);
+    }, 50);
+  }
+  voiceActive = false;
+  updateVoiceUI();
+}
+
+function updateVoiceUI() {
+  const wrap = document.getElementById('avatarWrap');
+  const status = document.getElementById('avatarStatus');
+  const btnText = document.getElementById('voiceBtnText');
+  if (voiceActive) {
+    wrap.classList.add('voice-active');
+    status.textContent = 'On a call...';
+    btnText.textContent = 'End Call';
+  } else {
+    wrap.classList.remove('voice-active');
+    status.textContent = 'Tap to talk';
+    btnText.textContent = 'Talk to Poppy';
+  }
+}
+
+// Watch widget state for real-time updates
+setTimeout(() => {
+  const widget = document.querySelector('elevenlabs-convai');
+  if (!widget) return;
+  const modal = document.getElementById('voiceModal');
+  const statusEl = document.getElementById('voiceModalStatus');
+
+  widget.addEventListener('elevenlabs-convai:call', e => {
+    if (e.detail?.status === 'connected') {
+      voiceActive = true;
+      statusEl.textContent = 'Connected — say hi!';
+      statusEl.className = 'voice-modal-status connected';
+      modal.classList.add('speaking');
+      updateVoiceUI();
+    }
+  });
+  widget.addEventListener('elevenlabs-convai:call-end', () => {
+    voiceActive = false;
+    modal.classList.remove('active', 'speaking');
+    document.body.style.overflow = '';
+    updateVoiceUI();
+  });
+
+  // MutationObserver on shadow DOM for speaking state
+  const checkSpeaking = () => {
+    if (!widget.shadowRoot) return;
+    const obs = new MutationObserver(() => {
+      const shadow = widget.shadowRoot;
+      if (!shadow || !modal.classList.contains('active')) return;
+      // Check for various speaking indicators in shadow DOM
+      const isSpeaking = shadow.querySelector('[data-state="speaking"]') ||
+                         shadow.querySelector('.speaking') ||
+                         shadow.innerHTML?.includes('speaking');
+      if (isSpeaking) {
+        modal.classList.add('speaking');
+        statusEl.textContent = 'Poppy is talking...';
+      } else if (modal.classList.contains('active')) {
+        statusEl.textContent = 'Listening...';
+      }
+    });
+    obs.observe(widget.shadowRoot, { subtree: true, childList: true, attributes: true });
+  };
+  setTimeout(checkSpeaking, 3000);
+}, 2000);
+
+/* ═══ SHARING / VIRAL ═══ */
+function generateInviteCode() {
+  return 'tt' + Math.random().toString(36).substr(2, 6);
+}
+
+function getInviteUrl() {
+  const code = localStorage.getItem('tt_my_code') || generateInviteCode();
+  localStorage.setItem('tt_my_code', code);
+  return window.location.origin + '?ref=' + code;
+}
+
+function shareViaText() {
+  const url = getInviteUrl();
+  const text = `Hey! Check out Poppy — she's the best babysitter. Red Cross certified, $12/hr, and she even has an AI that answers your parenting questions 😂\n\n${url}`;
+  if (navigator.share) {
+    navigator.share({ title: 'Meet Poppy — Babysitter Extraordinaire', text, url });
+  } else {
+    window.open(`sms:?body=${encodeURIComponent(text)}`);
+  }
+}
+
+function copyInviteLink() {
+  const url = getInviteUrl();
+  navigator.clipboard.writeText(url).then(() => showToast('Link copied!')).catch(() => {
+    showToast(url); // fallback: show the URL
+  });
+}
+
+function shareTip(title, body) {
+  const text = `💡 Poppy's Tip: ${title}\n\n${body}\n\nMore tips at `;
+  const url = window.location.origin;
+  if (navigator.share) {
+    navigator.share({ title: `Poppy's Tip: ${title}`, text, url });
+  } else {
+    navigator.clipboard.writeText(text + url).then(() => showToast('Tip copied!'));
+  }
+}
+
+function sendParentInvite() {
+  const phone = document.getElementById('invitePhone').value.trim();
+  const name = document.getElementById('inviteParentName').value.trim();
+  if (!phone) return;
+  const url = getInviteUrl() + '&name=' + encodeURIComponent(name);
+  const msg = `Hi${name ? ' ' + name : ''}! Poppy Wilbert here 👋 I babysit on weekday evenings and Saturdays. Check out my page: ${url}`;
+
+  // Try to send via Twilio edge function (if configured)
+  fetch(SUPABASE_URL + '/functions/v1/send-booking-sms', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + SUPABASE_KEY },
+    body: JSON.stringify({ parentName: name, parentPhone: phone, kidName: '', date: '', startTime: '', endTime: '', packageName: 'Invite', price: msg })
+  }).then(() => showToast('Invite sent to ' + (name || phone) + '!'))
+    .catch(() => {
+      // Fallback: open SMS
+      window.open(`sms:${phone}?body=${encodeURIComponent(msg)}`);
+    });
+
+  document.getElementById('invitePhone').value = '';
+  document.getElementById('inviteParentName').value = '';
+}
+
+/* ═══ NAVIGATION ═══ */
+function tabNav(sectionId) {
+  const el = document.getElementById(sectionId);
+  if (el) el.scrollIntoView({ behavior: 'smooth' });
+}
+function scrollTo(selector) {
+  const el = document.querySelector(selector);
+  if (el) el.scrollIntoView({ behavior: 'smooth' });
+}
+
+/* ═══ TOAST ═══ */
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+/* ═══ DASHBOARD ═══ */
+function checkRoute() {
+  const hash = window.location.hash;
+  const dash = document.getElementById('dashboard');
+  const main = document.querySelectorAll('.hero, .feed-section, .avail-section, .reviews-section, .pricing-section, .sitters-section, .share-section, .footer, .bottom-bar');
+  if (hash === '#/dashboard') {
+    dash.classList.add('active'); main.forEach(el => el.style.display = 'none');
+  } else {
+    dash.classList.remove('active'); main.forEach(el => el.style.display = '');
+  }
+}
+window.addEventListener('hashchange', checkRoute);
+
+function adminAuth() {
+  if (document.getElementById('adminPass').value === 'poppy2026') {
+    document.getElementById('adminLogin').style.display = 'none';
+    document.getElementById('adminPanel').style.display = 'block';
+    loadRevenueSummary();
+    loadAdminBookings();
+    loadAdminParents();
+    loadAdminAvail();
+    loadDashSitters();
+  }
+}
+
+/* ═══ DASHBOARD TABS ═══ */
+function switchDashTab(tab, el) {
+  document.querySelectorAll('.dash-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.dash-panel').forEach(p => p.classList.remove('active'));
+  if (el) el.classList.add('active');
+  const panelMap = { bookings:'dashBookings', schedule:'dashSchedule', sitters:'dashSitters', parents:'dashParents', invite:'dashInvite' };
+  const panel = document.getElementById(panelMap[tab]);
+  if (panel) panel.classList.add('active');
+}
+
+/* ═══ REVENUE SUMMARY ═══ */
+async function loadRevenueSummary() {
+  const { data: bookings } = await db.from('bookings').select('*');
+  if (!bookings) return;
+  const now = new Date();
+  const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  let totalEarned = 0, monthEarned = 0, upcoming = 0, upcomingSits = 0;
+  bookings.forEach(b => {
+    const bDate = new Date(b.date);
+    const hours = calcHours(b.start_time, b.end_time);
+    const amt = hours * 12;
+    if (b.status === 'confirmed' || b.status === 'completed') {
+      if (bDate < now) {
+        totalEarned += amt;
+        if (bDate.getMonth() === now.getMonth() && bDate.getFullYear() === now.getFullYear()) monthEarned += amt;
+      } else {
+        upcoming += amt;
+        upcomingSits++;
+      }
+    }
+  });
+  document.getElementById('revTotal').textContent = '$' + totalEarned.toFixed(0);
+  document.getElementById('revMonth').textContent = '$' + monthEarned.toFixed(0);
+  document.getElementById('revMonthLabel').textContent = monthNames[now.getMonth()];
+  document.getElementById('revUpcoming').textContent = '$' + upcoming.toFixed(0);
+  document.getElementById('revUpcomingSits').textContent = upcomingSits + ' sit' + (upcomingSits !== 1 ? 's' : '');
+}
+
+function calcHours(start, end) {
+  if (!start || !end) return 2;
+  const [sh, sm] = start.split(':').map(Number);
+  const [eh, em] = end.split(':').map(Number);
+  return Math.max(1, ((eh * 60 + em) - (sh * 60 + sm)) / 60);
+}
+
+/* ═══ DASHBOARD SITTERS LIST ═══ */
+function loadDashSitters() {
+  const el = document.getElementById('dashSittersList');
+  if (!el) return;
+  if (sitters.length === 0) {
+    el.innerHTML = '<div class="dash-empty">No sitters yet. Add your first sitter below!</div>';
+    return;
+  }
+  el.innerHTML = sitters.map((s, i) => `
+    <div class="dash-sitter-card">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div style="width:40px;height:40px;border-radius:50%;background:var(--pink);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--gold);">${s.name.charAt(0)}</div>
+        <div>
+          <div style="font-weight:700;font-size:14px;">${s.name}</div>
+          <div style="font-size:11px;color:var(--gray);">Age ${s.age} · $${s.rate}/hr · ${s.stats.sits} sits</div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+async function addAvailability() {
+  const date = document.getElementById('availDate').value;
+  const start = document.getElementById('availStart').value;
+  const end = document.getElementById('availEnd').value;
+  if (!date) return;
+  const { error } = await db.from('availability').upsert({ date, start_time: start, end_time: end }, { onConflict: 'date' });
+  if (!error) { showToast('Availability added!'); loadAdminAvail(); loadAvailability(); }
+}
+
+async function removeAvail(id) {
+  await db.from('availability').delete().eq('id', id);
+  loadAdminAvail(); loadAvailability();
+}
+
+async function loadAdminAvail() {
+  const { data } = await db.from('availability').select('*').order('date');
+  if (!data) return;
+  document.getElementById('availList').innerHTML = data.map(r => `
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #eee;">
+      <span style="font-size:12px;font-weight:600;">${r.date} · ${r.start_time}–${r.end_time}</span>
+      <button onclick="removeAvail('${r.id}')" style="background:none;border:none;color:var(--red-soft);font-weight:700;cursor:pointer;font-size:12px;">Remove</button>
+    </div>
+  `).join('');
+}
+
+async function loadAdminBookings() {
+  const { data } = await db.from('bookings').select('*, parents(full_name, phone)').order('date', { ascending: false }).limit(30);
+  const el = document.getElementById('dashBookingsList');
+  if (!data || data.length === 0) {
+    el.innerHTML = '<div class="dash-empty">No bookings yet — share your link!</div>';
+    return;
+  }
+  el.innerHTML = data.map(b => {
+    const hours = calcHours(b.start_time, b.end_time);
+    const amt = (hours * 12).toFixed(0);
+    const statusClass = b.status === 'confirmed' ? 'confirmed' : b.status === 'completed' ? 'completed' : 'pending';
+    const statusLabel = b.status.charAt(0).toUpperCase() + b.status.slice(1);
+    const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+    const d = new Date(b.date + 'T00:00:00');
+    const dayName = dayNames[d.getDay()];
+    return `<div class="dash-booking-row">
+      <div style="display:flex;justify-content:space-between;align-items:start;">
+        <div>
+          <div style="font-weight:700;font-size:14px;">${b.parents?.full_name || 'Unknown'}</div>
+          <div style="font-size:12px;color:var(--gray);margin-top:2px;">${dayName}, ${b.date} · ${b.start_time || ''}–${b.end_time || ''}</div>
+          <div style="font-size:11px;color:var(--gray);margin-top:2px;">${b.num_children || '?'} kid${(b.num_children||0)!==1?'s':''} · ${hours.toFixed(1)}h · $${amt}</div>
+        </div>
+        <span class="status-badge ${statusClass}">${statusLabel}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function loadAdminParents() {
+  const { data } = await db.from('parents').select('*').order('created_at', { ascending: false }).limit(20);
+  const el = document.getElementById('dashParentsList');
+  if (!data || data.length === 0) {
+    el.innerHTML = '<div class="dash-empty">No parents yet — invite some families!</div>';
+    return;
+  }
+  el.innerHTML = data.map(p => `
+    <div class="dash-booking-row">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div style="width:36px;height:36px;border-radius:50%;background:var(--pink);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;color:var(--gold);">${(p.full_name||'?').charAt(0)}</div>
+        <div>
+          <div style="font-weight:700;font-size:14px;">${p.full_name}</div>
+          <div style="font-size:12px;color:var(--gray);">${p.phone} ${p.email ? '· '+p.email : ''}</div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function addSitter() {
+  const name = document.getElementById('sitterName').value.trim();
+  const age = document.getElementById('sitterAge').value;
+  const rate = document.getElementById('sitterRate').value || 12;
+  if (!name) return;
+  sitters.push({
+    name, age: parseInt(age), slug: name.toLowerCase().replace(/\s+/g,'-'),
+    photo: '', bio: 'New Tiny Tots sitter', rate: parseInt(rate),
+    certs: [], stats: { sits: 0, families: 0, rating: 0 },
+    schedule: {}
+  });
+  renderSitters();
+  showToast(name + ' added to the network!');
+  document.getElementById('sitterName').value = '';
+  document.getElementById('sitterAge').value = '';
+}
+
+/* ═══ SCROLL REVEAL (IntersectionObserver) ═══ */
+function initScrollReveal() {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+}
+
+/* ═══ HERO ENTRANCE ═══ */
+function animateHeroEntrance() {
+  const els = document.querySelectorAll('.hero-enter');
+  els.forEach((el, i) => {
+    setTimeout(() => el.classList.add('animate-in'), i * 120);
+  });
+}
+
+/* ═══ ACTIVITY TICKER (social proof) ═══ */
+const activityMessages = [
+  { name: 'Sarah M.', action: 'just booked Poppy for Saturday' },
+  { name: 'The Rodriguez Family', action: 'left a 5-star review' },
+  { name: 'Jennifer K.', action: 'shared Poppy with 3 friends' },
+  { name: 'A parent nearby', action: 'is viewing this page' },
+  { name: 'Mike & Lisa T.', action: 'just booked for next Tuesday' },
+  { name: 'Emily W.', action: 'joined the Tiny Tots network' },
+  { name: 'A neighbor', action: 'recommended Poppy to a friend' },
+  { name: 'Amanda S.', action: 'booked Poppy for 2 kids' },
+];
+let tickerIndex = 0;
+let tickerTimeout = null;
+
+function showActivityTicker() {
+  const ticker = document.getElementById('activityTicker');
+  const text = document.getElementById('activityText');
+  const msg = activityMessages[tickerIndex % activityMessages.length];
+  text.textContent = `${msg.name} ${msg.action}`;
+  ticker.classList.add('show');
+
+  setTimeout(() => {
+    ticker.classList.remove('show');
+  }, 3500);
+
+  tickerIndex++;
+  // Next one in 12-25 seconds (random for realism)
+  tickerTimeout = setTimeout(showActivityTicker, 12000 + Math.random() * 13000);
+}
+
+// Start ticker after 6 seconds on page
+setTimeout(showActivityTicker, 6000);
+
+/* ═══ CONFETTI ═══ */
+function launchConfetti() {
+  const canvas = document.getElementById('confettiCanvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  const colors = ['#D4A853', '#E8C97A', '#F5E0DC', '#EACDC6', '#5CB85C', '#FF6B6B', '#4ECDC4', '#FFE66D'];
+  const particles = [];
+  const count = 120;
+
+  for (let i = 0; i < count; i++) {
+    particles.push({
+      x: canvas.width / 2 + (Math.random() - 0.5) * 100,
+      y: canvas.height / 2,
+      vx: (Math.random() - 0.5) * 16,
+      vy: -Math.random() * 18 - 4,
+      w: Math.random() * 10 + 4,
+      h: Math.random() * 6 + 2,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      rotation: Math.random() * 360,
+      rotSpeed: (Math.random() - 0.5) * 12,
+      gravity: 0.25 + Math.random() * 0.15,
+      opacity: 1,
+    });
+  }
+
+  let frame = 0;
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    let alive = false;
+    particles.forEach(p => {
+      if (p.opacity <= 0) return;
+      alive = true;
+      p.x += p.vx;
+      p.vy += p.gravity;
+      p.y += p.vy;
+      p.rotation += p.rotSpeed;
+      p.vx *= 0.99;
+      if (frame > 60) p.opacity -= 0.015;
+
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rotation * Math.PI / 180);
+      ctx.globalAlpha = Math.max(0, p.opacity);
+      ctx.fillStyle = p.color;
+      ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+      ctx.restore();
+    });
+    frame++;
+    if (alive) requestAnimationFrame(draw);
+    else ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }
+  requestAnimationFrame(draw);
+}
+
+/* ═══ COUNT-UP ANIMATION ═══ */
+function animateCountUp() {
+  document.querySelectorAll('.stat-num').forEach(el => {
+    const target = parseFloat(el.textContent);
+    const isDecimal = el.textContent.includes('.');
+    const duration = 1200;
+    const start = performance.now();
+    el.textContent = '0';
+    function tick(now) {
+      const progress = Math.min((now - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3); // ease-out cubic
+      const current = target * eased;
+      el.textContent = isDecimal ? current.toFixed(1) : Math.round(current).toString();
+      if (progress < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  });
+}
+
+/* ═══ GO ═══ */
+init();
+// Trigger hero entrance and scroll reveals after DOM paint
+requestAnimationFrame(() => {
+  animateHeroEntrance();
+  initScrollReveal();
+  setTimeout(animateCountUp, 600); // Start count-up after hero entrance
+});
+</script>
+
+<!-- ═══ VOICE MODAL ═══ -->
+<div class="voice-modal-overlay" id="voiceModal">
+  <div class="voice-modal">
+    <button class="voice-modal-close" onclick="endVoiceCall()">&times;</button>
+    <div class="voice-avatar-container">
+      <div class="voice-pulse"></div>
+      <div class="voice-avatar-ring">
+        <img src="poppy-photo.jpg" alt="Poppy"
+             onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 200 200%22><circle cx=%22100%22 cy=%22100%22 r=%22100%22 fill=%22%23F5E0DC%22/><text x=%2250%25%22 y=%2255%25%22 text-anchor=%22middle%22 font-size=%2272%22>P</text></svg>'">
+      </div>
+    </div>
+    <div class="voice-modal-name">Poppy</div>
+    <div class="voice-modal-status" id="voiceModalStatus">Connecting...</div>
+    <div class="voice-waveform" id="voiceWaveform">
+      <div class="voice-bar"></div><div class="voice-bar"></div><div class="voice-bar"></div>
+      <div class="voice-bar"></div><div class="voice-bar"></div><div class="voice-bar"></div>
+      <div class="voice-bar"></div><div class="voice-bar"></div><div class="voice-bar"></div>
+    </div>
+    <button class="voice-end-btn" onclick="endVoiceCall()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 9c-1.6 0-3.15.25-4.6.72v3.1c0 .39-.23.74-.56.9-.98.49-1.87 1.12-2.66 1.85-.18.18-.43.28-.7.28-.28 0-.53-.11-.71-.29L.29 13.08c-.18-.17-.29-.42-.29-.7 0-.28.11-.53.29-.71C3.34 8.78 7.46 7 12 7s8.66 1.78 11.71 4.67c.18.18.29.43.29.71 0 .28-.11.53-.29.71l-2.48 2.48c-.18.18-.43.29-.71.29-.27 0-.52-.11-.7-.28-.79-.74-1.69-1.36-2.67-1.85-.33-.16-.56-.5-.56-.9v-3.1C15.15 9.25 13.6 9 12 9z"/></svg>
+      End Call
+    </button>
+    <div class="voice-modal-hint">Poppy can answer questions about babysitting, parenting tips, and booking</div>
+  </div>
+</div>
+
+<!-- ElevenLabs Conversational AI — hidden, triggered via avatar -->
+<elevenlabs-convai agent-id="agent_9201m47wf1t0e7wt6djfassmqy6t"></elevenlabs-convai>
+<script src="https://elevenlabs.io/convai-widget/index.js" async type="text/javascript"></script>
+</body>
+</html>
