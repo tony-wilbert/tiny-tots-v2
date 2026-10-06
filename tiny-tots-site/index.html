@@ -1736,6 +1736,26 @@ elevenlabs-convai {
 .reveal-delay-3 { transition-delay: 0.3s; }
 .reveal-delay-4 { transition-delay: 0.4s; }
 
+/* ═══ SCROLL-LINKED PARALLAX ═══ */
+.parallax-card {
+  transition: transform 0.1s linear;
+  will-change: transform;
+}
+.float-badge {
+  animation: floatBadge 6s ease-in-out infinite;
+}
+@keyframes floatBadge {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+.tilt-on-scroll {
+  transition: transform 0.3s cubic-bezier(.22,1,.36,1);
+}
+@media (prefers-reduced-motion: reduce) {
+  .parallax-card, .tilt-on-scroll { transition: none !important; }
+  .float-badge { animation: none !important; }
+}
+
 /* ═══ HERO ENTRANCE ═══ */
 .hero-enter { opacity: 0; transform: translateY(24px); }
 .hero-enter.animate-in {
@@ -2777,12 +2797,12 @@ body.dark-mode .scenario-pick:hover, body.dark-mode .scenario-pick.active { bord
       Poppy's Safety Promise
     </div>
     <div class="safety-items">
-      <div class="safety-item"><div class="safety-item-icon">🩹</div><span>Red Cross Certified</span></div>
-      <div class="safety-item"><div class="safety-item-icon">📱</div><span>Real-time updates</span></div>
-      <div class="safety-item"><div class="safety-item-icon">👨‍👩‍👧</div><span>Parent-approved</span></div>
-      <div class="safety-item"><div class="safety-item-icon">🏠</div><span>Neighborhood local</span></div>
-      <div class="safety-item"><div class="safety-item-icon">⏰</div><span>Always punctual</span></div>
-      <div class="safety-item"><div class="safety-item-icon">📋</div><span>Activity reports</span></div>
+      <div class="safety-item float-badge" style="animation-delay:0s"><div class="safety-item-icon">🩹</div><span>Red Cross Certified</span></div>
+      <div class="safety-item float-badge" style="animation-delay:1s"><div class="safety-item-icon">📱</div><span>Real-time updates</span></div>
+      <div class="safety-item float-badge" style="animation-delay:2s"><div class="safety-item-icon">👨‍👩‍👧</div><span>Parent-approved</span></div>
+      <div class="safety-item float-badge" style="animation-delay:3s"><div class="safety-item-icon">🏠</div><span>Neighborhood local</span></div>
+      <div class="safety-item float-badge" style="animation-delay:4s"><div class="safety-item-icon">⏰</div><span>Always punctual</span></div>
+      <div class="safety-item float-badge" style="animation-delay:5s"><div class="safety-item-icon">📋</div><span>Activity reports</span></div>
     </div>
     <div class="safety-stats">
       <div class="safety-stat"><span class="safety-stat-num">50+</span> sessions</div>
@@ -5243,6 +5263,59 @@ function initParallax() {
   }, { passive: true });
 }
 
+/* ═══ SCROLL-LINKED MOTION (Loop 39) ═══ */
+function initScrollMotion() {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  // Depth-layered parallax on review cards and how-steps
+  const parallaxTargets = document.querySelectorAll('.review-card, .how-step, .safety-promise, .tip-card');
+  if (!parallaxTargets.length) return;
+
+  let smTicking = false;
+  window.addEventListener('scroll', () => {
+    if (!smTicking) {
+      requestAnimationFrame(() => {
+        const vh = window.innerHeight;
+        parallaxTargets.forEach((el, i) => {
+          const rect = el.getBoundingClientRect();
+          if (rect.top < vh && rect.bottom > 0) {
+            // Normalized progress: 0 when entering bottom, 1 when at top
+            const progress = 1 - (rect.top / vh);
+            // Subtle Y shift: cards lift 8-16px as they scroll into view
+            const depth = 0.4 + (i % 3) * 0.2;
+            const yShift = (1 - progress) * 12 * depth;
+            el.style.transform = `translateY(${yShift}px)`;
+          }
+        });
+        smTicking = false;
+      });
+      smTicking = true;
+    }
+  }, { passive: true });
+
+  // Hero text parallax — subtitle moves slower than title
+  const heroSub = document.querySelector('.hero-subtitle');
+  const heroTitle = document.querySelector('.hero-title');
+  if (heroTitle && heroSub) {
+    let htTicking = false;
+    window.addEventListener('scroll', () => {
+      if (!htTicking) {
+        requestAnimationFrame(() => {
+          const y = window.scrollY;
+          if (y < 600) {
+            heroTitle.style.transform = `translateY(${y * 0.12}px)`;
+            heroSub.style.transform = `translateY(${y * 0.06}px)`;
+            heroTitle.style.opacity = Math.max(0, 1 - y / 500);
+            heroSub.style.opacity = Math.max(0, 1 - y / 450);
+          }
+          htTicking = false;
+        });
+        htTicking = true;
+      }
+    }, { passive: true });
+  }
+}
+
 /* ═══ ROTATING SOCIAL PROOF ═══ */
 function initRotatingProof() {
   const el = document.getElementById('proofText');
@@ -5420,6 +5493,7 @@ requestAnimationFrame(() => {
     initRipples();
     initScrollProgress();
     initParallax();
+    initScrollMotion();
     initRotatingProof();
   });
   setTimeout(initChatLogging, 3000);
