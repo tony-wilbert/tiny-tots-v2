@@ -3334,31 +3334,34 @@ function init() {
   loadAvailability();
   applySmartContext();
 
-  // Nav scroll effect + sticky CTA + active bottom tab
+  // Nav scroll effect + sticky CTA + active bottom tab (cached DOM lookups)
+  const _nav = document.getElementById('nav');
+  const _hero = document.getElementById('hero');
+  const _cta = document.getElementById('stickyCta');
+  const _tabs = document.querySelectorAll('.tab-btn');
   const navSections = [
-    { id: 'hero', tab: 0 },
-    { id: 'avail', tab: 1 },
-    { id: 'share', tab: 3 }
+    { el: document.getElementById('hero'), tab: 0 },
+    { el: document.getElementById('avail'), tab: 1 },
+    { el: document.getElementById('share'), tab: 3 }
   ];
+  let _scrollTicking = false;
   window.addEventListener('scroll', () => {
-    document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 20);
-    // Show sticky CTA when hero is out of view
-    const hero = document.getElementById('hero');
-    const cta = document.getElementById('stickyCta');
-    if (hero && cta) {
-      const heroBottom = hero.getBoundingClientRect().bottom;
-      cta.classList.toggle('visible', heroBottom < -50);
-    }
-    // Active bottom tab indicator
-    const tabs = document.querySelectorAll('.tab-btn');
-    let activeTab = 0;
-    const scrollMid = window.innerHeight / 2;
-    navSections.forEach(({ id, tab }) => {
-      const el = document.getElementById(id);
-      if (el && el.getBoundingClientRect().top < scrollMid) activeTab = tab;
+    if (_scrollTicking) return;
+    _scrollTicking = true;
+    requestAnimationFrame(() => {
+      _nav.classList.toggle('scrolled', window.scrollY > 20);
+      if (_hero && _cta) {
+        _cta.classList.toggle('visible', _hero.getBoundingClientRect().bottom < -50);
+      }
+      let activeTab = 0;
+      const scrollMid = window.innerHeight / 2;
+      navSections.forEach(({ el, tab }) => {
+        if (el && el.getBoundingClientRect().top < scrollMid) activeTab = tab;
+      });
+      _tabs.forEach((t, i) => t.classList.toggle('active', i === activeTab));
+      _scrollTicking = false;
     });
-    tabs.forEach((t, i) => t.classList.toggle('active', i === activeTab));
-  });
+  }, { passive: true });
 
   // Check for referral
   const params = new URLSearchParams(window.location.search);
@@ -4354,6 +4357,23 @@ function toggleFaq(btn) {
   }
 }
 
+let _elevenLabsLoaded = false;
+function loadElevenLabs() {
+  if (_elevenLabsLoaded) return Promise.resolve();
+  return new Promise(resolve => {
+    const slot = document.getElementById('elevenLabsSlot');
+    const el = document.createElement('elevenlabs-convai');
+    el.setAttribute('agent-id', 'agent_9201m47wf1t0e7wt6djfassmqy6t');
+    slot.appendChild(el);
+    const sc = document.createElement('script');
+    sc.src = 'https://elevenlabs.io/convai-widget/index.js';
+    sc.async = true;
+    sc.onload = () => { _elevenLabsLoaded = true; setTimeout(() => { initChatLogging(); resolve(); }, 500); };
+    sc.onerror = () => { _elevenLabsLoaded = true; resolve(); };
+    document.body.appendChild(sc);
+  });
+}
+
 function toggleVoice() {
   if (voiceActive) { endVoiceCall(); return; }
   // Open voice modal
@@ -4371,9 +4391,14 @@ function toggleVoice() {
   // Focus the close button
   requestAnimationFrame(() => { const cb = modal.querySelector('.voice-modal-close'); if (cb) cb.focus(); });
 
-  // Trigger ElevenLabs widget
-  const widget = document.querySelector('elevenlabs-convai');
-  if (!widget) return;
+  // Lazy-load ElevenLabs on first use
+  loadElevenLabs().then(() => {
+    const widget = document.querySelector('elevenlabs-convai');
+    if (!widget) return;
+    _initWidgetAfterLoad(widget);
+  });
+}
+function _initWidgetAfterLoad(widget) {
   widget.style.cssText = 'position:fixed!important;bottom:-200px!important;right:-200px!important;z-index:-1!important;opacity:0!important;pointer-events:auto!important;width:auto!important;height:auto!important;overflow:visible!important;';
   setTimeout(() => {
     const shadow = widget.shadowRoot;
@@ -5324,13 +5349,17 @@ requestAnimationFrame(() => {
   animateHeroEntrance();
   initScrollReveal();
   animateBioTyping();
-  initCardTilt();
   initCounters();
-  initRipples();
-  initScrollProgress();
-  initParallax();
-  initRotatingProof();
-  setTimeout(initChatLogging, 2000);
+  // Defer non-critical visual enhancements
+  const idle = window.requestIdleCallback || (cb => setTimeout(cb, 100));
+  idle(() => {
+    initCardTilt();
+    initRipples();
+    initScrollProgress();
+    initParallax();
+    initRotatingProof();
+  });
+  setTimeout(initChatLogging, 3000);
 });
 </script>
 
@@ -5360,8 +5389,7 @@ requestAnimationFrame(() => {
   </div>
 </div>
 
-<!-- ElevenLabs Conversational AI — hidden, triggered via avatar -->
-<elevenlabs-convai agent-id="agent_9201m47wf1t0e7wt6djfassmqy6t"></elevenlabs-convai>
-<script src="https://elevenlabs.io/convai-widget/index.js" async type="text/javascript"></script>
+<!-- ElevenLabs Conversational AI — lazy-loaded on first voice interaction -->
+<div id="elevenLabsSlot"></div>
 </body>
 </html>
