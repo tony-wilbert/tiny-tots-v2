@@ -446,8 +446,25 @@ a { text-decoration: none; color: inherit; }
 .unavail-dot { width: 5px; height: 5px; border-radius: 50%; background: transparent; }
 .pill-time { font-size: 9px; font-weight: 700; color: var(--gold); letter-spacing: 0.2px; white-space: nowrap; line-height: 1; }
 .day-pill.selected .pill-time { color: var(--gold-light); }
-.day-pill:not(.available) { opacity: 0.35; }
-.day-pill:not(.available):hover { border-color: transparent; cursor: default; }
+.day-pill:not(.available) { opacity: 0.35; position: relative; }
+.day-pill:not(.available):hover { border-color: transparent; cursor: pointer; }
+/* Unavailable day tooltip */
+.unavail-tip {
+  position: absolute; bottom: calc(100% + 8px); left: 50%; transform: translateX(-50%) scale(0.9);
+  background: var(--charcoal); color: #F0EDE8; padding: 8px 12px; border-radius: 10px;
+  font-size: 11px; font-weight: 600; line-height: 1.4; text-align: center;
+  white-space: nowrap; pointer-events: none; z-index: 20;
+  opacity: 0; transition: opacity 0.2s, transform 0.2s;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+}
+.unavail-tip::after {
+  content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+  border: 5px solid transparent; border-top-color: var(--charcoal);
+}
+.unavail-tip.show { opacity: 1; transform: translateX(-50%) scale(1); }
+.unavail-tip .tip-suggest { color: var(--gold); font-weight: 700; }
+body.dark-mode .unavail-tip { background: #3A3A3E; box-shadow: 0 4px 16px rgba(0,0,0,0.4); }
+body.dark-mode .unavail-tip::after { border-top-color: #3A3A3E; }
 .day-pill.available:active { transform: scale(0.93); }
 .day-pill.available { transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), border-color 0.2s; box-shadow: 0 0 0 0 rgba(212,168,83,0); animation: pill-glow 3s ease-in-out infinite; }
 .day-pill.available:nth-child(odd) { animation-delay: 0.5s; }
@@ -4225,9 +4242,41 @@ function buildDateStrip() {
       <span class="day-num">${d.getDate()}</span>
       ${avail ? `<span class="pill-time">${fmtShort(avail.start_time)}–${fmtShort(avail.end_time)}</span>` : '<span class="unavail-dot"></span>'}
     `;
-    pill.addEventListener('click', () => { if (avail) selectDay(key, pill); });
+    pill.addEventListener('click', () => {
+      if (avail) { selectDay(key, pill); }
+      else { showUnavailTip(pill, d); }
+    });
     strip.appendChild(pill);
   }
+}
+
+function showUnavailTip(pill, date) {
+  // Remove existing tips
+  document.querySelectorAll('.unavail-tip').forEach(t => t.remove());
+  // Find nearest available day
+  const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const fullDayNames = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  let nearestLabel = '';
+  const allPills = document.querySelectorAll('.day-pill.available');
+  let nearestPill = null;
+  let minDist = Infinity;
+  allPills.forEach(p => {
+    const pDate = new Date(p.dataset.date + 'T12:00:00');
+    const dist = Math.abs(pDate - date);
+    if (dist < minDist && dist > 0) { minDist = dist; nearestPill = p; }
+  });
+  if (nearestPill) {
+    const nd = new Date(nearestPill.dataset.date + 'T12:00:00');
+    const av = availabilityData[nearestPill.dataset.date];
+    const fmtShort = t => { const [h,m]=t.split(':').map(Number); const ap=h>=12?'p':'a'; return `${h>12?h-12:h||12}${m?':'+String(m).padStart(2,'0'):''}${ap}`; };
+    nearestLabel = `Try <span class="tip-suggest">${fullDayNames[nd.getDay()]} ${fmtShort(av.start_time)}</span>`;
+  }
+  const tip = document.createElement('div');
+  tip.className = 'unavail-tip';
+  tip.innerHTML = `Not available ${dayNames[date.getDay()]}${nearestLabel ? ' — ' + nearestLabel : ''}`;
+  pill.appendChild(tip);
+  requestAnimationFrame(() => tip.classList.add('show'));
+  setTimeout(() => { tip.classList.remove('show'); setTimeout(() => tip.remove(), 200); }, 3000);
 }
 
 /* Calendar scroll indicators + auto-center */
