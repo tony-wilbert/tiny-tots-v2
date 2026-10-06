@@ -1986,6 +1986,24 @@ elevenlabs-convai {
 .date-strip-wrap.scrolled-start::before { opacity: 1; }
 body.dark-mode .date-strip-wrap::after { background: linear-gradient(to right, transparent, #1A1A1E); }
 body.dark-mode .date-strip-wrap::before { background: linear-gradient(to left, transparent, #1A1A1E); }
+/* Availability Insights Bar */
+.avail-insights {
+  display: flex; gap: 8px; padding: 0 20px; margin-top: 12px; overflow-x: auto;
+  scrollbar-width: none; -ms-overflow-style: none;
+}
+.avail-insights::-webkit-scrollbar { display: none; }
+.avail-insight-chip {
+  display: flex; align-items: center; gap: 5px; padding: 6px 12px;
+  background: rgba(212,168,83,0.08); border: 1px solid rgba(212,168,83,0.2);
+  border-radius: 20px; white-space: nowrap; font-size: 11px; font-weight: 600;
+  color: var(--charcoal); transition: transform 0.2s;
+}
+.avail-insight-chip:active { transform: scale(0.95); }
+.avail-insight-chip .chip-icon { font-size: 13px; }
+.avail-insight-chip.urgent { background: rgba(232,139,139,0.1); border-color: rgba(232,139,139,0.3); }
+.avail-insight-chip.popular { background: rgba(212,168,83,0.15); border-color: rgba(212,168,83,0.35); }
+body.dark-mode .avail-insight-chip { background: rgba(212,168,83,0.12); color: #F0EDE8; border-color: rgba(212,168,83,0.25); }
+body.dark-mode .avail-insight-chip.urgent { background: rgba(232,139,139,0.15); border-color: rgba(232,139,139,0.3); }
 /* Swipe hint animation */
 @keyframes swipeHint {
   0% { transform: translateX(0); opacity: 1; }
@@ -2687,6 +2705,7 @@ body.dark-mode .scenario-pick:hover, body.dark-mode .scenario-pick.active { bord
   <div class="date-strip-wrap" id="dateStripWrap">
     <div class="date-strip" id="dateStrip"></div>
   </div>
+  <div class="avail-insights" id="availInsights"></div>
   <div style="padding: 0 20px;">
     <div class="comm-promise reveal">
       <div class="comm-promise-icon">💬</div>
@@ -4171,9 +4190,56 @@ async function loadAvailability(retries = 2) {
   applyDefaultAvailability();
   buildDateStrip();
   initCalendarScroll();
+  buildAvailInsights();
   buildQuickSlots();
   showNextAvailable();
   autoSelectFirstAvailable();
+}
+
+/* ═══ AVAILABILITY INSIGHTS ═══ */
+function buildAvailInsights() {
+  const container = document.getElementById('availInsights');
+  if (!container) return;
+  const today = new Date();
+  const chips = [];
+  // Count available days this week and next
+  let thisWeekAvail = 0, nextWeekAvail = 0, totalAvail = 0;
+  let weekendAvail = 0, weekdayAvail = 0;
+  const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const availDays = [];
+  for (let i = 0; i < 14; i++) {
+    const d = new Date(today); d.setDate(today.getDate() + i);
+    const key = d.toISOString().split('T')[0];
+    if (availabilityData[key]) {
+      totalAvail++;
+      if (i < 7) thisWeekAvail++; else nextWeekAvail++;
+      if (d.getDay() === 0 || d.getDay() === 6) weekendAvail++; else weekdayAvail++;
+      availDays.push({ day: dayNames[d.getDay()], i });
+    }
+  }
+  // Chip 1: This week summary
+  if (thisWeekAvail > 0 && thisWeekAvail <= 3) {
+    chips.push({ icon: '⚡', text: `Only ${thisWeekAvail} spot${thisWeekAvail > 1 ? 's' : ''} this week`, cls: 'urgent' });
+  } else if (thisWeekAvail > 3) {
+    chips.push({ icon: '📅', text: `${thisWeekAvail} days open this week`, cls: '' });
+  }
+  // Chip 2: Weekend availability
+  if (weekendAvail > 0) {
+    chips.push({ icon: '🌙', text: `${weekendAvail} weekend evening${weekendAvail > 1 ? 's' : ''} open`, cls: 'popular' });
+  } else {
+    chips.push({ icon: '📌', text: 'Weekends fully booked', cls: 'urgent' });
+  }
+  // Chip 3: Most popular day (Saturdays are always hot)
+  if (availDays.some(d => d.day === 'Sat')) {
+    chips.push({ icon: '🔥', text: 'Saturday is most popular', cls: 'popular' });
+  }
+  // Chip 4: Next week preview
+  if (nextWeekAvail > 0) {
+    chips.push({ icon: '→', text: `${nextWeekAvail} days next week`, cls: '' });
+  }
+  container.innerHTML = chips.map(c =>
+    `<div class="avail-insight-chip ${c.cls}"><span class="chip-icon">${c.icon}</span>${c.text}</div>`
+  ).join('');
 }
 
 /* ═══ QUICK-PICK SLOT CARDS ═══ */
