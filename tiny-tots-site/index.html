@@ -2296,6 +2296,81 @@ body.dark-mode .avail-insight-chip.urgent { background: rgba(232,139,139,0.15); 
   .meet-grid { max-width: 720px; margin: 0 auto; }
   .how-steps { max-width: 600px; margin: 0 auto; }
 }
+/* ═══ iPAD PRO / LARGE TABLET (1024px+) ═══ */
+@media (min-width: 1024px) {
+  .hero { min-height: 68vh; padding: calc(var(--nav-h) + 32px) 48px 40px; }
+  .avatar-ring { width: 170px; height: 170px; }
+  .avatar-wave { width: 170px; height: 170px; }
+  .profile-name { font-size: 48px; }
+  .profile-sub { font-size: 16px; }
+  .hero-subtitle { font-size: 17px; max-width: 480px; }
+  .section { padding: 56px 48px; max-width: 860px; }
+  .section-title { font-size: 32px; }
+  .action-btn { padding: 18px 38px; font-size: 16px; }
+  /* Tips & reviews: grid instead of horizontal scroll */
+  .feed-scroll { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; overflow-x: visible; scroll-snap-type: none; padding: 0 48px 16px; }
+  .tip-card { width: auto; scroll-snap-align: unset; }
+  .reviews-scroll { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 20px; overflow-x: visible; scroll-snap-type: none; padding: 0 48px 16px; }
+  .review-card { width: auto; scroll-snap-align: unset; }
+  /* Wider bottom bar + booking elements */
+  .bottom-bar { max-width: 560px; }
+  .sticky-cta { max-width: 560px; }
+  .book-sheet { max-width: 620px; }
+  .book-card { max-width: 580px; }
+  .meet-card { max-width: 680px; }
+  /* How It Works side by side */
+  .how-steps { max-width: 720px; gap: 28px; }
+  .how-card { padding: 24px 20px 20px; }
+  .how-icon { width: 48px; height: 48px; font-size: 22px; }
+  .how-label { font-size: 15px; }
+  .how-desc { font-size: 13px; }
+  /* Calendar day pills bigger */
+  .day-pill { width: 88px; padding: 16px 8px; }
+  .day-num { font-size: 22px; }
+  .day-label { font-size: 11px; }
+  .pill-time { font-size: 10px; }
+  /* Stats */
+  .stats-row { gap: 48px; }
+  .stat-num { font-size: 32px; }
+  .stat-label { font-size: 12px; }
+  /* Form elements */
+  .book-guest .form-row { gap: 14px; }
+  .book-guest .form-row input { padding: 16px 20px; min-height: 52px; }
+  .time-select { min-height: 56px; font-size: 16px; }
+  .book-btn { min-height: 56px; font-size: 17px; }
+  /* FAQ */
+  .faq-q { font-size: 16px; padding: 22px 0; }
+  .faq-a { font-size: 14px; }
+  /* Nav */
+  .nav { padding: 14px 32px; }
+  .nav-logo { font-size: 20px; }
+  .nav-btn { font-size: 13px; padding: 10px 18px; }
+  /* Avail insights */
+  .avail-insights { padding: 0 48px; justify-content: center; }
+  .avail-insight-chip { font-size: 12px; padding: 8px 16px; }
+  /* Price spotlight */
+  .price-spotlight { padding: 52px 48px; max-width: 620px; }
+  /* Share section */
+  .share-btn { padding: 18px 32px; font-size: 16px; }
+  /* Safety promise */
+  .safety-promise { max-width: 600px; }
+  .trust-bar { max-width: 540px; }
+  /* Tab bar labels bigger */
+  .tab-btn { font-size: 11px; padding: 8px 20px; }
+  .tab-btn svg { width: 24px; height: 24px; }
+}
+/* ═══ iPAD LANDSCAPE ═══ */
+@media (min-width: 1024px) and (orientation: landscape) {
+  .hero { min-height: auto; padding: calc(var(--nav-h) + 20px) 60px 28px; flex-direction: row; gap: 48px; text-align: left; }
+  .hero > *:first-child { flex-shrink: 0; }
+  .hero-stats { justify-content: flex-start; }
+  .hero-cta { justify-content: flex-start; }
+  .hero-badges { justify-content: flex-start; }
+  .section { max-width: 920px; }
+  .feed-scroll { grid-template-columns: repeat(3, 1fr); padding: 0 60px 16px; }
+  .reviews-scroll { grid-template-columns: repeat(3, 1fr); padding: 0 60px 16px; }
+  .how-steps { max-width: 800px; }
+}
 /* ═══ TOUCH DEVICE REFINEMENTS ═══ */
 @media (hover: none) and (pointer: coarse) {
   /* Remove hover effects that stick on touch */
