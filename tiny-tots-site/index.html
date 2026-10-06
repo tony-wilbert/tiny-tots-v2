@@ -321,6 +321,7 @@ a { text-decoration: none; color: inherit; }
 .day-pill.selected .pill-time { color: var(--gold-light); }
 .day-pill:not(.available) { opacity: 0.35; }
 .day-pill:not(.available):hover { border-color: transparent; cursor: default; }
+.day-pill.available:active { transform: scale(0.93); }
 
 /* Sticky CTA Bar — appears when scrolling past hero */
 .sticky-cta {
@@ -491,6 +492,7 @@ a { text-decoration: none; color: inherit; }
   background: var(--charcoal); color: var(--white); transition: all 0.2s;
 }
 .book-btn:hover { background: var(--gold); }
+.book-btn:active { transform: scale(0.96); }
 .book-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 .book-msg {
   margin-top: 12px; padding: 12px 16px; border-radius: 12px;
@@ -509,6 +511,54 @@ a { text-decoration: none; color: inherit; }
 }
 @keyframes checkCircle { to { stroke-dashoffset: 0; } }
 @keyframes checkDraw { to { stroke-dashoffset: 0; } }
+
+/* ═══ BOOKING CONFIRMATION OVERLAY ═══ */
+.confirm-overlay {
+  position: fixed; inset: 0; z-index: 9999;
+  background: rgba(255,248,245,0.97); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none; transition: opacity 0.4s ease;
+  padding: 24px;
+}
+.confirm-overlay.active { opacity: 1; pointer-events: auto; }
+.confirm-card {
+  background: var(--white); border-radius: 28px; padding: 40px 28px 32px; max-width: 380px; width: 100%;
+  box-shadow: var(--shadow-lg); text-align: center;
+  transform: translateY(30px) scale(0.95); transition: transform 0.5s cubic-bezier(.22,1,.36,1);
+}
+.confirm-overlay.active .confirm-card { transform: translateY(0) scale(1); }
+.confirm-emoji { font-size: 56px; margin-bottom: 12px; animation: confirmBounce 0.6s 0.3s ease both; }
+@keyframes confirmBounce {
+  0% { transform: scale(0); } 50% { transform: scale(1.25); } 100% { transform: scale(1); }
+}
+.confirm-title {
+  font-family: var(--font-display); font-size: 26px; font-weight: 800;
+  color: var(--charcoal); margin-bottom: 6px;
+}
+.confirm-sub { font-size: 14px; color: var(--gray); margin-bottom: 20px; }
+.confirm-details {
+  background: var(--warm); border-radius: 16px; padding: 16px 20px; margin-bottom: 20px; text-align: left;
+}
+.confirm-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 6px 0; font-size: 13px; color: var(--charcoal);
+}
+.confirm-row:not(:last-child) { border-bottom: 1px solid rgba(0,0,0,0.05); }
+.confirm-row-label { font-weight: 600; color: var(--gray); font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
+.confirm-row-value { font-weight: 700; }
+.confirm-total { font-size: 15px !important; }
+.confirm-total .confirm-row-value { color: var(--gold); font-size: 18px; font-weight: 800; }
+.confirm-note {
+  display: flex; align-items: center; gap: 8px; background: #e8f5e9; border-radius: 12px;
+  padding: 12px 16px; margin-bottom: 20px; font-size: 12px; color: #2e7d32; font-weight: 600;
+}
+.confirm-note-icon { font-size: 18px; flex-shrink: 0; }
+.confirm-close-btn {
+  background: var(--charcoal); color: var(--white); border: none; padding: 14px 32px;
+  border-radius: 50px; font-size: 15px; font-weight: 700; cursor: pointer;
+  width: 100%; transition: transform 0.2s;
+}
+.confirm-close-btn:active { transform: scale(0.96); }
 
 /* ═══ REVIEWS ═══ */
 .reviews-section { background: var(--white); }
@@ -1257,6 +1307,26 @@ elevenlabs-convai {
 </footer>
 
 <!-- ═══ STICKY CTA BAR ═══ -->
+<!-- Booking Confirmation Overlay -->
+<div class="confirm-overlay" id="confirmOverlay">
+  <div class="confirm-card">
+    <div class="confirm-emoji">🎉</div>
+    <h2 class="confirm-title">You're All Set!</h2>
+    <p class="confirm-sub">Poppy can't wait to meet your little one</p>
+    <div class="confirm-details">
+      <div class="confirm-row"><span class="confirm-row-label">Date</span><span class="confirm-row-value" id="confirmDate"></span></div>
+      <div class="confirm-row"><span class="confirm-row-label">Time</span><span class="confirm-row-value" id="confirmTime"></span></div>
+      <div class="confirm-row"><span class="confirm-row-label">Child</span><span class="confirm-row-value" id="confirmKid"></span></div>
+      <div class="confirm-row confirm-total"><span class="confirm-row-label">Total</span><span class="confirm-row-value" id="confirmTotal"></span></div>
+    </div>
+    <div class="confirm-note">
+      <span class="confirm-note-icon">💬</span>
+      <span>Poppy will text you to confirm — keep an eye on your phone!</span>
+    </div>
+    <button class="confirm-close-btn" onclick="closeConfirmation()">Awesome!</button>
+  </div>
+</div>
+
 <div class="sticky-cta" id="stickyCta">
   <div class="sticky-cta-info">
     <span class="sticky-cta-label">Next available</span>
@@ -1869,9 +1939,16 @@ async function submitBooking() {
     });
     if (bErr) throw bErr;
 
-    msgEl.innerHTML = '<div class="success-check"><svg viewBox="0 0 52 52"><circle cx="26" cy="26" r="25" fill="none" stroke="var(--green)" stroke-width="2"/><path fill="none" stroke="var(--green)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" d="M14.1 27.2l7.1 7.2 16.7-16.8" class="check-path"/></svg></div>You\'re booked! Poppy will see you soon.';
-    msgEl.className = 'book-msg success'; msgEl.style.display = 'block';
-    showToast('Booking confirmed! 🎉');
+    // Show confirmation overlay
+    const dayNames = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+    const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    const bDate = new Date(selectedDate + 'T12:00:00');
+    const fmt12 = t => { const [h,m] = t.split(':').map(Number); const ap = h>=12?'PM':'AM'; return `${h>12?h-12:h||12}:${String(m).padStart(2,'0')} ${ap}`; };
+    document.getElementById('confirmDate').textContent = `${dayNames[bDate.getDay()]}, ${monthNames[bDate.getMonth()]} ${bDate.getDate()}`;
+    document.getElementById('confirmTime').textContent = `${fmt12(startTime)} – ${fmt12(endTime)}`;
+    document.getElementById('confirmKid').textContent = kidName;
+    document.getElementById('confirmTotal').textContent = `$${priceCents/100}`;
+    document.getElementById('confirmOverlay').classList.add('active');
     launchConfetti();
 
     fetch(SUPABASE_URL + '/functions/v1/send-booking-sms', {
@@ -1894,6 +1971,12 @@ async function submitBooking() {
 }
 
 /* ═══ VOICE (ElevenLabs via Avatar Modal) ═══ */
+function closeConfirmation() {
+  document.getElementById('confirmOverlay').classList.remove('active');
+  // Scroll back to top
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
 function toggleVoice() {
   if (voiceActive) { endVoiceCall(); return; }
   // Open voice modal
