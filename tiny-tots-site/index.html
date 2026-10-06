@@ -2100,18 +2100,21 @@ body.dark-mode .meet-quote { background: rgba(212,168,83,0.08); border-color: rg
 body.dark-mode .social-proof-notif { background: #2A2A2E; color: var(--white); box-shadow: 0 4px 24px rgba(0,0,0,0.3); }
 body.dark-mode .social-proof-notif .sp-time { color: rgba(255,255,255,0.4); }
 
-/* ═══ ElevenLabs widget — hidden off-screen by default, shown inside voice modal ═══ */
+/* ═══ ElevenLabs widget — completely hidden by default ═══ */
 elevenlabs-convai {
   position: fixed !important; bottom: -9999px !important; right: -9999px !important;
   z-index: -1 !important; opacity: 0 !important; pointer-events: none !important;
   width: 0 !important; height: 0 !important; overflow: hidden !important;
+  display: none !important;
 }
-/* When voice modal is active, show the widget VISIBLE so users can click Start directly (mic permissions require real user gesture) */
+/* When voice modal is active, show widget VISIBLE inside modal (mic permissions require real user gesture) */
 .voice-modal-overlay.active elevenlabs-convai {
   position: relative !important; bottom: auto !important; right: auto !important;
   z-index: 10 !important; opacity: 1 !important; pointer-events: auto !important;
   width: 100% !important; height: auto !important; overflow: visible !important;
   display: block !important; max-width: 400px !important; margin: 0 auto !important;
+  /* Contain fixed-position shadow DOM children within this element */
+  transform: translateZ(0) !important; contain: layout paint !important;
 }
 
 /* ═══ VOICE MODAL ═══ */
@@ -2186,9 +2189,22 @@ elevenlabs-convai {
 
 /* ElevenLabs widget container — visible inside modal so user can click Start directly (required for mic permissions) */
 .voice-widget-container {
-  margin: 12px 0 0; width: 100%; min-height: 60px;
-  display: flex; justify-content: center; align-items: center;
+  margin: 12px 0 0; width: 100%; min-height: 80px;
+  display: flex; flex-direction: column; justify-content: center; align-items: center;
+  gap: 8px;
 }
+/* "Tap to start" hint below widget orb */
+.voice-tap-hint {
+  font-size: 13px; color: rgba(240,237,232,0.5); text-align: center;
+  animation: tapHintPulse 2.5s ease-in-out infinite; margin-top: 4px;
+  letter-spacing: 0.3px;
+}
+@keyframes tapHintPulse {
+  0%, 100% { opacity: 0.5; transform: translateY(0); }
+  50% { opacity: 0.9; transform: translateY(-2px); }
+}
+/* Hide hint once call connects */
+.voice-modal-overlay.active.speaking .voice-tap-hint { display: none; }
 
 /* Waveform bars — shown when connected */
 .voice-waveform {
@@ -5886,12 +5902,32 @@ function loadElevenLabs() {
       setTimeout(() => {
         _setupWidgetListeners();
         initChatLogging();
+        // Hide any floating trigger button the widget creates outside the modal
+        _hideFloatingWidgetButton();
         resolve();
       }, 800);
     };
     sc.onerror = () => { _elevenLabsLoaded = true; resolve(); };
     document.body.appendChild(sc);
   });
+}
+
+/* Hide any floating button the ElevenLabs widget creates in its shadow DOM */
+function _hideFloatingWidgetButton() {
+  const widget = document.querySelector('elevenlabs-convai');
+  if (!widget || !widget.shadowRoot) return;
+  const shadow = widget.shadowRoot;
+  // Inject a style into the shadow DOM to contain fixed-position elements
+  const style = document.createElement('style');
+  style.textContent = `
+    /* Force any fixed-position floating button to stay within widget bounds */
+    :host { contain: layout paint !important; transform: translateZ(0) !important; }
+    /* Hide default floating trigger — we show the full widget inside our modal */
+    [style*="position: fixed"], [style*="position:fixed"] {
+      position: relative !important; bottom: auto !important; right: auto !important;
+    }
+  `;
+  shadow.appendChild(style);
 }
 
 /* Open voice modal — widget loads VISIBLE so user can click "Start a call" directly (required for Chrome mic permissions) */
@@ -7203,6 +7239,7 @@ requestAnimationFrame(() => {
     <div class="voice-widget-container" id="voiceWidgetContainer">
       <!-- ElevenLabs widget — visible so user can click "Start a call" directly (required for mic permissions in Chrome) -->
     </div>
+    <div class="voice-tap-hint" id="voiceTapHint">👆 Tap the orb to start talking</div>
     <button class="voice-end-btn" id="voiceEndBtn" onclick="endVoiceCall()" style="display:none">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 9c-1.6 0-3.15.25-4.6.72v3.1c0 .39-.23.74-.56.9-.98.49-1.87 1.12-2.66 1.85-.18.18-.43.28-.7.28-.28 0-.53-.11-.71-.29L.29 13.08c-.18-.17-.29-.42-.29-.7 0-.28.11-.53.29-.71C3.34 8.78 7.46 7 12 7s8.66 1.78 11.71 4.67c.18.18.29.43.29.71 0 .28-.11.53-.29.71l-2.48 2.48c-.18.18-.43.29-.71.29-.27 0-.52-.11-.7-.28-.79-.74-1.69-1.36-2.67-1.85-.33-.16-.56-.5-.56-.9v-3.1C15.15 9.25 13.6 9 12 9z"/></svg>
       End Call
