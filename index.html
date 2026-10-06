@@ -3100,7 +3100,7 @@ body.dark-mode .scenario-pick:hover, body.dark-mode .scenario-pick.active { bord
   <div class="nav-right">
     <img class="nav-user" id="navUserPic" onclick="openAuthModal()" alt="Your profile" role="button" tabindex="0">
     <button class="dark-toggle" id="darkToggle" onclick="toggleDarkMode()" aria-label="Toggle dark mode" title="Toggle dark mode">🌙</button>
-    <button class="nav-btn" onclick="scrollTo('#avail')">Book</button>
+    <button class="nav-btn" onclick="scrollToSection('#avail')">Book</button>
     <button class="nav-btn primary" id="navAuthBtn" onclick="openAuthModal()">Sign In</button>
   </div>
 </nav>
@@ -3276,7 +3276,7 @@ body.dark-mode .scenario-pick:hover, body.dark-mode .scenario-pick.active { bord
       <div class="time-picker" id="timePicker" style="display:none;">
         <div class="time-confirmed-flash" id="timeConfirmedFlash">✓ Locked in</div>
         <div class="time-picker-header">
-          <span class="time-picker-title">Slide to pick hours</span>
+          <span class="time-picker-title">Pick your hours</span>
           <span class="time-picker-hint" id="timePickerHint">Drag to adjust</span>
         </div>
         <div class="time-slider-container" id="timeSlider">
@@ -3627,7 +3627,7 @@ body.dark-mode .scenario-pick:hover, body.dark-mode .scenario-pick.active { bord
       Pay with Apple Pay (via text) or cash at pickup<br>
       No hidden fees. No contracts. Tips always make her smile.
     </div>
-    <button class="action-btn primary" style="display:inline-flex;margin-top:20px;" onclick="scrollTo('#avail')">Book Poppy</button>
+    <button class="action-btn primary" style="display:inline-flex;margin-top:20px;" onclick="scrollToSection('#avail')">Book Poppy</button>
   </div>
 </section>
 
@@ -4466,7 +4466,7 @@ function renderSitters() {
       <div class="sitter-rate">$${s.rate}<span>/hr</span></div>
     </div>
   `).join('') + `
-    <div class="add-sitter-card" onclick="scrollTo('#sitters')">
+    <div class="add-sitter-card" onclick="scrollToSection('#sitters')">
       <div class="add-icon">+</div>
       <div class="add-title">Know a great sitter?</div>
       <div class="add-sub">Poppy can add friends to the Tiny Tots network. Ask her!</div>
@@ -4730,8 +4730,8 @@ function _buildMarkers() {
   const mk = document.getElementById('sliderMarkers');
   if (!mk) return; mk.innerHTML = '';
   const dur = _sl.trackEnd - _sl.trackStart;
-  // Start marker if not on the hour
-  if (_sl.trackStart % 60 !== 0) {
+  // Start marker only if not on the hour and far enough from first hour marker
+  if (_sl.trackStart % 60 !== 0 && (Math.ceil(_sl.trackStart/60)*60 - _sl.trackStart) >= 30) {
     const sp = document.createElement('span');
     sp.className = 'time-slider-marker';
     sp.style.left = '0%'; sp.textContent = _mLabel(_sl.trackStart);
@@ -5315,13 +5315,13 @@ function bookNextAvailable() {
     if (availabilityData[key]) {
       const pill = document.querySelector(`.day-pill[data-date="${key}"]`);
       if (pill) {
-        scrollTo('#avail');
+        scrollToSection('#avail');
         setTimeout(() => selectDay(key, pill), 400);
       }
       return;
     }
   }
-  scrollTo('#avail');
+  scrollToSection('#avail');
 }
 
 /* ═══ QUICK REBOOK (returning visitors) ═══ */
@@ -5903,7 +5903,7 @@ function tabNav(sectionId) {
   // Haptic on supported devices
   if (navigator.vibrate) navigator.vibrate(5);
 }
-function scrollTo(selector) {
+function scrollToSection(selector) {
   const el = document.querySelector(selector);
   if (el) el.scrollIntoView({ behavior: 'smooth' });
 }
