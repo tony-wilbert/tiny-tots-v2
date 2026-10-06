@@ -1152,7 +1152,7 @@ ul { list-style: none; }
 /* ── Supabase Init ── */
 const SUPABASE_URL = 'https://udhgdtiezzzudczckaaw.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVkaGdkdGllenp6dWRjemNrYWF3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA1NDcwNzIsImV4cCI6MjEwNjEyMzA3Mn0.sg5CssfPktk11ytdaPJpWyfQj7JvVdxIKdVvITA_X18';
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 /* ── State ── */
 let currentYear, currentMonth;
@@ -1224,7 +1224,7 @@ async function fetchAvailability(year, month) {
   const todayStr = today.toISOString().split('T')[0];
   const filterDate = startDate > todayStr ? startDate : todayStr;
 
-  const { data, error } = await supabase
+  const { data, error } = await db
     .from('availability')
     .select('date, start_time, end_time')
     .eq('is_available', true)
@@ -1448,7 +1448,7 @@ async function submitBooking() {
   try {
     // 1. Upsert parent
     let parentId;
-    const { data: existingParents } = await supabase
+    const { data: existingParents } = await db
       .from('parents')
       .select('id')
       .eq('phone', parentPhone)
@@ -1457,9 +1457,9 @@ async function submitBooking() {
     if (existingParents && existingParents.length > 0) {
       parentId = existingParents[0].id;
       // Update name/email if provided
-      await supabase.from('parents').update({ full_name: parentName, email: parentEmail || null }).eq('id', parentId);
+      await db.from('parents').update({ full_name: parentName, email: parentEmail || null }).eq('id', parentId);
     } else {
-      const { data: newParent, error: parentErr } = await supabase
+      const { data: newParent, error: parentErr } = await db
         .from('parents')
         .insert({ full_name: parentName, phone: parentPhone, email: parentEmail || null })
         .select('id')
@@ -1469,7 +1469,7 @@ async function submitBooking() {
     }
 
     // 2. Insert kid
-    const { error: kidErr } = await supabase
+    const { error: kidErr } = await db
       .from('kids')
       .insert({
         parent_id: parentId,
@@ -1481,7 +1481,7 @@ async function submitBooking() {
     if (kidErr) throw kidErr;
 
     // 3. Insert booking
-    const { error: bookErr } = await supabase
+    const { error: bookErr } = await db
       .from('bookings')
       .insert({
         parent_id: parentId,
@@ -1603,7 +1603,7 @@ function switchAdminTab(tab) {
 }
 
 async function loadAdminBookings() {
-  const { data, error } = await supabase
+  const { data, error } = await db
     .from('bookings')
     .select('*, parents(full_name, phone)')
     .gte('date', new Date().toISOString().split('T')[0])
@@ -1640,7 +1640,7 @@ async function loadAdminBookings() {
 }
 
 async function loadAdminAvailability() {
-  const { data, error } = await supabase
+  const { data, error } = await db
     .from('availability')
     .select('*')
     .gte('date', new Date().toISOString().split('T')[0])
@@ -1673,7 +1673,7 @@ async function addAvailability() {
 
   if (!date || !start || !end) { alert('Please fill in all fields.'); return; }
 
-  const { error } = await supabase
+  const { error } = await db
     .from('availability')
     .insert({ date, start_time: start, end_time: end, is_available: true });
 
@@ -1685,12 +1685,12 @@ async function addAvailability() {
 
 async function removeAvailability(id) {
   if (!confirm('Remove this availability slot?')) return;
-  await supabase.from('availability').delete().eq('id', id);
+  await db.from('availability').delete().eq('id', id);
   loadAdminAvailability();
 }
 
 async function loadAdminParents() {
-  const { data, error } = await supabase
+  const { data, error } = await db
     .from('parents')
     .select('*, kids(*)')
     .order('created_at', { ascending: false });
