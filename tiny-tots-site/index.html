@@ -3474,7 +3474,7 @@ body.dark-mode .scenario-pick:hover, body.dark-mode .scenario-pick.active { bord
 </div>
 
 <!-- ═══ HOW IT WORKS ═══ -->
-<div class="how-section" id="howItWorks">
+<section class="how-section" id="howItWorks" aria-label="How it works">
   <p class="how-section-label reveal">How It Works</p>
   <h2 class="how-section-title reveal">Three taps. That's it.</h2>
   <p class="how-section-sub reveal">No apps to download, no accounts required. Just pick a time and Poppy handles the rest.</p>
@@ -3507,10 +3507,10 @@ body.dark-mode .scenario-pick:hover, body.dark-mode .scenario-pick.active { bord
       </div>
     </div>
   </div>
-</div>
+</section>
 
 <!-- ═══ CALENDAR / BOOKING ═══ -->
-<section class="avail-section" id="avail">
+<section class="avail-section" id="avail" aria-label="Schedule and booking">
   <div class="avail-header reveal">
     <p class="section-label">Schedule</p>
     <h2 class="section-title">Pick a Day</h2>
@@ -3610,36 +3610,36 @@ body.dark-mode .scenario-pick:hover, body.dark-mode .scenario-pick.active { bord
           </div>
         </div>
         <div class="form-row" style="display:flex;gap:8px;margin-bottom:10px;">
-          <input type="text" id="kidNameSigned" placeholder="Your kiddo's name" style="flex:1;padding:13px 16px;border-radius:12px;border:2px solid #eee;font-size:14px;outline:none;">
+          <input type="text" id="kidNameSigned" placeholder="Your kiddo's name" aria-label="Your child's name for session plan" style="flex:1;padding:13px 16px;border-radius:12px;border:2px solid #eee;font-size:14px;outline:none;">
         </div>
-        <button type="button" class="book-btn" onclick="submitBooking()"><span class="btn-spinner"></span><span class="btn-text">Book Poppy</span></button>
+        <button type="button" class="book-btn" onclick="submitBooking()" aria-label="Book Poppy now"><span class="btn-spinner"></span><span class="btn-text">Book Poppy</span></button>
       </div>
 
       <!-- Guest booking -->
       <div class="book-guest" id="bookGuest">
         <div class="google-signin-row">
-          <button class="google-btn" onclick="openAuthModal()">
+          <button class="google-btn" onclick="openAuthModal()" aria-label="Continue with Google">
             <svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
             Continue with Google
           </button>
           <span class="or-divider">or</span>
         </div>
         <div class="form-row">
-          <input type="text" id="parentName" placeholder="Your first name" required autocomplete="given-name" enterkeyhint="next">
-          <input type="tel" id="parentPhone" placeholder="Best number for updates" required autocomplete="tel" inputmode="tel" enterkeyhint="next">
+          <input type="text" id="parentName" placeholder="Your first name" required autocomplete="given-name" enterkeyhint="next" aria-label="Your first name">
+          <input type="tel" id="parentPhone" placeholder="Best number for updates" required autocomplete="tel" inputmode="tel" enterkeyhint="next" aria-label="Phone number for updates">
         </div>
         <div class="form-row">
-          <input type="text" id="kidName" placeholder="Your kiddo's name" required enterkeyhint="next">
-          <input type="email" id="parentEmail" placeholder="Email (optional)" style="font-size:13px;" autocomplete="email" inputmode="email" enterkeyhint="done">
+          <input type="text" id="kidName" placeholder="Your kiddo's name" required enterkeyhint="next" aria-label="Your child's name">
+          <input type="email" id="parentEmail" placeholder="Email (optional)" style="font-size:13px;" autocomplete="email" inputmode="email" enterkeyhint="done" aria-label="Email address (optional)">
         </div>
-        <button type="button" class="book-btn" onclick="submitBooking()"><span class="btn-spinner"></span><span class="btn-text">Book Poppy</span></button>
+        <button type="button" class="book-btn" onclick="submitBooking()" aria-label="Book Poppy now"><span class="btn-spinner"></span><span class="btn-text">Book Poppy</span></button>
         <div class="book-reassurance">Poppy responds in under 5 minutes</div>
       </div>
 
-      <div class="trust-micros">
-        <span class="trust-micro"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Confirmed in minutes</span>
-        <span class="trust-micro"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Free cancellation</span>
-        <span class="trust-micro"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Photo updates included</span>
+      <div class="trust-micros" role="list" aria-label="Booking benefits">
+        <span class="trust-micro" role="listitem"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Confirmed in minutes</span>
+        <span class="trust-micro" role="listitem"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Free cancellation</span>
+        <span class="trust-micro" role="listitem"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Photo updates included</span>
       </div>
 
       <div class="book-msg" id="bookMsg"></div>
@@ -3648,7 +3648,7 @@ body.dark-mode .scenario-pick:hover, body.dark-mode .scenario-pick.active { bord
 </section>
 
 <!-- ═══ DURING YOUR SESSION — ANIMATED CHAT PREVIEW ═══ -->
-<section class="session-updates-section" id="sessionUpdates">
+<section class="session-updates-section" id="sessionUpdates" aria-label="Session updates preview">
   <p class="section-label reveal">During Your Session</p>
   <h2 class="section-title reveal">Poppy keeps you posted</h2>
   <p class="section-sub reveal" style="max-width:340px;margin:8px auto 0;">Real-time updates, photos, and check-ins — so you can relax and enjoy your evening.</p>
@@ -3680,7 +3680,7 @@ body.dark-mode .scenario-pick:hover, body.dark-mode .scenario-pick.active { bord
 </section>
 
 <!-- ═══ POPPY'S WORLD — AI CONTENT FEED ═══ -->
-<section class="feed-section" id="feed">
+<section class="feed-section" id="feed" aria-label="Parent activity feed">
   <div class="feed-header reveal">
     <p class="section-label">Poppy's World</p>
     <h2 class="section-title">Tips & Tricks</h2>
@@ -3699,7 +3699,7 @@ body.dark-mode .scenario-pick:hover, body.dark-mode .scenario-pick.active { bord
 </div>
 
 <!-- ═══ ADVENTURES WITH POPPY ═══ -->
-<section class="adventures-section" id="adventures">
+<section class="adventures-section" id="adventures" aria-label="Adventures with Poppy">
   <div class="adventures-header reveal">
     <p class="section-label">The Fun Stuff</p>
     <h2 class="section-title">Adventures with Poppy</h2>
@@ -3754,7 +3754,7 @@ body.dark-mode .scenario-pick:hover, body.dark-mode .scenario-pick.active { bord
 </div>
 
 <!-- ═══ REVIEWS ═══ -->
-<section class="section reviews-section" id="reviews">
+<section class="section reviews-section" id="reviews" aria-label="Parent reviews">
   <div class="section-header reveal">
     <p class="section-label">From Parents</p>
     <h2 class="section-title">What Parents Are Saying</h2>
@@ -3802,7 +3802,7 @@ body.dark-mode .scenario-pick:hover, body.dark-mode .scenario-pick.active { bord
 </section>
 
 <!-- ═══ MEET POPPY ═══ -->
-<section class="meet-section" id="about">
+<section class="meet-section" id="about" aria-label="About Poppy">
   <h2 class="section-title reveal">Meet Your Sitter</h2>
   <div class="meet-card reveal">
     <div class="meet-top">
@@ -3847,7 +3847,7 @@ body.dark-mode .scenario-pick:hover, body.dark-mode .scenario-pick.active { bord
 </section>
 
 <!-- ═══ POPPY'S PROMISE ═══ -->
-<section class="guarantee-section reveal">
+<section class="guarantee-section reveal" aria-label="Poppy's Promise guarantee">
   <div class="guarantee-card">
     <div class="guarantee-shield">🛡️</div>
     <div class="guarantee-label">Poppy's Promise</div>
@@ -3902,7 +3902,7 @@ body.dark-mode .scenario-pick:hover, body.dark-mode .scenario-pick.active { bord
 </section>
 
 <!-- ═══ PRICING ═══ -->
-<section class="section pricing-section" id="pricing">
+<section class="section pricing-section" id="pricing" aria-label="Pricing">
   <div class="section-header reveal">
     <p class="section-label">Pricing</p>
     <h2 class="section-title">Simple & Fair</h2>
@@ -3920,7 +3920,7 @@ body.dark-mode .scenario-pick:hover, body.dark-mode .scenario-pick.active { bord
 </section>
 
 <!-- ═══ SITTER NETWORK ═══ -->
-<section class="section sitters-section" id="sitters">
+<section class="section sitters-section" id="sitters" aria-label="Our sitters">
   <div class="section-header reveal">
     <p class="section-label">The Network</p>
     <h2 class="section-title">Tiny Tots Sitters</h2>
@@ -3938,7 +3938,7 @@ body.dark-mode .scenario-pick:hover, body.dark-mode .scenario-pick.active { bord
 </div>
 
 <!-- ═══ SHARE / INVITE ═══ -->
-<section class="section share-section" id="share">
+<section class="section share-section" id="share" aria-label="Invite friends">
   <div class="section-header reveal">
     <p class="section-label">Spread the Word</p>
     <h2 class="section-title">Know a Family<br>That Needs Poppy?</h2>
@@ -4075,13 +4075,13 @@ body.dark-mode .scenario-pick:hover, body.dark-mode .scenario-pick.active { bord
   <div class="sp-icon">👋</div>
   <div class="sp-text"><span class="sp-name" id="spName"></span> <span id="spAction"></span><br><span class="sp-time" id="spTime"></span></div>
 </div>
-<div class="sticky-cta" id="stickyCta">
+<div class="sticky-cta" id="stickyCta" role="complementary" aria-label="Quick booking">
   <div class="sticky-cta-info">
     <span class="sticky-cta-label" id="stickyCtaLabel">Available tonight</span>
     <span class="sticky-cta-detail" id="stickyCtaDetail"></span>
     <span class="sticky-cta-urgency"><span class="pulse-dot"></span> <span id="stickyUrgency">Filling up fast</span></span>
   </div>
-  <button class="sticky-cta-btn" onclick="bookNextAvailable()">Book Poppy</button>
+  <button class="sticky-cta-btn" onclick="bookNextAvailable()" aria-label="Book next available session">Book Poppy</button>
 </div>
 
 <!-- ═══ BOTTOM TAB BAR ═══ -->
