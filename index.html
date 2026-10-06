@@ -2203,9 +2203,15 @@ img[loading="lazy"] { content-visibility: auto; }
   backdrop-filter: blur(12px); display: flex; align-items: center; gap: 8px;
 }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-.toast::before { content: '✓'; display: inline-flex; align-items: center; justify-content: center;
-  width: 20px; height: 20px; border-radius: 50%; background: var(--gold); color: var(--charcoal);
-  font-size: 11px; font-weight: 800; flex-shrink: 0; }
+.toast .toast-icon {
+  width: 20px; height: 20px; border-radius: 50%; display: inline-flex;
+  align-items: center; justify-content: center; font-size: 11px; font-weight: 800; flex-shrink: 0;
+}
+.toast[data-type="success"] .toast-icon { background: var(--gold); color: var(--charcoal); }
+.toast[data-type="warn"] .toast-icon { background: #FFB347; color: #5C3D00; }
+.toast[data-type="error"] .toast-icon { background: #E88B8B; color: #fff; }
+.toast[data-type="warn"] { background: #4A3A1A; }
+.toast[data-type="error"] { background: #4A1A1A; }
 
 /* ═══ SOCIAL PROOF NOTIFICATION ═══ */
 .social-proof-notif {
@@ -2878,9 +2884,7 @@ body.dark-mode *:focus-visible { box-shadow: 0 0 0 4px rgba(212,168,83,0.25); }
 }
 .empty-state-icon { font-size: 32px; margin-bottom: 8px; }
 .empty-state-text { font-size: 14px; font-weight: 600; }
-.error-toast {
-  background: #fce4ec !important; color: #c62828 !important;
-}
+/* error-toast replaced by toast[data-type="error"] */
 
 /* ═══ PRINT STYLES ═══ */
 /* View Transitions API */
@@ -4367,7 +4371,7 @@ body.dark-mode .scenario-pick:hover, body.dark-mode .scenario-pick.active { bord
 <canvas id="confettiCanvas"></canvas>
 
 <!-- ═══ TOAST ═══ -->
-<div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
+<div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true" data-type="success"><span class="toast-icon">✓</span><span class="toast-msg"></span></div>
 
 <!-- ═══ SUPABASE ═══ -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -4739,7 +4743,7 @@ async function signInWithGoogle() {
     options: { redirectTo: window.location.origin }
   });
   if (error) {
-    showToast('Google Sign-In setup in progress — use the form for now!');
+    showToast('Google Sign-In setup in progress — use the form for now!', 'warn');
   }
 }
 
@@ -5929,18 +5933,18 @@ async function submitBooking() {
     parentPhone = currentUser.phone || '';
     parentEmail = currentUser.email || '';
     kidName = document.getElementById('kidNameSigned').value.trim();
-    if (!kidName) { showToast("What's your child's name?"); return; }
+    if (!kidName) { showToast("What's your child's name?", 'warn'); return; }
   } else {
     parentName = document.getElementById('parentName').value.trim();
     parentPhone = document.getElementById('parentPhone').value.trim();
     parentEmail = document.getElementById('parentEmail').value.trim();
     kidName = document.getElementById('kidName').value.trim();
     if (!parentName || !parentPhone || !kidName || !selectedDate) {
-      showToast('Almost there — just need your name, number, and kiddo\'s name!'); return;
+      showToast('Almost there — just need your name, number, and kiddo\'s name!', 'warn'); return;
     }
   }
 
-  if (!selectedDate) { showToast('Tap a highlighted day on the calendar to pick your date!'); return; }
+  if (!selectedDate) { showToast('Tap a highlighted day on the calendar to pick your date!', 'warn'); return; }
 
   const msgEl = document.getElementById('bookMsg');
   msgEl.className = 'book-msg'; msgEl.style.display = 'none';
@@ -6432,10 +6436,16 @@ function srAnnounce(msg) {
 }
 
 /* ═══ TOAST ═══ */
-function showToast(msg) {
+function showToast(msg, type) {
   const t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 3000);
+  const icons = { success: '✓', warn: '!', error: '✕' };
+  const tp = type || 'success';
+  t.setAttribute('data-type', tp);
+  t.querySelector('.toast-icon').textContent = icons[tp] || '✓';
+  t.querySelector('.toast-msg').textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._tid);
+  t._tid = setTimeout(() => t.classList.remove('show'), 3200);
 }
 
 /* ═══ DASHBOARD ═══ */
