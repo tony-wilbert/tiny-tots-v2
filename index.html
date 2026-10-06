@@ -5924,8 +5924,11 @@ function _hideFloatingWidgetButton() {
     style.textContent = `
       /* Hide the floating minimize/trigger orb button — we embed the full interface inside our modal */
       [class*="minimize"], [class*="avatarButton"] { display: none !important; }
-      /* Ensure the main box is centered and visible */
-      [class*="_box_"] { margin: 0 auto; }
+      /* Force the main interface box to be visible (widget hides it at opacity:0 when minimize button is hidden) */
+      [class*="_box_"] { opacity: 1 !important; margin: 0 auto; transform: none !important; pointer-events: auto !important; }
+      [class*="_feedback_"] { opacity: 1 !important; }
+      /* Make the wrapper use full width */
+      [class*="_wrapper_"] { width: 100% !important; justify-content: center !important; }
     `;
     shadow.appendChild(style);
   }
