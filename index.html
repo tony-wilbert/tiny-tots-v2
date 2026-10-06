@@ -2317,31 +2317,10 @@ elevenlabs-convai {
 }
 .voice-modal-close:hover { color: #fff; }
 
-.voice-avatar-container {
-  width: 140px; height: 140px; margin: 0 auto 16px;
-  position: relative; border-radius: 50%;
-}
-.voice-avatar-ring {
-  width: 100%; height: 100%; border-radius: 50%;
-  border: 3px solid var(--gold); overflow: hidden;
-  position: relative; z-index: 2;
-}
-.voice-avatar-ring img {
-  width: 100%; height: 100%; object-fit: cover;
-}
-.voice-pulse {
-  position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
-  width: 140px; height: 140px; border-radius: 50%; z-index: 1;
-  opacity: 0;
-}
-.voice-modal-overlay.active.speaking .voice-pulse {
-  animation: voicePulse 1.2s ease-in-out infinite;
-}
-@keyframes voicePulse {
-  0% { box-shadow: 0 0 0 0 rgba(212,168,83,0.5); }
-  50% { box-shadow: 0 0 0 20px rgba(212,168,83,0.15); }
-  100% { box-shadow: 0 0 0 30px rgba(212,168,83,0); }
-}
+/* Avatar container — hidden now; Daisy IS the ElevenLabs orb */
+.voice-avatar-container { display: none; }
+.voice-avatar-ring { display: none; }
+.voice-pulse { display: none; }
 
 .voice-modal-name {
   font-family: var(--font-display); font-size: 24px; font-weight: 800;
@@ -2353,35 +2332,29 @@ elevenlabs-convai {
 }
 .voice-modal-status.connected { color: var(--gold); font-weight: 600; }
 .voice-modal-status.ready { color: #34C759; }
-/* Avatar glows when connected */
-.voice-modal-overlay.active.speaking .voice-avatar-ring {
-  box-shadow: 0 0 24px rgba(212,168,83,0.5), 0 0 48px rgba(212,168,83,0.2);
-  animation: avatarGlow 2s ease-in-out infinite;
-}
-@keyframes avatarGlow {
-  0%, 100% { box-shadow: 0 0 24px rgba(212,168,83,0.5), 0 0 48px rgba(212,168,83,0.2); }
-  50% { box-shadow: 0 0 32px rgba(212,168,83,0.7), 0 0 64px rgba(212,168,83,0.3); }
+/* Widget container glows when connected */
+.voice-modal-overlay.active.speaking .voice-widget-container {
+  filter: drop-shadow(0 0 24px rgba(212,168,83,0.4));
 }
 
-/* ElevenLabs widget container — visible inside modal so user can click Start directly (required for mic permissions) */
+/* ElevenLabs widget container — THE MAIN VISUAL: big orb avatar front and center */
 .voice-widget-container {
-  margin: 12px 0 0; width: 100%; min-height: 80px;
+  margin: 0 auto; width: 100%; min-height: 260px;
   display: flex; flex-direction: column; justify-content: center; align-items: center;
   gap: 8px;
 }
-/* "Tap to start" hint below widget orb */
+/* Hint below widget — pulsing to draw attention */
 .voice-tap-hint {
   font-size: 13px; color: rgba(240,237,232,0.5); text-align: center;
-  animation: tapHintPulse 2.5s ease-in-out infinite; margin-top: 4px;
+  animation: tapHintPulse 2.5s ease-in-out infinite; margin-top: 8px;
   letter-spacing: 0.3px;
 }
+/* Connected state: hide the start button area, waveform replaces */
+.voice-modal-overlay.active.speaking .voice-tap-hint { display: none; }
 @keyframes tapHintPulse {
   0%, 100% { opacity: 0.5; transform: translateY(0); }
   50% { opacity: 0.9; transform: translateY(-2px); }
 }
-/* Hide hint once call connects */
-.voice-modal-overlay.active.speaking .voice-tap-hint { display: none; }
-
 /* Waveform bars — shown when connected */
 .voice-waveform {
   display: none; align-items: center; justify-content: center; gap: 3px;
@@ -6216,11 +6189,12 @@ function loadElevenLabs() {
       setTimeout(() => {
         _setupWidgetListeners();
         initChatLogging();
-        // Hide any floating trigger button the widget creates outside the modal
+        // Style the widget — make orb big, restyle buttons, replace "call" text
         _hideFloatingWidgetButton();
-        // Re-check after delays — ElevenLabs script may create duplicate widget instances
+        // Re-check after delays — ElevenLabs script may render late
         setTimeout(_hideFloatingWidgetButton, 1500);
         setTimeout(_hideFloatingWidgetButton, 3000);
+        setTimeout(_hideFloatingWidgetButton, 5000);
         resolve();
       }, 800);
     };
@@ -6237,6 +6211,24 @@ function _hideFloatingWidgetButton() {
     [class*="_box_"] { opacity: 1 !important; margin: 0 auto; transform: none !important; pointer-events: auto !important; }
     [class*="_feedback_"] { display: none !important; }
     [class*="_wrapper_"] { width: 100% !important; justify-content: center !important; }
+    /* Make the orb avatar LARGE — Daisy IS the orb */
+    [class*="_orb_"], [class*="orb"], canvas, [class*="_avatar_"] {
+      width: 180px !important; height: 180px !important;
+      margin: 0 auto !important;
+    }
+    /* Style the call button to say Chat with Daisy */
+    button[class*="_call_"], button[class*="_start_"], [class*="_callButton_"] {
+      background: linear-gradient(135deg, #D4A853, #C4982F) !important;
+      color: #1B1B1F !important; border-radius: 50px !important;
+      font-weight: 700 !important; font-size: 16px !important;
+      padding: 14px 36px !important; border: none !important;
+      box-shadow: 0 6px 24px rgba(212,168,83,0.35) !important;
+      letter-spacing: 0.3px !important;
+    }
+    /* Hide "Need help?" label — Daisy is already named in the modal */
+    [class*="_header_"], [class*="_title_"]:not([class*="_callButton_"]) {
+      display: none !important;
+    }
   `;
   document.querySelectorAll('elevenlabs-convai').forEach(widget => {
     if (!widget.shadowRoot) return;
@@ -6247,12 +6239,35 @@ function _hideFloatingWidgetButton() {
       style.textContent = _ttStyle;
       shadow.appendChild(style);
     }
+    // Replace "Start a call" text with "Chat with Daisy"
+    _replaceCallText(shadow);
   });
   // Keep only the first widget instance — remove duplicates created by the ElevenLabs script
   const allWidgets = document.querySelectorAll('elevenlabs-convai');
   if (allWidgets.length > 1) {
     for (let i = 1; i < allWidgets.length; i++) allWidgets[i].remove();
   }
+}
+
+/* Replace "Start a call" with "Chat with Daisy" inside ElevenLabs Shadow DOM */
+function _replaceCallText(shadow) {
+  if (!shadow) return;
+  const walk = (node) => {
+    if (node.nodeType === 3) {
+      const t = node.textContent;
+      if (t.includes('Start a call')) node.textContent = t.replace('Start a call', 'Chat with Daisy');
+      if (t.includes('Need help')) node.textContent = t.replace(/Need help\??/, '');
+      if (t.includes('End call')) node.textContent = t.replace('End call', 'End chat');
+    } else if (node.childNodes) {
+      node.childNodes.forEach(walk);
+    }
+  };
+  walk(shadow);
+  // Keep watching for dynamically rendered content
+  const obs = new MutationObserver(() => walk(shadow));
+  obs.observe(shadow, { childList: true, subtree: true, characterData: true });
+  // Stop after 30s to avoid infinite observation
+  setTimeout(() => obs.disconnect(), 30000);
 }
 
 /* Open voice modal — widget loads VISIBLE so user can click "Start a call" directly (required for Chrome mic permissions) */
@@ -6286,7 +6301,7 @@ function toggleVoice() {
   // Hide end button until call connects
   const endBtn = document.getElementById('voiceEndBtn');
   if (endBtn) endBtn.style.display = 'none';
-  statusEl.textContent = "Ready when you are — tap Start below!";
+  statusEl.textContent = "Poppy's AI assistant — tap the orb to start!";
   statusEl.className = 'voice-modal-status';
 
   // Lazy-load widget into the modal container — widget is VISIBLE so user clicks it directly
@@ -6331,8 +6346,8 @@ function updateVoiceUI() {
   const btnText = document.getElementById('voiceBtnText');
   if (voiceActive) {
     wrap.classList.add('voice-active');
-    status.textContent = 'On a call...';
-    btnText.textContent = 'End Call';
+    status.textContent = 'Chatting with Daisy...';
+    btnText.textContent = 'End Chat';
   } else {
     wrap.classList.remove('voice-active');
     status.textContent = 'Tap to talk';
@@ -6350,7 +6365,7 @@ function _setupWidgetListeners() {
   widget.addEventListener('elevenlabs-convai:call', e => {
     if (e.detail?.status === 'connected') {
       voiceActive = true;
-      statusEl.textContent = 'Connected — say hi to Daisy!';
+      statusEl.textContent = 'Connected — say hi to Daisy! 💛';
       statusEl.className = 'voice-modal-status connected';
       modal.classList.add('speaking');
       const endBtn = document.getElementById('voiceEndBtn');
@@ -6362,7 +6377,7 @@ function _setupWidgetListeners() {
     voiceActive = false;
     modal.classList.remove('speaking');
     const statusEl2 = document.getElementById('voiceModalStatus');
-    statusEl2.textContent = 'Call ended. Tap Start below to call again.';
+    statusEl2.textContent = 'Chat ended. Tap the orb to chat again!';
     const endBtn = document.getElementById('voiceEndBtn');
     if (endBtn) endBtn.style.display = 'none';
     updateVoiceUI();
@@ -7679,32 +7694,25 @@ requestAnimationFrame(() => {
 </script>
 
 <!-- ═══ VOICE MODAL ═══ -->
-<div class="voice-modal-overlay" id="voiceModal" role="dialog" aria-modal="true" aria-label="Voice call with Daisy" aria-hidden="true">
+<div class="voice-modal-overlay" id="voiceModal" role="dialog" aria-modal="true" aria-label="Chat with Daisy, Poppy's AI assistant" aria-hidden="true">
   <div class="voice-modal">
     <button class="voice-modal-close" onclick="closeVoiceModal()" aria-label="Close">&times;</button>
-    <div class="voice-avatar-container">
-      <div class="voice-pulse"></div>
-      <div class="voice-avatar-ring">
-        <img src="poppy-photo.jpg" alt="Poppy" loading="lazy" decoding="async"
-             onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 200 200%22><circle cx=%22100%22 cy=%22100%22 r=%22100%22 fill=%22%23F5E0DC%22/><text x=%2250%25%22 y=%2255%25%22 text-anchor=%22middle%22 font-size=%2272%22>P</text></svg>'">
-      </div>
-    </div>
     <div class="voice-modal-name">Daisy</div>
-    <div class="voice-modal-status" id="voiceModalStatus">Ready when you are — tap Start below!</div>
+    <div class="voice-modal-status" id="voiceModalStatus">Poppy's AI assistant — tap the orb to start!</div>
+    <div class="voice-widget-container" id="voiceWidgetContainer">
+      <!-- ElevenLabs widget — the animated orb IS Daisy -->
+    </div>
+    <div class="voice-tap-hint" id="voiceTapHint">👆 Tap the orb above to chat with Daisy</div>
     <div class="voice-waveform" id="voiceWaveform">
       <div class="voice-bar"></div><div class="voice-bar"></div><div class="voice-bar"></div>
       <div class="voice-bar"></div><div class="voice-bar"></div><div class="voice-bar"></div>
       <div class="voice-bar"></div><div class="voice-bar"></div><div class="voice-bar"></div>
     </div>
-    <div class="voice-widget-container" id="voiceWidgetContainer">
-      <!-- ElevenLabs widget — visible so user can click "Start a call" directly (required for mic permissions in Chrome) -->
-    </div>
-    <div class="voice-tap-hint" id="voiceTapHint">👆 Tap "Start a call" to chat with Daisy</div>
     <button class="voice-end-btn" id="voiceEndBtn" onclick="endVoiceCall()" style="display:none">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 9c-1.6 0-3.15.25-4.6.72v3.1c0 .39-.23.74-.56.9-.98.49-1.87 1.12-2.66 1.85-.18.18-.43.28-.7.28-.28 0-.53-.11-.71-.29L.29 13.08c-.18-.17-.29-.42-.29-.7 0-.28.11-.53.29-.71C3.34 8.78 7.46 7 12 7s8.66 1.78 11.71 4.67c.18.18.29.43.29.71 0 .28-.11.53-.29.71l-2.48 2.48c-.18.18-.43.29-.71.29-.27 0-.52-.11-.7-.28-.79-.74-1.69-1.36-2.67-1.85-.33-.16-.56-.5-.56-.9v-3.1C15.15 9.25 13.6 9 12 9z"/></svg>
-      End Call
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+      End Chat
     </button>
-    <div class="voice-modal-hint">Daisy is Poppy's AI assistant — ask about babysitting, scheduling, rates & more</div>
+    <div class="voice-modal-hint">Ask Daisy anything — babysitting, scheduling, rates, what Poppy does with kids & more</div>
   </div>
 </div>
 
