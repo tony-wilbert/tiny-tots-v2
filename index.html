@@ -1216,7 +1216,11 @@ body.dark-mode .extended-note { color: #E8C97A; background: rgba(212,168,83,0.1)
 .book-btn:disabled { opacity: 0.4; cursor: not-allowed; box-shadow: none; }
 .book-btn.form-ready {
   background: var(--gold); box-shadow: 0 4px 20px rgba(212,168,83,0.35);
-  animation: btn-pulse 2.5s ease-in-out infinite;
+  animation: bookBtnReady 2.5s ease-in-out infinite;
+}
+@keyframes bookBtnReady {
+  0%, 100% { box-shadow: 0 4px 16px rgba(212,168,83,0.25); }
+  50% { box-shadow: 0 4px 28px rgba(212,168,83,0.45), 0 0 0 6px rgba(212,168,83,0.1); }
 }
 .book-btn.loading {
   pointer-events: none; opacity: 0.85;
@@ -1369,13 +1373,19 @@ body.dark-mode .extended-note { color: #E8C97A; background: rgba(212,168,83,0.1)
   margin-top: 10px; text-align: center; line-height: 1.4;
 }
 .watch-caption strong { color: var(--green); }
-/* ═══ SMOOTH BOOKING STEP TRANSITIONS ═══ */
+/* ═══ SMOOTH BOOKING STEP TRANSITIONS (spring-based) ═══ */
 .step-animate-in {
-  animation: bookStepIn 0.4s ease both;
+  animation: bookStepIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
+.step-animate-in.step-delay-1 { animation-delay: 0.1s; }
+.step-animate-in.step-delay-2 { animation-delay: 0.2s; }
 @keyframes bookStepIn {
-  from { opacity: 0; transform: translateY(14px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translateY(18px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+/* Price card golden glow on update */
+.price-total-amount.updating {
+  text-shadow: 0 0 12px rgba(212,168,83,0.4);
 }
 .confirm-close-btn {
   background: var(--charcoal); color: var(--white); border: none; padding: 14px 32px;
@@ -5046,15 +5056,15 @@ function selectDay(key, pill) {
     // Populate time picker
     populateTimePicker(avail.start_time, avail.end_time);
     timePicker.style.display = 'block';
-    timePicker.classList.remove('step-animate-in');
+    timePicker.classList.remove('step-animate-in', 'step-delay-1', 'step-delay-2');
     void timePicker.offsetWidth; // force reflow
     timePicker.classList.add('step-animate-in');
     // Calculate price from selected times
     updateTimePrice();
     pricePreview.style.display = 'block';
-    pricePreview.classList.remove('step-animate-in');
+    pricePreview.classList.remove('step-animate-in', 'step-delay-1', 'step-delay-2');
     void pricePreview.offsetWidth;
-    pricePreview.classList.add('step-animate-in');
+    pricePreview.classList.add('step-animate-in', 'step-delay-1');
     setTimeout(() => sheet.scrollIntoView({ behavior: 'smooth', block: 'start' }), 150);
   } else {
     sheet.classList.remove('open');
