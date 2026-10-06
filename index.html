@@ -1860,11 +1860,22 @@ body.dark-mode .meet-quote { background: rgba(212,168,83,0.08); border-color: rg
   flex-shrink: 0;
 }
 /* content-visibility for below-fold sections */
-.feed-section, .adventures-section, .reviews-section, .meet-section, .faq-section,
+.how-section, .session-updates-section, .feed-section, .adventures-section,
+.reviews-section, .meet-section, .guarantee-section, .faq-section,
 .pricing-section, .sitters-section, .share-section {
   content-visibility: auto;
-  contain-intrinsic-size: auto 400px;
 }
+.how-section { contain-intrinsic-size: auto 320px; }
+.session-updates-section { contain-intrinsic-size: auto 280px; }
+.feed-section { contain-intrinsic-size: auto 300px; }
+.adventures-section { contain-intrinsic-size: auto 420px; }
+.reviews-section { contain-intrinsic-size: auto 380px; }
+.meet-section { contain-intrinsic-size: auto 500px; }
+.guarantee-section { contain-intrinsic-size: auto 200px; }
+.faq-section { contain-intrinsic-size: auto 600px; }
+.pricing-section { contain-intrinsic-size: auto 350px; }
+.sitters-section { contain-intrinsic-size: auto 300px; }
+.share-section { contain-intrinsic-size: auto 350px; }
 /* GPU-accelerate animated elements */
 .reveal { will-change: opacity, transform; }
 .avatar-wave { will-change: transform, opacity; }
@@ -1874,6 +1885,12 @@ body.dark-mode .meet-quote { background: rgba(212,168,83,0.08); border-color: rg
 .book-card, .review-card, .adventure-card, .tip-card, .meet-card {
   contain: layout style;
 }
+/* Contain heavy sections to isolate style/layout recalcs */
+.faq-section, .pricing-section, .sitters-section, .share-section,
+.guarantee-section, .meet-section { contain: layout style paint; }
+/* Optimize image rendering */
+img { image-rendering: auto; }
+img[loading="lazy"] { content-visibility: auto; }
 /* Offscreen animation pause — JS adds .paused to sections outside viewport */
 .paused .hero-blob, .paused .avatar-ring, .paused .earliest-badge {
   animation-play-state: paused !important;
@@ -3385,7 +3402,7 @@ body.dark-mode .scenario-pick:hover, body.dark-mode .scenario-pick.active { bord
   <div class="avatar-wrap hero-enter" id="avatarWrap" onclick="toggleVoice()" role="button" tabindex="0" aria-label="Talk to Daisy — tap to start voice chat">
     <div class="avatar-wave"></div>
     <div class="avatar-ring">
-      <img src="poppy-photo.jpg" alt="Poppy Wilbert" fetchpriority="high" width="154" height="154"
+      <img src="poppy-photo.jpg" alt="Poppy Wilbert" fetchpriority="high" decoding="async" width="154" height="154"
            onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 200 200%22><circle cx=%22100%22 cy=%22100%22 r=%22100%22 fill=%22%23F5E0DC%22/><text x=%2250%25%22 y=%2255%25%22 text-anchor=%22middle%22 font-size=%2272%22>P</text></svg>'">
     </div>
     <div class="avatar-status" id="avatarStatus">Tap to talk</div>
@@ -4738,7 +4755,7 @@ function renderReviews() {
         d.classList.toggle('active', i === idx)
       );
       if (swipeHint && scrollLeft > 20) swipeHint.style.display = 'none';
-    });
+    }, { passive: true });
     // Dot click scrolls to card
     dotsEl.addEventListener('click', (e) => {
       const dot = e.target.closest('.review-dot');
@@ -4946,7 +4963,7 @@ function initCalendarScroll() {
     strip.addEventListener('scroll', function onFirst() {
       hint.remove(); localStorage.setItem('tt_cal_swiped','1');
       strip.removeEventListener('scroll', onFirst);
-    }, { once: false });
+    }, { passive: true });
     setTimeout(() => { if (hint.parentNode) hint.remove(); }, 8000);
   }
 }
@@ -7362,7 +7379,7 @@ requestAnimationFrame(() => {
     <div class="voice-avatar-container">
       <div class="voice-pulse"></div>
       <div class="voice-avatar-ring">
-        <img src="poppy-photo.jpg" alt="Poppy"
+        <img src="poppy-photo.jpg" alt="Poppy" loading="lazy" decoding="async"
              onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 200 200%22><circle cx=%22100%22 cy=%22100%22 r=%22100%22 fill=%22%23F5E0DC%22/><text x=%2250%25%22 y=%2255%25%22 text-anchor=%22middle%22 font-size=%2272%22>P</text></svg>'">
       </div>
     </div>
