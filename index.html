@@ -2312,6 +2312,34 @@ elevenlabs-convai {
 .reveal-delay-3 { transition-delay: 0.3s; }
 .reveal-delay-4 { transition-delay: 0.4s; }
 
+/* ═══ LIVE "AVAILABLE NOW" INDICATOR ═══ */
+.live-now-badge {
+  display: none; align-items: center; gap: 8px;
+  background: linear-gradient(135deg, rgba(92,184,92,0.12), rgba(92,184,92,0.06));
+  border: 1px solid rgba(92,184,92,0.25);
+  border-radius: 24px; padding: 8px 18px; margin: 8px auto 0;
+  font-size: 13px; font-weight: 700; color: var(--green);
+  width: fit-content; backdrop-filter: blur(8px);
+  animation: live-badge-glow 2.5s ease-in-out infinite;
+}
+.live-now-badge.show { display: flex; }
+.live-now-dot {
+  width: 8px; height: 8px; border-radius: 50%; background: var(--green);
+  animation: live-pulse 2s ease-in-out infinite; flex-shrink: 0;
+}
+.live-now-until { font-weight: 500; opacity: 0.8; font-size: 12px; }
+@keyframes live-badge-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(92,184,92,0); }
+  50% { box-shadow: 0 0 16px 2px rgba(92,184,92,0.15); }
+}
+.action-btn.primary.live-pulse {
+  animation: cta-live-pulse 2s ease-in-out infinite;
+}
+@keyframes cta-live-pulse {
+  0%, 100% { box-shadow: 0 4px 16px rgba(212,168,83,0.3); }
+  50% { box-shadow: 0 4px 24px rgba(92,184,92,0.4), 0 0 0 4px rgba(92,184,92,0.1); }
+}
+
 /* ═══ SCROLL-LINKED PARALLAX ═══ */
 .parallax-card {
   transition: transform 0.1s linear;
@@ -3346,6 +3374,11 @@ body.dark-mode .scenario-pick:hover, body.dark-mode .scenario-pick.active { bord
     <svg viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
     Red Cross Certified · Age 12
   </div>
+  <div class="live-now-badge hero-enter" id="liveNowBadge">
+    <span class="live-now-dot"></span>
+    <span>Available Right Now</span>
+    <span class="live-now-until" id="liveNowUntil"></span>
+  </div>
   <p class="profile-bio hero-enter" id="heroBio">Hi! I'm the sitter your kids ask for by name. Blanket forts, slime labs, dance battles — every session is an adventure. Parents love the text updates. Kids love the fun. Tap my face to chat!</p>
 
   <div class="stats-row hero-enter">
@@ -3396,11 +3429,11 @@ body.dark-mode .scenario-pick:hover, body.dark-mode .scenario-pick.active { bord
 
 <!-- ═══ HOW IT WORKS ═══ -->
 <div class="how-section" id="howItWorks">
-  <p class="how-section-label">How It Works</p>
-  <h2 class="how-section-title">Three taps. That's it.</h2>
-  <p class="how-section-sub">No apps to download, no accounts required. Just pick a time and Poppy handles the rest.</p>
+  <p class="how-section-label reveal">How It Works</p>
+  <h2 class="how-section-title reveal">Three taps. That's it.</h2>
+  <p class="how-section-sub reveal">No apps to download, no accounts required. Just pick a time and Poppy handles the rest.</p>
   <div class="how-steps">
-    <div class="how-step">
+    <div class="how-step reveal reveal-delay-1">
       <div class="how-step-num">1</div>
       <div class="how-card">
         <div class="how-icon">📅</div>
@@ -3409,7 +3442,7 @@ body.dark-mode .scenario-pick:hover, body.dark-mode .scenario-pick.active { bord
         <span class="how-hint">Takes 30 seconds</span>
       </div>
     </div>
-    <div class="how-step">
+    <div class="how-step reveal reveal-delay-2">
       <div class="how-step-num">2</div>
       <div class="how-card">
         <div class="how-icon">💬</div>
@@ -3418,7 +3451,7 @@ body.dark-mode .scenario-pick:hover, body.dark-mode .scenario-pick.active { bord
         <span class="how-hint">One tap to book</span>
       </div>
     </div>
-    <div class="how-step">
+    <div class="how-step reveal reveal-delay-3">
       <div class="how-step-num">3</div>
       <div class="how-card">
         <div class="how-icon">🎉</div>
@@ -3724,8 +3757,8 @@ body.dark-mode .scenario-pick:hover, body.dark-mode .scenario-pick.active { bord
 
 <!-- ═══ MEET POPPY ═══ -->
 <section class="meet-section" id="about">
-  <h2 class="section-title">Meet Your Sitter</h2>
-  <div class="meet-card">
+  <h2 class="section-title reveal">Meet Your Sitter</h2>
+  <div class="meet-card reveal">
     <div class="meet-top">
       <img src="poppy-photo.jpg" alt="Poppy" class="meet-photo" loading="lazy" decoding="async">
       <div class="meet-intro">
@@ -4418,6 +4451,39 @@ function saveParentInfo(name, phone, email, kidName) {
   } catch {}
 }
 
+/* ═══ LIVE AVAILABILITY INDICATOR ═══ */
+function checkLiveAvailability() {
+  const now = new Date();
+  const day = now.getDay(); // 0=Sun, 1=Mon, 2=Tue...
+  const hour = now.getHours();
+  const min = now.getMinutes();
+  const currentTime = hour + min / 60; // e.g., 4:30 PM = 16.5
+
+  // Default schedule: Tue(2) & Thu(4) 3:45–8 PM, Sat(6) 4–11 PM
+  const schedule = {
+    2: { start: 15.75, end: 20, label: '8:00 PM' },   // Tue 3:45p–8p
+    4: { start: 15.75, end: 20, label: '8:00 PM' },   // Thu 3:45p–8p
+    6: { start: 16, end: 23, label: '11:00 PM' }      // Sat 4p–11p
+  };
+
+  const badge = document.getElementById('liveNowBadge');
+  const untilEl = document.getElementById('liveNowUntil');
+  const bookBtn = document.getElementById('heroBookBtn');
+  const voiceBtnText = document.getElementById('voiceBtnText');
+  if (!badge) return;
+
+  const todaySchedule = schedule[day];
+  if (todaySchedule && currentTime >= todaySchedule.start && currentTime < todaySchedule.end) {
+    // Currently available!
+    badge.classList.add('show');
+    untilEl.textContent = '· until ' + todaySchedule.label;
+    if (bookBtn) {
+      bookBtn.textContent = 'Book Now';
+      bookBtn.classList.add('live-pulse');
+    }
+  }
+}
+
 function init() {
   checkRoute();
   checkAuth();
@@ -4426,6 +4492,7 @@ function init() {
   renderSitters();
   loadAvailability();
   applySmartContext();
+  checkLiveAvailability();
 
   // Nav scroll effect + sticky CTA + active bottom tab (cached DOM lookups)
   const _nav = document.getElementById('nav');
