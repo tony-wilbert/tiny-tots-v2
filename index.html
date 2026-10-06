@@ -196,19 +196,25 @@ a { text-decoration: none; color: inherit; }
 .action-btn {
   display: flex; align-items: center; gap: 8px;
   padding: 14px 28px; border-radius: 50px; font-size: 15px; font-weight: 700;
-  transition: all 0.3s ease; position: relative; overflow: hidden;
+  transition: all 0.25s cubic-bezier(.22,1,.36,1); position: relative; overflow: hidden;
 }
+.action-btn::after {
+  content: ''; position: absolute; inset: 0; background: radial-gradient(circle at var(--ripple-x, 50%) var(--ripple-y, 50%), rgba(255,255,255,0.3), transparent 60%);
+  opacity: 0; transition: opacity 0.4s;
+}
+.action-btn:active::after { opacity: 1; transition: opacity 0s; }
 .action-btn.primary {
-  background: var(--charcoal); color: var(--white);
+  background: linear-gradient(135deg, #3A3A3A 0%, #2a2a2a 100%); color: var(--white);
   box-shadow: 0 6px 24px rgba(0,0,0,0.2);
 }
-.action-btn.primary:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0,0,0,0.25); }
-.action-btn.primary:active { transform: scale(0.97); }
+.action-btn.primary:hover { transform: translateY(-2px) scale(1.02); box-shadow: 0 12px 36px rgba(0,0,0,0.28); }
+.action-btn.primary:active { transform: scale(0.96); box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
 .action-btn.secondary {
   background: var(--white); color: var(--charcoal);
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-md); border: 1.5px solid rgba(0,0,0,0.06);
 }
-.action-btn.secondary:hover { background: var(--pink); }
+.action-btn.secondary:hover { background: var(--pink); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(0,0,0,0.08); }
+.action-btn.secondary:active { transform: scale(0.97); }
 .action-btn .mic-dot {
   width: 10px; height: 10px; border-radius: 50%; background: var(--gold);
   animation: mic-pulse 2s ease-in-out infinite;
@@ -369,8 +375,19 @@ a { text-decoration: none; color: inherit; }
   margin-top: 12px; padding: 12px 16px; border-radius: 12px;
   font-size: 13px; font-weight: 600; text-align: center; display: none;
 }
-.book-msg.success { display: block; background: #e8f5e9; color: #2e7d32; }
+.book-msg.success { display: block; background: #e8f5e9; color: #2e7d32; text-align: center; }
 .book-msg.error { display: block; background: #fce4ec; color: #c62828; }
+.success-check { width: 52px; height: 52px; margin: 0 auto 8px; }
+.success-check svg circle {
+  stroke-dasharray: 166; stroke-dashoffset: 166;
+  animation: checkCircle 0.6s ease-in-out forwards;
+}
+.success-check .check-path {
+  stroke-dasharray: 48; stroke-dashoffset: 48;
+  animation: checkDraw 0.4s 0.4s ease-in-out forwards;
+}
+@keyframes checkCircle { to { stroke-dashoffset: 0; } }
+@keyframes checkDraw { to { stroke-dashoffset: 0; } }
 
 /* ═══ REVIEWS ═══ */
 .reviews-section { background: var(--white); }
@@ -657,10 +674,14 @@ a { text-decoration: none; color: inherit; }
   position: fixed; bottom: calc(var(--bottom-h) + 16px); left: 50%; transform: translateX(-50%) translateY(20px);
   background: var(--charcoal); color: var(--white); padding: 12px 24px;
   border-radius: 14px; font-size: 13px; font-weight: 600; z-index: 200;
-  opacity: 0; transition: all 0.3s ease; pointer-events: none;
-  box-shadow: var(--shadow-lg); white-space: nowrap;
+  opacity: 0; transition: all 0.35s cubic-bezier(.22,1,.36,1); pointer-events: none;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.2); white-space: nowrap;
+  backdrop-filter: blur(12px); display: flex; align-items: center; gap: 8px;
 }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.toast::before { content: '✓'; display: inline-flex; align-items: center; justify-content: center;
+  width: 20px; height: 20px; border-radius: 50%; background: var(--gold); color: var(--charcoal);
+  font-size: 11px; font-weight: 800; flex-shrink: 0; }
 
 /* ═══ ElevenLabs widget — hidden until voice modal ═══ */
 elevenlabs-convai {
@@ -1083,11 +1104,11 @@ elevenlabs-convai {
 
     <!-- Dashboard Tabs -->
     <div class="dash-tabs">
-      <button class="dash-tab active" onclick="switchDashTab('bookings')">Bookings</button>
-      <button class="dash-tab" onclick="switchDashTab('schedule')">Schedule</button>
-      <button class="dash-tab" onclick="switchDashTab('sitters')">Sitters</button>
-      <button class="dash-tab" onclick="switchDashTab('parents')">Parents</button>
-      <button class="dash-tab" onclick="switchDashTab('invite')">Invite</button>
+      <button class="dash-tab active" onclick="switchDashTab('bookings',this)">Bookings</button>
+      <button class="dash-tab" onclick="switchDashTab('schedule',this)">Schedule</button>
+      <button class="dash-tab" onclick="switchDashTab('sitters',this)">Sitters</button>
+      <button class="dash-tab" onclick="switchDashTab('parents',this)">Parents</button>
+      <button class="dash-tab" onclick="switchDashTab('invite',this)">Invite</button>
     </div>
 
     <!-- Bookings Panel -->
@@ -1521,9 +1542,9 @@ async function submitBooking() {
     });
     if (bErr) throw bErr;
 
-    msgEl.textContent = "You're booked! Poppy will see you soon. 🎉";
+    msgEl.innerHTML = '<div class="success-check"><svg viewBox="0 0 52 52"><circle cx="26" cy="26" r="25" fill="none" stroke="var(--green)" stroke-width="2"/><path fill="none" stroke="var(--green)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" d="M14.1 27.2l7.1 7.2 16.7-16.8" class="check-path"/></svg></div>You\'re booked! Poppy will see you soon.';
     msgEl.className = 'book-msg success'; msgEl.style.display = 'block';
-    showToast('Booking confirmed!');
+    showToast('Booking confirmed! 🎉');
     launchConfetti();
 
     fetch(SUPABASE_URL + '/functions/v1/send-booking-sms', {
@@ -1759,10 +1780,10 @@ function adminAuth() {
 }
 
 /* ═══ DASHBOARD TABS ═══ */
-function switchDashTab(tab) {
+function switchDashTab(tab, el) {
   document.querySelectorAll('.dash-tab').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.dash-panel').forEach(p => p.classList.remove('active'));
-  event.target.classList.add('active');
+  if (el) el.classList.add('active');
   const panelMap = { bookings:'dashBookings', schedule:'dashSchedule', sitters:'dashSitters', parents:'dashParents', invite:'dashInvite' };
   const panel = document.getElementById(panelMap[tab]);
   if (panel) panel.classList.add('active');
@@ -2025,12 +2046,32 @@ function launchConfetti() {
   requestAnimationFrame(draw);
 }
 
+/* ═══ COUNT-UP ANIMATION ═══ */
+function animateCountUp() {
+  document.querySelectorAll('.stat-num').forEach(el => {
+    const target = parseFloat(el.textContent);
+    const isDecimal = el.textContent.includes('.');
+    const duration = 1200;
+    const start = performance.now();
+    el.textContent = '0';
+    function tick(now) {
+      const progress = Math.min((now - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3); // ease-out cubic
+      const current = target * eased;
+      el.textContent = isDecimal ? current.toFixed(1) : Math.round(current).toString();
+      if (progress < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  });
+}
+
 /* ═══ GO ═══ */
 init();
 // Trigger hero entrance and scroll reveals after DOM paint
 requestAnimationFrame(() => {
   animateHeroEntrance();
   initScrollReveal();
+  setTimeout(animateCountUp, 600); // Start count-up after hero entrance
 });
 </script>
 
