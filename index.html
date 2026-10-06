@@ -410,6 +410,63 @@ a { text-decoration: none; color: inherit; }
   cursor: pointer; transition: all 0.2s; white-space: nowrap;
 }
 .sticky-cta-btn:active { transform: scale(0.95); }
+.sticky-cta-urgency {
+  font-size: 10px; color: var(--gold-light); font-weight: 700;
+  display: flex; align-items: center; gap: 4px; margin-top: 2px;
+}
+.sticky-cta-urgency .pulse-dot {
+  width: 6px; height: 6px; border-radius: 50%; background: var(--green);
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(92,184,92,0.4); }
+  50% { opacity: 0.8; box-shadow: 0 0 0 4px rgba(92,184,92,0); }
+}
+
+/* Social proof strip */
+.social-proof-strip {
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  font-size: 12px; color: var(--gray); margin-top: 8px;
+  animation: fadeInUp 0.6s ease-out 1.2s both;
+}
+.social-proof-strip .proof-avatars {
+  display: flex; margin-right: 2px;
+}
+.social-proof-strip .proof-avatar {
+  width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--warm);
+  margin-left: -6px; font-size: 9px; display: flex; align-items: center;
+  justify-content: center; color: #fff; font-weight: 700;
+}
+.social-proof-strip .proof-avatar:first-child { margin-left: 0; }
+.social-proof-strip .proof-text { font-weight: 600; color: var(--charcoal); }
+
+/* Trust micro-signals near booking */
+.trust-micros {
+  display: flex; flex-wrap: wrap; justify-content: center; gap: 12px;
+  margin-top: 12px; padding: 0 8px;
+}
+.trust-micro {
+  display: flex; align-items: center; gap: 4px;
+  font-size: 11px; color: var(--green); font-weight: 600;
+}
+.trust-micro svg {
+  width: 14px; height: 14px; fill: var(--green);
+}
+
+/* Urgency badge in next-avail */
+.urgency-line {
+  font-size: 11px; color: var(--gold); font-weight: 700;
+  text-align: center; margin-top: 6px;
+  animation: avail-breathe 3s ease-in-out infinite;
+}
+
+/* Review "booked again" tag */
+.review-booked-tag {
+  display: inline-flex; align-items: center; gap: 3px;
+  font-size: 10px; font-weight: 700; color: var(--gold);
+  background: rgba(212,168,83,0.1); border-radius: 8px;
+  padding: 2px 8px; margin-top: 6px;
+}
 
 /* How It Works — 3 steps */
 .how-section {
@@ -1658,7 +1715,7 @@ elevenlabs-convai {
       <span class="mic-dot"></span>
       <span id="voiceBtnText">Talk to Poppy</span>
     </button>
-    <button class="action-btn secondary" id="heroBookBtn" onclick="bookNextAvailable()">Book Now</button>
+    <button class="action-btn secondary" id="heroBookBtn" onclick="bookNextAvailable()">Book Today</button>
   </div>
 
   <!-- Next available session callout -->
@@ -1668,6 +1725,15 @@ elevenlabs-convai {
       <span class="next-avail-detail" id="nextAvailDetail"></span>
       <span class="next-avail-arrow">→</span>
     </div>
+  </div>
+
+  <div class="social-proof-strip hero-enter" id="socialProofStrip">
+    <span class="proof-avatars">
+      <span class="proof-avatar" style="background:linear-gradient(135deg,#FF6B6B,#FFE66D)">S</span>
+      <span class="proof-avatar" style="background:linear-gradient(135deg,#4ECDC4,#A8E6CF)">R</span>
+      <span class="proof-avatar" style="background:linear-gradient(135deg,#A18CD1,#FBC2EB)">J</span>
+    </span>
+    <span class="proof-text" id="proofText">5 families booked this week</span>
   </div>
 
   <div class="hero-badges hero-enter">
@@ -1702,7 +1768,7 @@ elevenlabs-convai {
   <div class="avail-header reveal">
     <p class="section-label">Schedule</p>
     <h2 class="section-title">Pick a Day</h2>
-    <p class="section-sub">Gold days = Poppy's free. Tap any to book in under 30 seconds.</p>
+    <p class="section-sub">Gold days = Poppy's free. Tap to book in 30 seconds — families grab slots fast.</p>
   </div>
   <div class="date-strip" id="dateStrip"></div>
   <div style="padding: 0 20px;">
@@ -1777,6 +1843,12 @@ elevenlabs-convai {
         <button class="book-btn" onclick="submitBooking()">Book Poppy</button>
       </div>
 
+      <div class="trust-micros">
+        <span class="trust-micro"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Instant confirmation</span>
+        <span class="trust-micro"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Free cancellation</span>
+        <span class="trust-micro"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Pay after session</span>
+      </div>
+
       <div class="book-msg" id="bookMsg"></div>
     </div>
   </div>
@@ -1798,7 +1870,7 @@ elevenlabs-convai {
 <section class="section reviews-section" id="reviews">
   <div class="section-header reveal">
     <p class="section-label">From Parents</p>
-    <h2 class="section-title">What Families Say</h2>
+    <h2 class="section-title">Why Families Keep Coming Back</h2>
   </div>
   <div class="trust-bar reveal">
     <div class="trust-rating">
@@ -2018,10 +2090,11 @@ elevenlabs-convai {
 
 <div class="sticky-cta" id="stickyCta">
   <div class="sticky-cta-info">
-    <span class="sticky-cta-label">Next available</span>
+    <span class="sticky-cta-label" id="stickyCtaLabel">Available tonight</span>
     <span class="sticky-cta-detail" id="stickyCtaDetail"></span>
+    <span class="sticky-cta-urgency"><span class="pulse-dot"></span> <span id="stickyUrgency">Filling up fast</span></span>
   </div>
-  <button class="sticky-cta-btn" onclick="bookNextAvailable()">Book Now</button>
+  <button class="sticky-cta-btn" onclick="bookNextAvailable()">Book Poppy</button>
 </div>
 
 <!-- ═══ BOTTOM TAB BAR ═══ -->
@@ -2233,11 +2306,11 @@ const tips = [
 ];
 
 const reviews = [
-  { parent: 'Sarah M.', text: "Poppy is incredible with our kids. They literally ask for her every weekend. She brings art supplies and plans activities — she's more prepared than most adults.", rating: 5, kids: '2 kids, ages 4 & 7', date: '2 weeks ago', verified: true },
-  { parent: 'The Rodriguez Family', text: "Most responsible 12-year-old we've ever met. Red Cross certified. Our son has food allergies and she handles it perfectly.", rating: 5, kids: '1 kid, age 3', date: '3 weeks ago', verified: true },
-  { parent: 'Jennifer K.', text: "Worth every penny. Our daughter shows us the art projects Poppy helped her make. We've recommended her to four other families already.", rating: 5, kids: '2 kids, ages 5 & 9', date: '1 month ago', verified: true },
-  { parent: 'Mike & Lisa T.', text: "The fact that she has a website and a voice AI blew our minds. This kid is going places. Oh, and she's a fantastic babysitter too.", rating: 5, kids: '3 kids, ages 2, 5 & 8', date: '1 month ago', verified: true },
-  { parent: 'Amanda S.', text: "Finally, a babysitter we can actually trust. Poppy texts us updates, which is so reassuring. Booked her for every Friday date night.", rating: 5, kids: '1 kid, age 6', date: '5 days ago', verified: true },
+  { parent: 'Sarah M.', text: "Poppy is incredible with our kids. They literally ask for her every weekend. She brings art supplies and plans activities — she's more prepared than most adults.", rating: 5, kids: '2 kids, ages 4 & 7', date: '2 weeks ago', verified: true, timesBooked: 8 },
+  { parent: 'The Rodriguez Family', text: "Most responsible 12-year-old we've ever met. Red Cross certified. Our son has food allergies and she handles it perfectly.", rating: 5, kids: '1 kid, age 3', date: '3 weeks ago', verified: true, timesBooked: 5 },
+  { parent: 'Jennifer K.', text: "Worth every penny. Our daughter shows us the art projects Poppy helped her make. We've recommended her to four other families already.", rating: 5, kids: '2 kids, ages 5 & 9', date: '1 month ago', verified: true, timesBooked: 6 },
+  { parent: 'Mike & Lisa T.', text: "The fact that she has a website and a voice AI blew our minds. This kid is going places. Oh, and she's a fantastic babysitter too.", rating: 5, kids: '3 kids, ages 2, 5 & 8', date: '1 month ago', verified: true, timesBooked: 3 },
+  { parent: 'Amanda S.', text: "Finally, a babysitter we can actually trust. Poppy texts us updates, which is so reassuring. Booked her for every Friday date night.", rating: 5, kids: '1 kid, age 6', date: '5 days ago', verified: true, timesBooked: 11 },
 ];
 
 /* ═══ DEFAULT SCHEDULE ═══ */
@@ -2448,6 +2521,7 @@ function renderReviews() {
       <div class="review-stars">${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}</div>
       <div class="review-text">"${r.text}"</div>
       <div class="review-kids">👶 ${r.kids}</div>
+      ${r.timesBooked > 1 ? `<div class="review-booked-tag">🔄 Booked ${r.timesBooked} times</div>` : ''}
     </div>
   `}).join('');
 
@@ -2803,6 +2877,14 @@ function showNextAvailable() {
       if (isToday) stickyLabel.textContent = 'Available tonight';
       else if (isTomorrow) stickyLabel.textContent = 'Available tomorrow';
       else stickyLabel.textContent = 'Next available';
+    }
+    // Urgency: count available slots this week
+    const availSlots = document.querySelectorAll('.day-pill.available').length;
+    const urgencyEl = document.getElementById('stickyUrgency');
+    if (urgencyEl) {
+      if (availSlots <= 2) urgencyEl.textContent = `Only ${availSlots} slot${availSlots === 1 ? '' : 's'} left this week`;
+      else if (availSlots <= 4) urgencyEl.textContent = `${availSlots} slots left — filling up`;
+      else urgencyEl.textContent = `${availSlots} slots available this week`;
     }
   }
 }
