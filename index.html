@@ -665,6 +665,24 @@ a { text-decoration: none; color: inherit; }
 }
 .rebook-quick.visible { display: block; }
 .rebook-quick:active { transform: scale(0.96); }
+
+/* Quick rebook hero button (returning visitors) */
+.quick-rebook {
+  display: none; margin: -2px auto 6px; width: fit-content;
+  animation: fadeSlideIn 0.6s ease-out 0.3s both;
+}
+.quick-rebook.visible { display: block; }
+.quick-rebook-btn {
+  display: flex; align-items: center; gap: 6px;
+  padding: 10px 22px; border-radius: 24px;
+  font-size: 13px; font-weight: 800; letter-spacing: 0.3px;
+  background: var(--gradient-gold); color: var(--white);
+  border: none; cursor: pointer;
+  box-shadow: 0 4px 16px rgba(212,168,83,0.35);
+  transition: all 0.2s;
+}
+.quick-rebook-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(212,168,83,0.45); }
+.quick-rebook-btn:active { transform: scale(0.96); }
 .prefilled-indicator {
   font-size: 10px; font-weight: 700; color: var(--green);
   text-transform: uppercase; letter-spacing: 0.5px;
@@ -1786,6 +1804,13 @@ elevenlabs-convai {
     <span id="welcomeBackText">Welcome back!</span>
   </div>
   <h1 class="profile-name hero-enter" id="heroTitle">Ask <em>Poppy</em></h1>
+  <!-- Quick rebook for returning visitors -->
+  <div class="quick-rebook hero-enter" id="quickRebook">
+    <button class="quick-rebook-btn" onclick="quickRebook()">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M17.65 6.35A7.958 7.958 0 0012 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0112 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+      <span id="rebookLabel">Book again</span>
+    </button>
+  </div>
   <div class="profile-verified hero-enter">
     <svg viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
     Red Cross Certified · Age 12
@@ -2433,16 +2458,41 @@ function applySmartContext() {
     const badge = document.getElementById('welcomeBackBadge');
     const badgeText = document.getElementById('welcomeBackText');
     badge.classList.add('visible');
-    badgeText.textContent = `Welcome back, ${firstName}!`;
+    const bookCount = savedParent.bookCount || 1;
+    badgeText.textContent = bookCount > 1
+      ? `Welcome back, ${firstName}! (${bookCount} sessions)`
+      : `Welcome back, ${firstName}!`;
+
+    // Personalize hero bio for returning visitors
+    const heroBio = document.getElementById('heroBio');
+    if (heroBio && savedParent.kids && savedParent.kids.length > 0) {
+      const kidName = savedParent.kids[savedParent.kids.length - 1];
+      heroBio.textContent = `Hey ${firstName}! Ready for another great evening? ${kidName} and I had a blast. Let's book the next one.`;
+    } else if (heroBio) {
+      heroBio.textContent = `Hey ${firstName}! Good to see you again. Pick a day below — booking takes 10 seconds when I already know you.`;
+    }
+
+    // Show quick rebook button
+    const rebookWrap = document.getElementById('quickRebook');
+    if (rebookWrap) {
+      rebookWrap.classList.add('visible');
+      const kidDisplay = savedParent.kids && savedParent.kids.length > 0
+        ? savedParent.kids[savedParent.kids.length - 1] : '';
+      const rebookLabel = document.getElementById('rebookLabel');
+      if (rebookLabel) rebookLabel.textContent = kidDisplay
+        ? `Book again for ${kidDisplay}` : 'Book again';
+    }
 
     // Pre-fill guest booking form
     setTimeout(() => {
       const nameEl = document.getElementById('parentName');
       const phoneEl = document.getElementById('parentPhone');
       const emailEl = document.getElementById('parentEmail');
+      const kidEl = document.getElementById('kidName');
       if (nameEl && !nameEl.value) nameEl.value = savedParent.name;
       if (phoneEl && !phoneEl.value && savedParent.phone) phoneEl.value = savedParent.phone;
       if (emailEl && !emailEl.value && savedParent.email) emailEl.value = savedParent.email;
+      if (kidEl && !kidEl.value && savedParent.kids && savedParent.kids.length > 0) kidEl.value = savedParent.kids[savedParent.kids.length - 1];
     }, 500);
   }
 }
@@ -2454,9 +2504,16 @@ function getSavedParent() {
   } catch { return null; }
 }
 
-function saveParentInfo(name, phone, email) {
+function saveParentInfo(name, phone, email, kidName) {
   try {
-    localStorage.setItem('tt_parent', JSON.stringify({ name, phone, email, lastBooking: new Date().toISOString() }));
+    const prev = getSavedParent() || {};
+    const kids = prev.kids || [];
+    if (kidName && !kids.includes(kidName)) kids.push(kidName);
+    localStorage.setItem('tt_parent', JSON.stringify({
+      name, phone, email: email || prev.email,
+      kids, lastBooking: new Date().toISOString(),
+      bookCount: (prev.bookCount || 0) + 1
+    }));
   } catch {}
 }
 
@@ -3032,6 +3089,49 @@ function bookNextAvailable() {
   scrollTo('#avail');
 }
 
+/* ═══ QUICK REBOOK (returning visitors) ═══ */
+function quickRebook() {
+  const saved = getSavedParent();
+  if (!saved) { bookNextAvailable(); return; }
+  // Find next available date and select it
+  const today = new Date();
+  for (let i = 0; i < 21; i++) {
+    const d = new Date(today); d.setDate(today.getDate() + i);
+    const key = d.toISOString().split('T')[0];
+    if (availabilityData[key]) {
+      const pill = document.querySelector(`.day-pill[data-date="${key}"]`);
+      if (pill) {
+        // Scroll to availability, select the day
+        const availSection = document.getElementById('avail');
+        if (availSection) availSection.scrollIntoView({ behavior: 'smooth' });
+        setTimeout(() => {
+          selectDay(key, pill);
+          // Pre-fill form fields from saved data
+          const nameEl = document.getElementById('parentName');
+          const phoneEl = document.getElementById('parentPhone');
+          const emailEl = document.getElementById('parentEmail');
+          const kidEl = document.getElementById('kidName');
+          if (nameEl) nameEl.value = saved.name || '';
+          if (phoneEl) phoneEl.value = saved.phone || '';
+          if (emailEl) emailEl.value = saved.email || '';
+          if (kidEl && saved.kids && saved.kids.length > 0) kidEl.value = saved.kids[saved.kids.length - 1];
+          // Flash the booking form to draw attention
+          const bookCard = document.querySelector('.book-card');
+          if (bookCard) {
+            bookCard.style.transition = 'box-shadow 0.3s';
+            bookCard.style.boxShadow = '0 0 0 3px var(--gold), 0 8px 32px rgba(212,168,83,0.3)';
+            setTimeout(() => { bookCard.style.boxShadow = ''; }, 1500);
+          }
+        }, 500);
+      }
+      return;
+    }
+  }
+  // Fallback: just scroll to availability
+  const availSection = document.getElementById('avail');
+  if (availSection) availSection.scrollIntoView({ behavior: 'smooth' });
+}
+
 /* ═══ BOOKING ═══ */
 async function submitBooking() {
   let parentName, parentPhone, parentEmail, kidName;
@@ -3103,7 +3203,7 @@ async function submitBooking() {
     launchConfetti();
 
     // Save parent info for returning visitor recognition
-    saveParentInfo(parentName, parentPhone, parentEmail);
+    saveParentInfo(parentName, parentPhone, parentEmail, kidName);
 
     fetch(SUPABASE_URL + '/functions/v1/send-booking-sms', {
       method: 'POST',
