@@ -553,37 +553,87 @@ a { text-decoration: none; color: inherit; }
 .wave-divider.section-wave { color: #222226; }
 body.dark-mode .wave-divider.hero-wave { color: #1B1B1F; }
 
-/* How It Works — 3 steps */
+/* How It Works — 3 steps (premium) */
 .how-section {
-  padding: 32px 20px 12px; max-width: 600px; margin: 0 auto;
+  padding: 48px 20px 24px; max-width: 640px; margin: 0 auto;
+  text-align: center;
+}
+.how-section-label {
+  font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 2.5px;
+  color: var(--gold); margin-bottom: 8px;
+}
+.how-section-title {
+  font-family: var(--font-display); font-size: 24px; font-weight: 700;
+  color: var(--charcoal); margin-bottom: 6px;
+}
+.how-section-sub {
+  font-size: 13px; color: var(--gray); line-height: 1.5; max-width: 320px;
+  margin: 0 auto 28px;
 }
 .how-steps {
-  display: flex; gap: 12px; justify-content: center;
+  display: flex; gap: 0; justify-content: center; align-items: flex-start;
+  position: relative;
+}
+/* Connecting line behind cards */
+.how-steps::before {
+  content: ''; position: absolute; top: 36px; left: 18%; right: 18%;
+  height: 2px; background: linear-gradient(90deg, transparent, var(--gold), var(--gold), transparent);
+  opacity: 0.3; z-index: 0;
 }
 .how-step {
-  text-align: center; flex: 1; max-width: 140px;
+  text-align: center; flex: 1; max-width: 180px; position: relative; z-index: 1;
+  padding: 0 8px;
+}
+.how-step-num {
+  width: 40px; height: 40px; border-radius: 50%; margin: 0 auto 12px;
+  background: var(--gradient-gold);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-size: 16px; font-weight: 800; color: white;
+  box-shadow: 0 4px 16px rgba(212,168,83,0.35), inset 0 1px 0 rgba(255,255,255,0.3);
+  position: relative;
+}
+.how-step-num::after {
+  content: ''; position: absolute; inset: -4px; border-radius: 50%;
+  border: 2px solid rgba(212,168,83,0.15);
 }
 .how-icon {
-  width: 44px; height: 44px; border-radius: 50%;
-  background: var(--glass-card); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-  display: flex; align-items: center; justify-content: center;
-  margin: 0 auto 8px; font-size: 20px;
-  box-shadow: var(--shadow-sm), inset 0 1px 0 rgba(255,255,255,0.5);
-  border: 1.5px solid rgba(212,168,83,0.2);
-  transition: transform 0.3s, box-shadow 0.3s;
+  font-size: 28px; margin-bottom: 10px; line-height: 1;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
 }
-.how-icon:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+.how-card {
+  background: var(--glass-card); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+  border-radius: 16px; padding: 20px 12px 16px;
+  border: 1.5px solid var(--glass-card-border);
+  box-shadow: var(--shadow-md), inset 0 1px 0 rgba(255,255,255,0.5);
+  transition: transform 0.4s cubic-bezier(.22,1,.36,1), box-shadow 0.3s;
+}
+.how-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
 .how-label {
-  font-size: 11px; font-weight: 700; color: var(--charcoal); line-height: 1.3;
+  font-size: 14px; font-weight: 800; color: var(--charcoal); line-height: 1.3;
+  margin-bottom: 4px;
+}
+.how-desc {
+  font-size: 11.5px; color: var(--gray); line-height: 1.5; font-weight: 600;
 }
 .how-hint {
-  font-size: 9px; font-weight: 600; color: var(--gold); text-transform: uppercase;
-  letter-spacing: 0.5px; margin-top: 2px;
+  display: inline-block; margin-top: 8px; font-size: 10px; font-weight: 700;
+  color: var(--gold); background: rgba(212,168,83,0.1);
+  padding: 3px 10px; border-radius: 20px; letter-spacing: 0.3px;
 }
-.how-connector {
-  display: flex; align-items: center; color: var(--gold); font-size: 16px; font-weight: 700;
-  padding-bottom: 16px;
+/* Dark mode */
+body.dark-mode .how-section-title { color: var(--white); }
+body.dark-mode .how-card {
+  background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.08);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.04);
 }
+body.dark-mode .how-card:hover { box-shadow: 0 8px 32px rgba(0,0,0,0.4); }
+body.dark-mode .how-label { color: var(--white); }
+body.dark-mode .how-steps::before { opacity: 0.2; }
+/* Stagger animation */
+.how-step { opacity: 0; transform: translateY(20px); transition: opacity 0.5s ease, transform 0.5s cubic-bezier(.22,1,.36,1); }
+.how-step.visible { opacity: 1; transform: translateY(0); }
+.how-step:nth-child(2) { transition-delay: 0.15s; }
+.how-step:nth-child(3) { transition-delay: 0.3s; }
 
 /* Next Available Card (hero) */
 .next-avail-card {
@@ -2820,24 +2870,37 @@ body.dark-mode .scenario-pick:hover, body.dark-mode .scenario-pick.active { bord
 </div>
 
 <!-- ═══ HOW IT WORKS ═══ -->
-<div class="how-section reveal">
+<div class="how-section" id="howItWorks">
+  <p class="how-section-label reveal">How It Works</p>
+  <h2 class="how-section-title reveal">Three taps. That's it.</h2>
+  <p class="how-section-sub reveal">No apps to download, no accounts required. Just pick a time and Poppy handles the rest.</p>
   <div class="how-steps">
     <div class="how-step">
-      <div class="how-icon">📅</div>
-      <div class="how-label">Pick a day</div>
-      <div class="how-hint">30 sec</div>
+      <div class="how-step-num">1</div>
+      <div class="how-card">
+        <div class="how-icon">📅</div>
+        <div class="how-label">Pick a Time</div>
+        <div class="how-desc">Gold slots show when Poppy's free. Tap one that works for your family.</div>
+        <span class="how-hint">Takes 30 seconds</span>
+      </div>
     </div>
-    <div class="how-connector">→</div>
     <div class="how-step">
-      <div class="how-icon">✨</div>
-      <div class="how-label">Confirm</div>
-      <div class="how-hint">One tap</div>
+      <div class="how-step-num">2</div>
+      <div class="how-card">
+        <div class="how-icon">💬</div>
+        <div class="how-label">Instant Confirm</div>
+        <div class="how-desc">Poppy texts you within 5 minutes. You'll know exactly what she has planned.</div>
+        <span class="how-hint">One tap to book</span>
+      </div>
     </div>
-    <div class="how-connector">→</div>
     <div class="how-step">
-      <div class="how-icon">🎉</div>
-      <div class="how-label">Poppy's there</div>
-      <div class="how-hint">On time, every time</div>
+      <div class="how-step-num">3</div>
+      <div class="how-card">
+        <div class="how-icon">🎉</div>
+        <div class="how-label">Relax & Enjoy</div>
+        <div class="how-desc">Photo updates all session. Pay after — Apple Pay or cash. No surprises.</div>
+        <span class="how-hint">On time, every time</span>
+      </div>
     </div>
   </div>
 </div>
@@ -5808,6 +5871,25 @@ function initScrollProgress() {
   }, { passive: true });
 }
 
+/* ═══ HOW IT WORKS STAGGER ANIMATION ═══ */
+function initHowItWorks() {
+  const section = document.getElementById('howItWorks');
+  if (!section) return;
+  const steps = section.querySelectorAll('.how-step');
+  if (!steps.length) return;
+  let animated = false;
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting && !animated) {
+        animated = true;
+        steps.forEach(s => s.classList.add('visible'));
+        observer.disconnect();
+      }
+    });
+  }, { threshold: 0.2 });
+  observer.observe(section);
+}
+
 /* ═══ SESSION UPDATES CHAT ANIMATION ═══ */
 function initSessionUpdates() {
   const section = document.getElementById('sessionUpdates');
@@ -6146,6 +6228,7 @@ requestAnimationFrame(() => {
     initScrollMotion();
     initRotatingProof();
     initSocialProofNotifs();
+    initHowItWorks();
     initSessionUpdates();
   });
   setTimeout(initChatLogging, 3000);
