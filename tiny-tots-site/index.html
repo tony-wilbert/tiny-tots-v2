@@ -1265,6 +1265,90 @@ body.dark-mode .extended-note { color: #E8C97A; background: rgba(212,168,83,0.1)
   padding: 12px 16px; margin-bottom: 20px; font-size: 12px; color: #2e7d32; font-weight: 600;
 }
 .confirm-note-icon { font-size: 18px; flex-shrink: 0; }
+/* ═══ APPLE WATCH NOTIFICATION MOCKUP ═══ */
+.watch-preview {
+  margin-bottom: 20px; display: flex; flex-direction: column; align-items: center;
+  animation: watchSlideIn 0.8s 0.5s ease both;
+}
+@keyframes watchSlideIn {
+  from { opacity: 0; transform: translateY(15px) scale(0.9); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.watch-body {
+  position: relative; width: 130px; height: 160px;
+  background: #1C1C1E; border-radius: 34px; padding: 10px;
+  box-shadow: 0 0 0 2px #444, inset 0 0 0 1px #333, 0 8px 30px rgba(0,0,0,0.35);
+}
+.watch-crown {
+  position: absolute; right: -5px; top: 48px;
+  width: 5px; height: 18px; background: #555; border-radius: 0 3px 3px 0;
+}
+.watch-btn {
+  position: absolute; right: -5px; top: 78px;
+  width: 5px; height: 12px; background: #555; border-radius: 0 3px 3px 0;
+}
+.watch-screen {
+  width: 100%; height: 100%; background: #000; border-radius: 26px;
+  overflow: hidden; display: flex; flex-direction: column; padding: 8px 6px;
+}
+.watch-time-top {
+  text-align: center; font-size: 10px; color: rgba(255,255,255,0.4);
+  font-weight: 300; margin-bottom: 4px; font-family: -apple-system, system-ui, sans-serif;
+}
+.watch-notif {
+  background: linear-gradient(135deg, rgba(212,168,83,0.95), rgba(180,130,50,0.95));
+  border-radius: 12px; padding: 8px 9px; flex: 1;
+  animation: watchNotifPulse 2.5s 1s ease both;
+}
+@keyframes watchNotifPulse {
+  0% { transform: scale(0.6); opacity: 0; }
+  50% { transform: scale(1.04); }
+  100% { transform: scale(1); opacity: 1; }
+}
+.watch-notif-header {
+  display: flex; align-items: center; gap: 4px; margin-bottom: 3px;
+}
+.watch-notif-icon { font-size: 10px; }
+.watch-notif-app {
+  font-size: 7px; font-weight: 700; color: rgba(255,255,255,0.75);
+  text-transform: uppercase; letter-spacing: 0.8px;
+  font-family: -apple-system, system-ui, sans-serif;
+}
+.watch-notif-now {
+  font-size: 7px; color: rgba(255,255,255,0.5); margin-left: auto;
+  font-family: -apple-system, system-ui, sans-serif;
+}
+.watch-notif-title {
+  font-size: 11px; font-weight: 800; color: #fff;
+  font-family: -apple-system, system-ui, sans-serif;
+  margin-bottom: 2px;
+}
+.watch-notif-text {
+  font-size: 9px; color: rgba(255,255,255,0.88); line-height: 1.35;
+  font-family: -apple-system, system-ui, sans-serif;
+}
+.watch-notif-actions {
+  display: flex; gap: 4px; margin-top: 6px;
+}
+.watch-notif-action {
+  flex: 1; background: rgba(255,255,255,0.2); border-radius: 8px;
+  padding: 4px 6px; text-align: center;
+  font-size: 8px; font-weight: 700; color: #fff;
+  font-family: -apple-system, system-ui, sans-serif;
+}
+.watch-caption {
+  font-size: 11px; color: var(--gray); font-weight: 600;
+  margin-top: 10px; text-align: center; line-height: 1.4;
+}
+.watch-caption strong { color: var(--green); }
+/* ═══ SMOOTH BOOKING STEP TRANSITIONS ═══ */
+.step-animate-in {
+  animation: bookStepIn 0.4s ease both;
+}
+@keyframes bookStepIn {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
 .confirm-close-btn {
   background: var(--charcoal); color: var(--white); border: none; padding: 14px 32px;
   border-radius: 50px; font-size: 15px; font-weight: 700; cursor: pointer;
@@ -2788,6 +2872,16 @@ body.dark-mode .confirm-expect-step { color: #F0EDE8; }
 body.dark-mode .confirm-expect-step::after { background: rgba(212,168,83,0.2); }
 body.dark-mode .confirm-action-btn { background: rgba(212,168,83,0.12); color: #F0EDE8; border-color: rgba(212,168,83,0.5); }
 body.dark-mode .confirm-action-btn:hover { background: rgba(212,168,83,0.22); }
+body.dark-mode .confirm-overlay { background: rgba(30,30,32,0.97); }
+body.dark-mode .confirm-card { background: #2A2A2E; }
+body.dark-mode .confirm-title { color: #F0EDE8; }
+body.dark-mode .confirm-sub { color: #9E9A92; }
+body.dark-mode .confirm-details { background: #333338; }
+body.dark-mode .confirm-row { color: #F0EDE8; }
+body.dark-mode .confirm-row-label { color: #9E9A92; }
+body.dark-mode .confirm-close-btn { background: #F0EDE8; color: #2A2A2E; }
+body.dark-mode .watch-caption { color: #9E9A92; }
+body.dark-mode .watch-caption strong { color: #66BB6A; }
 body.dark-mode .review-neighborhood { color: #9E9A92; }
 body.dark-mode .review-neighborhood svg { fill: #9E9A92; }
 body.dark-mode .comm-promise { background: rgba(42,42,46,0.9); border-color: rgba(212,168,83,0.15); }
@@ -3736,9 +3830,29 @@ body.dark-mode .scenario-pick:hover, body.dark-mode .scenario-pick.active { bord
       <div class="confirm-row"><span class="confirm-row-label">Child</span><span class="confirm-row-value" id="confirmKid"></span></div>
       <div class="confirm-row confirm-total"><span class="confirm-row-label">Total</span><span class="confirm-row-value" id="confirmTotal"></span></div>
     </div>
-    <div class="confirm-note" style="background:linear-gradient(135deg,rgba(212,168,83,0.1),rgba(212,168,83,0.05));color:var(--charcoal);">
-      <span class="confirm-note-icon">⌚</span>
-      <span style="font-size:11px;">Poppy sees this on her Apple Watch instantly — she'll confirm within minutes</span>
+    <!-- Apple Watch Notification Preview -->
+    <div class="watch-preview">
+      <div class="watch-body">
+        <div class="watch-screen">
+          <div class="watch-time-top" id="watchTimeTop">10:32</div>
+          <div class="watch-notif">
+            <div class="watch-notif-header">
+              <span class="watch-notif-icon">⭐</span>
+              <span class="watch-notif-app">Tiny Tots</span>
+              <span class="watch-notif-now">now</span>
+            </div>
+            <div class="watch-notif-title">New Booking!</div>
+            <div class="watch-notif-text" id="watchNotifText">Loading...</div>
+            <div class="watch-notif-actions">
+              <div class="watch-notif-action">Confirm</div>
+              <div class="watch-notif-action">View</div>
+            </div>
+          </div>
+        </div>
+        <div class="watch-crown"></div>
+        <div class="watch-btn"></div>
+      </div>
+      <div class="watch-caption">Poppy sees this on her <strong>Watch</strong> right now</div>
     </div>
     <div class="confirm-expect" style="margin-bottom:20px;">
       <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--gold);margin-bottom:10px;text-align:left;">What to Expect</div>
@@ -4647,9 +4761,15 @@ function selectDay(key, pill) {
     // Populate time picker
     populateTimePicker(avail.start_time, avail.end_time);
     timePicker.style.display = 'block';
+    timePicker.classList.remove('step-animate-in');
+    void timePicker.offsetWidth; // force reflow
+    timePicker.classList.add('step-animate-in');
     // Calculate price from selected times
     updateTimePrice();
     pricePreview.style.display = 'block';
+    pricePreview.classList.remove('step-animate-in');
+    void pricePreview.offsetWidth;
+    pricePreview.classList.add('step-animate-in');
     setTimeout(() => sheet.scrollIntoView({ behavior: 'smooth', block: 'start' }), 150);
   } else {
     sheet.classList.remove('open');
@@ -5537,6 +5657,17 @@ async function submitBooking() {
     document.getElementById('confirmKid').textContent = kidName;
     document.getElementById('confirmTotal').textContent = `$${priceCents/100}`;
     document.getElementById('confirmOverlay').classList.add('active');
+    // Populate Apple Watch notification
+    const watchText = document.getElementById('watchNotifText');
+    const watchTime = document.getElementById('watchTimeTop');
+    if (watchText) {
+      const shortName = parentName.split(' ')[0];
+      watchText.textContent = `${shortName} needs you ${dayNames[bDate.getDay()].slice(0,3)} ${fmt12(startTime)}–${fmt12(endTime)}`;
+    }
+    if (watchTime) {
+      const now = new Date();
+      watchTime.textContent = `${now.getHours() > 12 ? now.getHours()-12 : now.getHours()||12}:${String(now.getMinutes()).padStart(2,'0')}`;
+    }
     // Update confirmation text for extended bookings
     const confirmTitle = document.querySelector('.confirm-title');
     if (confirmTitle && isExtended) {
