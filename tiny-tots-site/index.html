@@ -3659,7 +3659,7 @@ body.dark-mode .scenario-pick:hover, body.dark-mode .scenario-pick.active { bord
   <p class="profile-bio hero-enter" id="heroBio">Hi! I'm the sitter your kids ask for by name. Blanket forts, slime labs, dance battles — every session is an adventure. Parents love the text updates. Kids love the fun. Tap my face to chat!</p>
 
   <div class="stats-row hero-enter">
-    <div class="stat-item"><div class="stat-num" data-count="47" data-suffix="">0</div><div class="stat-label">Sits</div></div>
+    <div class="stat-item"><div class="stat-num" data-count="50" data-suffix="">0</div><div class="stat-label">Sits</div></div>
     <div class="stat-item"><div class="stat-num" data-count="12" data-suffix="">0</div><div class="stat-label">Families</div></div>
     <div class="stat-item"><div class="stat-num" data-count="4.9" data-suffix="" data-decimals="1">0</div><div class="stat-label">Rating</div></div>
     <div class="stat-item"><div class="stat-num stat-zero-cancel" data-count="0" data-suffix="">0</div><div class="stat-label">Cancellations</div></div>
@@ -3917,7 +3917,7 @@ body.dark-mode .scenario-pick:hover, body.dark-mode .scenario-pick.active { bord
   <div class="feed-header reveal">
     <p class="section-label">Poppy's World</p>
     <h2 class="section-title">Tips & Tricks</h2>
-    <p class="section-sub">Real words from real parents — after 47 sessions and counting.</p>
+    <p class="section-sub">Real words from real parents — after 50 sessions and counting.</p>
   </div>
   <div class="feed-scroll" id="feedScroll">
     <!-- Tip cards rendered by JS -->
@@ -4088,7 +4088,7 @@ body.dark-mode .scenario-pick:hover, body.dark-mode .scenario-pick.active { bord
     <div class="guarantee-sub">
       If you're not <strong>100% comfortable</strong> within the first 30 minutes, just say the word — no charge, no questions, no awkwardness.
     </div>
-    <div class="guarantee-fine">47 sessions and counting. Zero refunds requested.</div>
+    <div class="guarantee-fine">50 sessions and counting. Zero refunds requested.</div>
   </div>
 </section>
 
@@ -4554,7 +4554,7 @@ const sitters = [
     name: 'Poppy Wilbert', age: 12, slug: 'poppy', photo: 'poppy-photo.jpg',
     bio: 'Arts & crafts, outdoor adventures, blanket fort architect',
     rate: 12, certs: ['Red Cross', 'First Aid'],
-    stats: { sits: 47, families: 12, rating: 4.9 },
+    stats: { sits: 50, families: 12, rating: 4.9 },
     schedule: { 2: '3:45–8 PM', 4: '3:45–8 PM', 6: '4–11 PM' }
   }
 ];
@@ -7249,6 +7249,10 @@ function initAnimationPauser() {
 /* Animated stat counters */
 function initCounters() {
   const counters = document.querySelectorAll('.stat-num[data-count]');
+  // Hero stats (in .stats-row) animate immediately on load for instant credibility
+  const heroStats = document.querySelectorAll('.stats-row .stat-num[data-count]');
+  heroStats.forEach(el => animateCounter(el));
+  // Other stats animate on scroll
   const cObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
@@ -7257,7 +7261,9 @@ function initCounters() {
       }
     });
   }, { threshold: 0.5 });
-  counters.forEach(el => cObserver.observe(el));
+  counters.forEach(el => {
+    if (!el.closest('.stats-row')) cObserver.observe(el);
+  });
 }
 
 function animateCounter(el) {
@@ -7681,7 +7687,7 @@ function initRotatingProof() {
     '5 families booked this week',
     '0 cancellations — ever',
     'Trusted by families in Tahoe Donner & Truckee',
-    '47 sessions completed with 4.9★ rating',
+    '50 sessions completed with 4.9★ rating',
     'Red Cross certified & parent-approved',
     '3 families rebooked this week'
   ];
