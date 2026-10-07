@@ -2352,37 +2352,44 @@ elevenlabs-convai {
 }
 .voice-modal-close:hover { color: #fff; background: rgba(255,255,255,0.15); }
 
-/* Daisy Video Avatar — lip-sync video plays when speaking */
-.daisy-video-wrap {
+/* Daisy Canvas Avatar — real-time audio-reactive lip sync */
+.daisy-avatar-wrap {
   width: 180px; height: 180px; border-radius: 50%; overflow: hidden;
   margin: 0 auto 16px; position: relative;
   box-shadow: 0 0 0 3px rgba(212,168,83,0.25), 0 0 60px rgba(212,168,83,0.08), 0 12px 48px rgba(0,0,0,0.5);
   transition: box-shadow 0.4s ease, transform 0.4s ease;
 }
 @media (min-height: 700px) {
-  .daisy-video-wrap { width: 220px; height: 220px; }
+  .daisy-avatar-wrap { width: 220px; height: 220px; }
 }
 @media (min-height: 800px) {
-  .daisy-video-wrap { width: 260px; height: 260px; }
+  .daisy-avatar-wrap { width: 260px; height: 260px; }
 }
-.daisy-video-wrap video, .daisy-video-wrap img {
-  width: 100%; height: 100%; object-fit: cover; display: block;
-  border-radius: 50%;
+.daisy-avatar-wrap canvas {
+  width: 100%; height: 100%; display: block; border-radius: 50%;
 }
-.daisy-video-wrap video { display: none; }
-.daisy-video-wrap.speaking video { display: block; }
-.daisy-video-wrap.speaking img { display: none; }
-.daisy-video-wrap.speaking {
-  box-shadow: 0 0 0 4px rgba(212,168,83,0.6), 0 0 40px rgba(212,168,83,0.3),
-              0 0 80px rgba(212,168,83,0.15);
-  animation: avatarGlow 2s ease-in-out infinite alternate;
+/* Audio-reactive glow rings when speaking */
+.daisy-avatar-wrap.speaking {
+  animation: none;
 }
-@keyframes avatarGlow {
-  0% { box-shadow: 0 0 0 4px rgba(212,168,83,0.6), 0 0 30px rgba(212,168,83,0.2); }
-  100% { box-shadow: 0 0 0 4px rgba(212,168,83,0.8), 0 0 60px rgba(212,168,83,0.35), 0 0 100px rgba(212,168,83,0.1); }
+.daisy-glow-ring {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  border-radius: 50%; pointer-events: none; opacity: 0;
+  border: 2px solid rgba(212,168,83,0.4);
+  transition: opacity 0.3s;
+}
+.daisy-avatar-wrap.speaking .daisy-glow-ring {
+  opacity: 1;
+  animation: ringPulse 2s ease-out infinite;
+}
+.daisy-glow-ring:nth-child(2) { animation-delay: 0.5s; }
+.daisy-glow-ring:nth-child(3) { animation-delay: 1s; }
+@keyframes ringPulse {
+  0% { width: 100%; height: 100%; opacity: 0.6; border-color: rgba(212,168,83,0.5); }
+  100% { width: 160%; height: 160%; opacity: 0; border-color: rgba(212,168,83,0); }
 }
 /* Subtle breathing animation when idle */
-.daisy-video-wrap:not(.speaking) {
+.daisy-avatar-wrap:not(.speaking) {
   animation: avatarBreathe 3s ease-in-out infinite;
 }
 @keyframes avatarBreathe {
@@ -2394,14 +2401,25 @@ elevenlabs-convai {
   position: absolute; bottom: 8px; right: 8px;
   width: 16px; height: 16px; border-radius: 50%;
   background: #34C759; border: 3px solid #2a2a2a;
-  opacity: 0; transition: opacity 0.3s;
+  opacity: 0; transition: opacity 0.3s; z-index: 2;
 }
-.daisy-video-wrap.speaking .daisy-speaking-dot {
+.daisy-avatar-wrap.speaking .daisy-speaking-dot {
   opacity: 1; animation: dotPulse 1.5s ease-in-out infinite;
 }
 @keyframes dotPulse {
   0%, 100% { transform: scale(1); }
   50% { transform: scale(1.3); }
+}
+/* Audio level indicator bar under avatar */
+.daisy-level-bar {
+  position: absolute; bottom: 0; left: 10%; right: 10%; height: 3px;
+  border-radius: 2px; background: rgba(212,168,83,0.15);
+  overflow: hidden; z-index: 2;
+}
+.daisy-level-fill {
+  height: 100%; width: 0%; border-radius: 2px;
+  background: linear-gradient(90deg, #D4A853, #E8C97A);
+  transition: width 0.05s linear;
 }
 
 /* Old avatar container — hidden */
@@ -6366,9 +6384,247 @@ function toggleFaq(btn) {
 }
 
 
-/* ═══ DAISY LIP-SYNC VIDEO AVATAR DATA ═══ */
-const _DAISY_VIDEO_URI = 'daisy-video.mp4';
+/* ═══ DAISY REAL-TIME LIP-SYNC AVATAR ═══ */
 const _DAISY_STILL_URI = 'daisy-still.jpg';
+
+/* ── WebRTC Audio Intercept ── */
+/* Monkey-patch RTCPeerConnection to capture remote audio for real-time analysis */
+let _daisyAnalyser = null;
+let _daisyAudioCtx = null;
+let _daisyFreqData = null;
+let _daisyTimeData = null;
+let _daisyAudioCaptured = false;
+
+(function _interceptWebRTCAudio() {
+  const _OrigRTC = window.RTCPeerConnection || window.webkitRTCPeerConnection;
+  if (!_OrigRTC) return;
+  const _OrigProto = _OrigRTC.prototype;
+
+  window.RTCPeerConnection = function(...args) {
+    const pc = new _OrigRTC(...args);
+    pc.addEventListener('track', (evt) => {
+      if (evt.track.kind === 'audio' && !_daisyAudioCaptured) {
+        try {
+          if (!_daisyAudioCtx) {
+            _daisyAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+          }
+          if (_daisyAudioCtx.state === 'suspended') _daisyAudioCtx.resume();
+          _daisyAnalyser = _daisyAudioCtx.createAnalyser();
+          _daisyAnalyser.fftSize = 256;
+          _daisyAnalyser.smoothingTimeConstant = 0.4;
+          _daisyFreqData = new Uint8Array(_daisyAnalyser.frequencyBinCount);
+          _daisyTimeData = new Uint8Array(_daisyAnalyser.fftSize);
+          const stream = new MediaStream([evt.track]);
+          const source = _daisyAudioCtx.createMediaStreamSource(stream);
+          source.connect(_daisyAnalyser);
+          _daisyAudioCaptured = true;
+          console.log('[Daisy] Real-time audio captured for lip sync');
+        } catch(e) { console.warn('[Daisy] Audio capture failed:', e); }
+      }
+    });
+    return pc;
+  };
+  window.RTCPeerConnection.prototype = _OrigProto;
+  if (window.webkitRTCPeerConnection) window.webkitRTCPeerConnection = window.RTCPeerConnection;
+  // Copy static props (generateCertificate, etc.)
+  for (const k of Object.getOwnPropertyNames(_OrigRTC)) {
+    if (k !== 'prototype' && k !== 'length' && k !== 'name') {
+      try { window.RTCPeerConnection[k] = _OrigRTC[k]; } catch(e) {}
+    }
+  }
+})();
+
+/* ── Canvas Lip-Sync Renderer ── */
+let _daisyImg = null;
+let _daisyImgLoaded = false;
+let _daisyAnimating = false;
+let _daisySpeaking = false;
+let _daisySmooth = 0; // smoothed amplitude 0-1
+let _daisyMouthPhase = 0; // phase for simulated lip sync fallback
+const _DAISY_CANVAS_SIZE = 300;
+// Mouth region calibration — positioned for the generated Daisy face
+const _MOUTH = { cx: 0.50, cy: 0.73, w: 0.22, h: 0.06 };
+
+function _initDaisyCanvas() {
+  const canvas = document.getElementById('daisyCanvas');
+  if (!canvas) return;
+  canvas.width = _DAISY_CANVAS_SIZE;
+  canvas.height = _DAISY_CANVAS_SIZE;
+  _daisyImg = new Image();
+  _daisyImg.crossOrigin = 'anonymous';
+  _daisyImg.onload = () => {
+    _daisyImgLoaded = true;
+    _drawDaisyFrame(canvas); // draw still image initially
+  };
+  _daisyImg.src = _DAISY_STILL_URI;
+}
+
+/* Get real-time audio amplitude 0-1 */
+function _getDaisyAmplitude() {
+  if (!_daisyAnalyser || !_daisyTimeData) return -1; // no audio captured
+  _daisyAnalyser.getByteTimeDomainData(_daisyTimeData);
+  let sum = 0;
+  for (let i = 0; i < _daisyTimeData.length; i++) {
+    const v = (_daisyTimeData[i] - 128) / 128;
+    sum += v * v;
+  }
+  return Math.sqrt(sum / _daisyTimeData.length);
+}
+
+/* Get frequency bands for mouth shape variation */
+function _getDaisyFreqBands() {
+  if (!_daisyAnalyser || !_daisyFreqData) return null;
+  _daisyAnalyser.getByteFrequencyData(_daisyFreqData);
+  const n = _daisyFreqData.length;
+  // Split into low (jaw), mid (lips), high (consonants)
+  let lo = 0, mid = 0, hi = 0;
+  const third = Math.floor(n / 3);
+  for (let i = 0; i < third; i++) lo += _daisyFreqData[i];
+  for (let i = third; i < third*2; i++) mid += _daisyFreqData[i];
+  for (let i = third*2; i < n; i++) hi += _daisyFreqData[i];
+  lo /= (third * 255); mid /= (third * 255); hi /= (third * 255);
+  return { lo, mid, hi };
+}
+
+/* Simulated lip-sync fallback — multi-frequency sine waves for natural mouth movement */
+function _getSimulatedAmplitude(t) {
+  if (!_daisySpeaking) return 0;
+  const s = t / 1000;
+  // Layer multiple frequencies for organic, non-repetitive motion
+  return Math.max(0,
+    Math.sin(s * 11.7) * 0.28 +
+    Math.sin(s * 7.1 + 1.2) * 0.22 +
+    Math.sin(s * 18.3 + 0.7) * 0.15 +
+    Math.sin(s * 3.4 + 2.1) * 0.18 +
+    Math.sin(s * 25 + 0.3) * 0.08 +
+    (Math.random() - 0.5) * 0.06 + 0.05
+  );
+}
+
+/* Draw one frame of the lip-synced avatar */
+function _drawDaisyFrame(canvas) {
+  if (!_daisyImgLoaded || !canvas) return;
+  const ctx = canvas.getContext('2d');
+  const S = _DAISY_CANVAS_SIZE;
+  const t = performance.now();
+
+  // Get audio level — real or simulated
+  let rawAmp = _getDaisyAmplitude();
+  const useReal = rawAmp >= 0;
+  if (!useReal) rawAmp = _getSimulatedAmplitude(t);
+  const targetAmp = _daisySpeaking ? Math.min(rawAmp * (useReal ? 3.5 : 1), 1) : 0;
+
+  // Smooth amplitude for natural movement
+  _daisySmooth += (targetAmp - _daisySmooth) * 0.25;
+  const amp = _daisySmooth;
+
+  // Get frequency bands for mouth shape variation (if real audio)
+  const freq = useReal ? _getDaisyFreqBands() : null;
+  const mouthWidth = freq ? (0.7 + freq.mid * 0.6) : (0.7 + Math.sin(t/1000 * 5) * 0.15 + 0.15);
+  const jawDrop = freq ? (freq.lo * 0.6 + amp * 0.4) : amp;
+
+  ctx.clearRect(0, 0, S, S);
+  ctx.save();
+
+  // Clip to circle
+  ctx.beginPath();
+  ctx.arc(S/2, S/2, S/2, 0, Math.PI * 2);
+  ctx.clip();
+
+  // Draw face — split into upper and lower halves for jaw movement
+  const splitY = S * 0.68; // split just above the mouth
+  const jawOffset = jawDrop * amp * 4; // max 4px jaw drop
+
+  // Upper face — static
+  ctx.drawImage(_daisyImg, 0, 0, _daisyImg.naturalWidth, _daisyImg.naturalHeight * 0.68,
+                0, 0, S, splitY);
+
+  // Lower face — shifts down based on jaw drop
+  ctx.drawImage(_daisyImg, 0, _daisyImg.naturalHeight * 0.68,
+                _daisyImg.naturalWidth, _daisyImg.naturalHeight * 0.32,
+                0, splitY + jawOffset, S, S * 0.32 + jawOffset * 0.5);
+
+  // Draw mouth shape in the gap created by jaw drop
+  if (amp > 0.02) {
+    const mcx = S * _MOUTH.cx;
+    const mcy = S * _MOUTH.cy + jawOffset * 0.4;
+    const mw = S * _MOUTH.w * mouthWidth;
+    const mh = S * _MOUTH.h + amp * S * 0.06;
+
+    // Dark mouth interior
+    ctx.fillStyle = `rgba(60, 30, 25, ${0.4 + amp * 0.5})`;
+    ctx.beginPath();
+    ctx.ellipse(mcx, mcy, mw * 0.85, mh * (0.3 + amp * 0.7), 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Teeth hint when mouth is open enough
+    if (amp > 0.15) {
+      ctx.fillStyle = `rgba(240, 235, 225, ${(amp - 0.15) * 1.5})`;
+      ctx.beginPath();
+      ctx.ellipse(mcx, mcy - mh * 0.15, mw * 0.6, mh * 0.25, 0, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // Upper lip
+    ctx.strokeStyle = `rgba(180, 110, 90, ${0.3 + amp * 0.4})`;
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(mcx - mw, mcy - mh * 0.2);
+    ctx.quadraticCurveTo(mcx - mw * 0.3, mcy - mh * (0.6 + amp * 0.3), mcx, mcy - mh * 0.3);
+    ctx.quadraticCurveTo(mcx + mw * 0.3, mcy - mh * (0.6 + amp * 0.3), mcx + mw, mcy - mh * 0.2);
+    ctx.stroke();
+
+    // Lower lip
+    ctx.beginPath();
+    ctx.moveTo(mcx - mw * 0.9, mcy + mh * 0.1);
+    ctx.quadraticCurveTo(mcx, mcy + mh * (0.5 + amp * 0.5), mcx + mw * 0.9, mcy + mh * 0.1);
+    ctx.stroke();
+  }
+
+  ctx.restore();
+
+  // Update level bar
+  const fill = document.getElementById('daisyLevelFill');
+  if (fill) fill.style.width = (amp * 100) + '%';
+
+  if (_daisyAnimating) requestAnimationFrame(() => _drawDaisyFrame(canvas));
+}
+
+function _startDaisyLipSync() {
+  _daisySpeaking = true;
+  _daisyAnimating = true;
+  const wrap = document.getElementById('daisyAvatarWrap');
+  if (wrap) wrap.classList.add('speaking');
+  // Resume audio context if suspended (needs user gesture)
+  if (_daisyAudioCtx && _daisyAudioCtx.state === 'suspended') _daisyAudioCtx.resume();
+  const canvas = document.getElementById('daisyCanvas');
+  _drawDaisyFrame(canvas);
+}
+
+function _stopDaisyLipSync() {
+  _daisySpeaking = false;
+  const wrap = document.getElementById('daisyAvatarWrap');
+  if (wrap) wrap.classList.remove('speaking');
+  // Let animation wind down naturally
+  setTimeout(() => {
+    if (!_daisySpeaking) {
+      _daisyAnimating = false;
+      // Redraw still image
+      const canvas = document.getElementById('daisyCanvas');
+      if (canvas && _daisyImgLoaded) {
+        const ctx = canvas.getContext('2d');
+        const S = _DAISY_CANVAS_SIZE;
+        ctx.clearRect(0, 0, S, S);
+        ctx.save();
+        ctx.beginPath(); ctx.arc(S/2, S/2, S/2, 0, Math.PI*2); ctx.clip();
+        ctx.drawImage(_daisyImg, 0, 0, S, S);
+        ctx.restore();
+      }
+      const fill = document.getElementById('daisyLevelFill');
+      if (fill) fill.style.width = '0%';
+    }
+  }, 300);
+}
 
 
 
@@ -6403,19 +6659,19 @@ function loadElevenLabs() {
   });
 }
 
-/* Hide the ElevenLabs widget visual — video avatar replaces it; widget stays for audio */
+/* Hide the ElevenLabs widget visual — canvas avatar replaces it; widget stays for audio */
 function _hideFloatingWidgetButton() {
   const _ttStyle = `
     [class*="minimize"], [class*="avatarButton"] { display: none !important; }
     [class*="_box_"] { opacity: 1 !important; margin: 0 auto; transform: none !important; pointer-events: auto !important; }
     [class*="_feedback_"] { display: none !important; }
     [class*="_wrapper_"] { width: 100% !important; justify-content: center !important; }
-    /* HIDE the avatar image — video avatar replaces it */
+    /* HIDE the widget orb/avatar — canvas lip-sync avatar replaces it */
     [class*="_orb_"], [class*="orb"], canvas, [class*="_avatar_"], img[class*="_avatar_"] {
       width: 0 !important; height: 0 !important; display: none !important;
       overflow: hidden !important;
     }
-    /* Style the call button — smaller since video avatar is the star */
+    /* Style the call button — smaller since canvas avatar is the star */
     button[class*="_call_"], button[class*="_start_"], [class*="_callButton_"] {
       background: linear-gradient(135deg, #D4A853, #C4982F) !important;
       color: #1B1B1F !important; border-radius: 50px !important;
@@ -6523,20 +6779,12 @@ function toggleVoice() {
   loadElevenLabs();
 }
 
-/* Load Daisy video + still image data URIs on first voice modal open */
+/* Initialize Daisy canvas avatar on first voice modal open */
 let _daisyAvatarLoaded = false;
 function _loadDaisyAvatar() {
   if (_daisyAvatarLoaded) return;
   _daisyAvatarLoaded = true;
-  const videoEl = document.getElementById('daisyVideo');
-  const stillEl = document.getElementById('daisyStill');
-  if (stillEl && !stillEl.src) {
-    stillEl.src = _DAISY_STILL_URI;
-  }
-  if (videoEl && !videoEl.src) {
-    videoEl.src = _DAISY_VIDEO_URI;
-    videoEl.load();
-  }
+  _initDaisyCanvas();
 }
 
 /* Close modal without necessarily ending a call */
@@ -6550,11 +6798,8 @@ function endVoiceCall() {
   modal.setAttribute('aria-hidden', 'true');
   document.body.style.overflow = '';
   if (modal._escHandler) { document.removeEventListener('keydown', modal._escHandler); modal._escHandler = null; }
-  // Stop Daisy video avatar
-  const videoWrap = document.getElementById('daisyVideoWrap');
-  const videoEl = document.getElementById('daisyVideo');
-  if (videoWrap) videoWrap.classList.remove('speaking');
-  if (videoEl) videoEl.pause();
+  // Stop Daisy canvas lip sync
+  _stopDaisyLipSync();
   // Restore focus to avatar
   const avatar = document.getElementById('avatarWrap');
   if (avatar) avatar.focus();
@@ -6591,25 +6836,21 @@ function updateVoiceUI() {
   }
 }
 
-/* Listen for ElevenLabs widget events to update modal UI */
+/* Listen for ElevenLabs widget events to update modal UI + drive canvas lip sync */
 function _setupWidgetListeners() {
   const widget = document.querySelector('elevenlabs-convai');
   if (!widget) return;
   const modal = document.getElementById('voiceModal');
   const statusEl = document.getElementById('voiceModalStatus');
 
-  const videoWrap = document.getElementById('daisyVideoWrap');
-  const videoEl = document.getElementById('daisyVideo');
-
   widget.addEventListener('elevenlabs-convai:call', e => {
     if (e.detail?.status === 'connected') {
       voiceActive = true;
-      statusEl.textContent = 'Connected — say hi to Daisy! 💛';
+      statusEl.textContent = 'Connected — say hi to Daisy!';
       statusEl.className = 'voice-modal-status connected';
       modal.classList.add('speaking');
-      // Start video avatar speaking
-      if (videoWrap) videoWrap.classList.add('speaking');
-      if (videoEl) { videoEl.currentTime = 0; videoEl.play().catch(()=>{}); }
+      // Start canvas lip sync animation
+      _startDaisyLipSync();
       const endBtn = document.getElementById('voiceEndBtn');
       if (endBtn) endBtn.style.display = 'flex';
       updateVoiceUI();
@@ -6618,9 +6859,8 @@ function _setupWidgetListeners() {
   widget.addEventListener('elevenlabs-convai:call-end', () => {
     voiceActive = false;
     modal.classList.remove('speaking');
-    // Stop video avatar
-    if (videoWrap) videoWrap.classList.remove('speaking');
-    if (videoEl) videoEl.pause();
+    // Stop canvas lip sync
+    _stopDaisyLipSync();
     const statusEl2 = document.getElementById('voiceModalStatus');
     statusEl2.textContent = 'Chat ended — tap below to chat again!';
     const endBtn = document.getElementById('voiceEndBtn');
@@ -6628,7 +6868,7 @@ function _setupWidgetListeners() {
     updateVoiceUI();
   });
 
-  // MutationObserver on shadow DOM for speaking/listening state — drive video avatar
+  // MutationObserver on shadow DOM for speaking/listening state — drive canvas lip sync
   const checkSpeaking = () => {
     if (!widget.shadowRoot) return;
     let lastSpeaking = false;
@@ -6641,15 +6881,13 @@ function _setupWidgetListeners() {
         lastSpeaking = true;
         modal.classList.add('speaking');
         statusEl.textContent = 'Daisy is talking...';
-        if (videoWrap) videoWrap.classList.add('speaking');
-        if (videoEl) { videoEl.play().catch(()=>{}); }
+        _startDaisyLipSync();
       } else if (!isSpeaking && lastSpeaking) {
         lastSpeaking = false;
         if (voiceActive && modal.classList.contains('active')) {
           statusEl.textContent = 'Listening...';
-          // Keep video playing subtly during listening for more natural feel
-          // but remove the speaking glow
-          if (videoWrap) videoWrap.classList.remove('speaking');
+          // Stop lip sync during listening — mouth should be closed
+          _stopDaisyLipSync();
         }
       }
     });
@@ -7980,10 +8218,13 @@ requestAnimationFrame(() => {
   <div class="voice-modal">
     <button class="voice-modal-close" onclick="closeVoiceModal()" aria-label="Close">&times;</button>
     <div class="voice-modal-name">Daisy</div>
-    <div class="daisy-video-wrap" id="daisyVideoWrap">
-      <img id="daisyStill" alt="Daisy — Poppy's AI assistant">
-      <video id="daisyVideo" loop muted playsinline></video>
+    <div class="daisy-avatar-wrap" id="daisyAvatarWrap">
+      <canvas id="daisyCanvas" width="300" height="300"></canvas>
+      <div class="daisy-glow-ring"></div>
+      <div class="daisy-glow-ring"></div>
+      <div class="daisy-glow-ring"></div>
       <div class="daisy-speaking-dot"></div>
+      <div class="daisy-level-bar"><div class="daisy-level-fill" id="daisyLevelFill"></div></div>
     </div>
     <div class="voice-modal-status" id="voiceModalStatus">Poppy's AI assistant — tap below to start!</div>
     <div class="daisy-suggestions" id="daisySuggestions">
