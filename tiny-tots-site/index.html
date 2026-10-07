@@ -6428,64 +6428,195 @@ function _cleanupSilentTrack() {
   if (_silentAudioCtx) { _silentAudioCtx.close().catch(() => {}); _silentAudioCtx = null; }
 }
 
-/* ── WebRTC Audio Intercept ── */
-/* Monkey-patch RTCPeerConnection to capture ElevenLabs remote audio track */
+/* ══ COMPREHENSIVE AUDIO INTERCEPT FOR LIP SYNC ══ */
+/* ElevenLabs widget bundles its own RTCPeerConnection reference, so a simple
+   monkey-patch on window.RTCPeerConnection never fires. We intercept ALL
+   possible audio delivery mechanisms:
+     Method 1: RTCPeerConnection 'track' event  (WebRTC)
+     Method 2: AudioNode.connect → destination   (Web Audio API)
+     Method 3: HTMLMediaElement.srcObject setter  (audio/video element)
+   Whichever fires first captures the audio and pipes it to Simli. */
+
 let _daisyAnalyser = null;
 let _daisyAudioCtx = null;
 let _daisyFreqData = null;
 let _daisyTimeData = null;
 let _daisyAudioCaptured = false;
-let _simliConnecting = false; /* true while Simli SDK is creating its own RTCPeerConnections */
+let _simliConnecting = false; /* true while Simli SDK is creating its own connections */
+let _elevenLabsActive = false; /* true once ElevenLabs conversation starts */
 
-(function _interceptWebRTCAudio() {
-  const _OrigRTC = window.RTCPeerConnection || window.webkitRTCPeerConnection;
-  if (!_OrigRTC) return;
-  const _OrigProto = _OrigRTC.prototype;
+/* Central handler — called by whichever intercept fires first */
+function _onDaisyAudioCaptured(track, source) {
+  if (_daisyAudioCaptured || _simliConnecting) return;
+  if (!track || track.kind !== 'audio') return;
+
+  _capturedAudioTrack = track;
+  _daisyAudioCaptured = true;
+  console.log('[Daisy] ✓ Audio captured via ' + source);
+
+  /* Pipe to Simli immediately if ready */
+  if (_simliClient && _simliReady) {
+    try {
+      _simliClient.listenToMediastreamTrack(track);
+      console.log('[Daisy] ✓ Audio piped to Simli — lip sync active');
+    } catch(e) { console.warn('[Daisy] Simli pipe failed:', e); }
+  }
+
+  /* Set up local analyser for canvas fallback */
+  try {
+    if (!_daisyAudioCtx) {
+      _daisyAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if (_daisyAudioCtx.state === 'suspended') _daisyAudioCtx.resume();
+    _daisyAnalyser = _daisyAudioCtx.createAnalyser();
+    _daisyAnalyser.fftSize = 256;
+    _daisyAnalyser.smoothingTimeConstant = 0.4;
+    _daisyFreqData = new Uint8Array(_daisyAnalyser.frequencyBinCount);
+    _daisyTimeData = new Uint8Array(_daisyAnalyser.fftSize);
+    const stream = new MediaStream([track]);
+    const src = _daisyAudioCtx.createMediaStreamSource(stream);
+    src.connect(_daisyAnalyser);
+  } catch(e) { /* analyser is optional */ }
+}
+
+/* Method 1: RTCPeerConnection — intercept WebRTC audio tracks */
+(function _interceptRTC() {
+  const Orig = window.RTCPeerConnection || window.webkitRTCPeerConnection;
+  if (!Orig) return;
+  const Proto = Orig.prototype;
 
   window.RTCPeerConnection = function(...args) {
-    const pc = new _OrigRTC(...args);
+    const pc = new Orig(...args);
     pc.addEventListener('track', (evt) => {
       if (evt.track.kind === 'audio' && !_daisyAudioCaptured && !_simliConnecting) {
-        try {
-          /* Store raw track reference for Simli */
-          _capturedAudioTrack = evt.track;
-          console.log('[Daisy] Audio track captured from ElevenLabs');
-
-          /* If Simli is already connected, pipe audio immediately */
-          if (_simliClient && _simliReady) {
-            try {
-              _simliClient.listenToMediastreamTrack(_capturedAudioTrack);
-              console.log('[Daisy] Audio piped to Simli (immediate)');
-            } catch(e) { console.warn('[Daisy] Simli pipe failed:', e); }
-          }
-
-          /* Also set up local analyser for canvas fallback lip sync */
-          if (!_daisyAudioCtx) {
-            _daisyAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
-          }
-          if (_daisyAudioCtx.state === 'suspended') _daisyAudioCtx.resume();
-          _daisyAnalyser = _daisyAudioCtx.createAnalyser();
-          _daisyAnalyser.fftSize = 256;
-          _daisyAnalyser.smoothingTimeConstant = 0.4;
-          _daisyFreqData = new Uint8Array(_daisyAnalyser.frequencyBinCount);
-          _daisyTimeData = new Uint8Array(_daisyAnalyser.fftSize);
-          const stream = new MediaStream([evt.track]);
-          const source = _daisyAudioCtx.createMediaStreamSource(stream);
-          source.connect(_daisyAnalyser);
-          _daisyAudioCaptured = true;
-        } catch(e) { console.warn('[Daisy] Audio capture failed:', e); }
+        console.log('[Daisy] RTCPeerConnection track event fired');
+        _onDaisyAudioCaptured(evt.track, 'RTCPeerConnection');
       }
     });
     return pc;
   };
-  window.RTCPeerConnection.prototype = _OrigProto;
+  window.RTCPeerConnection.prototype = Proto;
   if (window.webkitRTCPeerConnection) window.webkitRTCPeerConnection = window.RTCPeerConnection;
-  for (const k of Object.getOwnPropertyNames(_OrigRTC)) {
+  for (const k of Object.getOwnPropertyNames(Orig)) {
     if (k !== 'prototype' && k !== 'length' && k !== 'name') {
-      try { window.RTCPeerConnection[k] = _OrigRTC[k]; } catch(e) {}
+      try { window.RTCPeerConnection[k] = Orig[k]; } catch(e) {}
     }
   }
 })();
+
+/* Method 2: AudioNode.connect — intercept Web Audio API connections to speakers */
+(function _interceptAudioConnect() {
+  const origConnect = AudioNode.prototype.connect;
+  const _origConnectRef = origConnect; /* keep for inner use */
+  AudioNode.prototype.connect = function(dest, ...args) {
+    const result = origConnect.call(this, dest, ...args);
+    /* Capture when a non-Simli, non-silent-keepalive node connects to speakers */
+    if (dest instanceof AudioDestinationNode
+        && !_daisyAudioCaptured
+        && !_simliConnecting
+        && this.context !== _silentAudioCtx) {
+      try {
+        console.log('[Daisy] AudioNode.connect → destination detected');
+        const ctx = this.context;
+        const streamDest = ctx.createMediaStreamDestination();
+        _origConnectRef.call(this, streamDest);
+        const track = streamDest.stream.getAudioTracks()[0];
+        if (track) _onDaisyAudioCaptured(track, 'AudioNode.connect→destination');
+      } catch(e) { console.warn('[Daisy] AudioNode capture error:', e); }
+    }
+    return result;
+  };
+})();
+
+/* Method 3: HTMLMediaElement.srcObject — intercept audio elements getting streams */
+(function _interceptSrcObject() {
+  const desc = Object.getOwnPropertyDescriptor(HTMLMediaElement.prototype, 'srcObject');
+  if (!desc || !desc.set) return;
+  const origSet = desc.set;
+
+  Object.defineProperty(HTMLMediaElement.prototype, 'srcObject', {
+    get: desc.get,
+    set: function(stream) {
+      origSet.call(this, stream);
+      /* Skip our own Simli elements and non-audio */
+      if (stream instanceof MediaStream
+          && !_daisyAudioCaptured
+          && !_simliConnecting
+          && this.id !== 'daisyAudio'
+          && this.id !== 'daisyVideo') {
+        const tracks = stream.getAudioTracks();
+        if (tracks.length > 0) {
+          console.log('[Daisy] HTMLMediaElement.srcObject set on <' + this.tagName.toLowerCase() + '> id=' + (this.id || '(none)'));
+          /* Short delay to let Simli finish setup first */
+          setTimeout(() => {
+            if (!_daisyAudioCaptured && !_simliConnecting) {
+              _onDaisyAudioCaptured(tracks[0], 'HTMLMediaElement.srcObject');
+            }
+          }, 200);
+        }
+      }
+    },
+    configurable: true,
+    enumerable: true
+  });
+})();
+
+/* Method 4: Periodic scan for un-captured <audio> elements playing audio */
+let _audioScanInterval = null;
+function _startAudioScan() {
+  if (_audioScanInterval) return;
+  _audioScanInterval = setInterval(() => {
+    if (_daisyAudioCaptured || !_elevenLabsActive) return;
+    /* Look for any playing <audio> element we haven't seen */
+    document.querySelectorAll('audio').forEach(el => {
+      if (el.id === 'daisyAudio') return; /* skip Simli's element */
+      if (el.paused) return;
+      if (el.srcObject instanceof MediaStream) {
+        const tracks = el.srcObject.getAudioTracks();
+        if (tracks.length > 0 && !_daisyAudioCaptured) {
+          console.log('[Daisy] Found playing <audio> element via scan');
+          _onDaisyAudioCaptured(tracks[0], 'audio-element-scan');
+        }
+      } else if (el.captureStream) {
+        /* Element playing from src/blob — use captureStream API */
+        try {
+          const stream = el.captureStream();
+          const tracks = stream.getAudioTracks();
+          if (tracks.length > 0 && !_daisyAudioCaptured) {
+            console.log('[Daisy] Found playing <audio> via captureStream()');
+            _onDaisyAudioCaptured(tracks[0], 'captureStream');
+          }
+        } catch(e) { /* captureStream may not be available */ }
+      }
+    });
+    /* Also scan shadow DOMs */
+    document.querySelectorAll('elevenlabs-convai').forEach(widget => {
+      if (!widget.shadowRoot) return;
+      widget.shadowRoot.querySelectorAll('audio, video').forEach(el => {
+        if (el.paused) return;
+        if (el.srcObject instanceof MediaStream) {
+          const tracks = el.srcObject.getAudioTracks();
+          if (tracks.length > 0 && !_daisyAudioCaptured) {
+            console.log('[Daisy] Found <' + el.tagName.toLowerCase() + '> in ElevenLabs shadow DOM');
+            _onDaisyAudioCaptured(tracks[0], 'shadow-dom-scan');
+          }
+        } else if (el.captureStream) {
+          try {
+            const stream = el.captureStream();
+            const tracks = stream.getAudioTracks();
+            if (tracks.length > 0 && !_daisyAudioCaptured) {
+              console.log('[Daisy] captureStream from ElevenLabs shadow DOM');
+              _onDaisyAudioCaptured(tracks[0], 'shadow-dom-captureStream');
+            }
+          } catch(e) {}
+        }
+      });
+    });
+  }, 1000);
+}
+function _stopAudioScan() {
+  if (_audioScanInterval) { clearInterval(_audioScanInterval); _audioScanInterval = null; }
+}
 
 /* ── Simli Avatar Init ── */
 async function _initSimliAvatar() {
@@ -6593,6 +6724,8 @@ function _cleanupSimli() {
   _simliConnecting = false;
   _capturedAudioTrack = null;
   _daisyAudioCaptured = false;
+  _elevenLabsActive = false;
+  _stopAudioScan();
   _cleanupSilentTrack();
   const videoEl = document.getElementById('daisyVideo');
   if (videoEl) { videoEl.style.display = 'none'; videoEl.srcObject = null; }
@@ -6737,7 +6870,8 @@ function loadElevenLabs() {
     const container = document.getElementById('voiceWidgetContainer');
     const el = document.createElement('elevenlabs-convai');
     el.setAttribute('agent-id', 'agent_9201m47wf1t0e7wt6djfassmqy6t');
-    el.setAttribute('avatar-id', '06ylnnHRpk6DfMBKs8U2');
+    /* avatar-id removed — we use Simli for the visual avatar, not ElevenLabs' built-in one.
+       Removing it avoids forcing the widget into avatar mode which may change audio delivery. */
     container.appendChild(el);
     const sc = document.createElement('script');
     sc.src = 'https://elevenlabs.io/convai-widget/index.js';
@@ -7315,6 +7449,12 @@ function initChatLogging() {
   widget.addEventListener('elevenlabs-convai:call-started', () => {
     chatSessionId = 'chat_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8);
     chatMessages = [];
+    /* Activate audio capture for lip sync */
+    _elevenLabsActive = true;
+    _daisyAudioCaptured = false;
+    _capturedAudioTrack = null;
+    _startAudioScan();
+    console.log('[Daisy] ElevenLabs conversation started — audio capture armed');
     const saved = getSavedParent();
     db.from('chat_logs').insert({
       session_id: chatSessionId,
@@ -7326,6 +7466,8 @@ function initChatLogging() {
   });
 
   widget.addEventListener('elevenlabs-convai:call-ended', () => {
+    _elevenLabsActive = false;
+    _stopAudioScan();
     if (chatSessionId && chatMessages.length > 0) {
       const summary = chatMessages.slice(0, 3).map(m => m.text.slice(0, 60)).join(' → ');
       db.from('chat_logs').update({
