@@ -1923,8 +1923,25 @@ body.dark-mode .meet-quote { background: rgba(212,168,83,0.08); border-color: rg
   color: var(--charcoal); line-height: 1;
 }
 .price-note { font-size: 14px; font-weight: 700; color: var(--gold); margin-top: 4px; }
-.price-compare { font-size: 12px; color: var(--gray); margin-top: 8px; font-weight: 600; font-style: italic; opacity: 0.75; }
-.price-details { font-size: 12px; color: var(--gray); margin-top: 16px; line-height: 1.7; }
+.price-compare { font-size: 13px; color: #777; margin-top: 10px; font-weight: 600; font-style: italic; }
+.price-details { font-size: 13px; color: #666; margin-top: 16px; line-height: 1.7; }
+
+/* ═══ PARENT SPOTLIGHT ═══ */
+.parent-spotlight {
+  text-align: center; padding: 36px 24px 28px; background: var(--white);
+}
+.parent-spotlight-stars {
+  color: var(--gold); font-size: 16px; letter-spacing: 3px; margin-bottom: 12px;
+}
+.parent-spotlight-quote {
+  font-family: var(--font-display); font-size: 21px; font-weight: 500;
+  color: var(--charcoal); line-height: 1.5; max-width: 440px;
+  margin: 0 auto; font-style: italic;
+}
+.parent-spotlight-attr {
+  font-size: 12px; font-weight: 700; color: var(--gold); margin-top: 14px;
+  letter-spacing: 0.3px;
+}
 
 /* ═══ FAQ ═══ */
 .faq-section { background: var(--white); padding: 40px 20px; }
@@ -3255,8 +3272,10 @@ body.dark-mode .price-spotlight::before {
 }
 body.dark-mode .price-amount { color: #F0EDE8; }
 body.dark-mode .price-note { color: var(--gold-light); }
-body.dark-mode .price-compare { color: #9E9A92; }
-body.dark-mode .price-details { color: #9E9A92; }
+body.dark-mode .price-compare { color: #B8B4AE; }
+body.dark-mode .price-details { color: #B8B4AE; }
+body.dark-mode .parent-spotlight { background: #222226; }
+body.dark-mode .parent-spotlight-quote { color: #F0EDE8; }
 body.dark-mode .ripple-stats .stat-num { color: #F0EDE8; }
 body.dark-mode .stat-zero-cancel.counted { color: var(--green) !important; }
 body.dark-mode .confirm-expect-step { color: #F0EDE8; }
@@ -3707,6 +3726,13 @@ body.dark-mode .scenario-pick:hover, body.dark-mode .scenario-pick.active { bord
   <svg viewBox="0 0 1440 48" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M0,32 C240,48 480,8 720,24 C960,40 1200,12 1440,28 L1440,48 L0,48 Z" fill="currentColor"/>
   </svg>
+</div>
+
+<!-- ═══ PARENT SPOTLIGHT ═══ -->
+<div class="parent-spotlight reveal">
+  <div class="parent-spotlight-stars">★★★★★</div>
+  <p class="parent-spotlight-quote">"Poppy is incredible with our kids. They literally ask for her every weekend."</p>
+  <p class="parent-spotlight-attr">— Sarah M., Tahoe Donner · Booked 8 times</p>
 </div>
 
 <!-- ═══ HOW IT WORKS ═══ -->
