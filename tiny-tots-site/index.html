@@ -6447,7 +6447,7 @@ let _elevenLabsActive = false; /* true once ElevenLabs conversation starts */
 
 /* Central handler — called by whichever intercept fires first */
 function _onDaisyAudioCaptured(track, source) {
-  if (_daisyAudioCaptured || _simliConnecting) return;
+  if (_daisyAudioCaptured || _simliConnecting || !_elevenLabsActive) return;
   if (!track || track.kind !== 'audio') return;
 
   _capturedAudioTrack = track;
@@ -6488,7 +6488,7 @@ function _onDaisyAudioCaptured(track, source) {
   window.RTCPeerConnection = function(...args) {
     const pc = new Orig(...args);
     pc.addEventListener('track', (evt) => {
-      if (evt.track.kind === 'audio' && !_daisyAudioCaptured && !_simliConnecting) {
+      if (evt.track.kind === 'audio' && !_daisyAudioCaptured && !_simliConnecting && _elevenLabsActive) {
         console.log('[Daisy] RTCPeerConnection track event fired');
         _onDaisyAudioCaptured(evt.track, 'RTCPeerConnection');
       }
@@ -6514,6 +6514,7 @@ function _onDaisyAudioCaptured(track, source) {
     if (dest instanceof AudioDestinationNode
         && !_daisyAudioCaptured
         && !_simliConnecting
+        && _elevenLabsActive
         && this.context !== _silentAudioCtx) {
       try {
         console.log('[Daisy] AudioNode.connect → destination detected');
@@ -6542,14 +6543,15 @@ function _onDaisyAudioCaptured(track, source) {
       if (stream instanceof MediaStream
           && !_daisyAudioCaptured
           && !_simliConnecting
+          && _elevenLabsActive
           && this.id !== 'daisyAudio'
           && this.id !== 'daisyVideo') {
         const tracks = stream.getAudioTracks();
         if (tracks.length > 0) {
           console.log('[Daisy] HTMLMediaElement.srcObject set on <' + this.tagName.toLowerCase() + '> id=' + (this.id || '(none)'));
-          /* Short delay to let Simli finish setup first */
+          /* Short delay to let connection stabilize */
           setTimeout(() => {
-            if (!_daisyAudioCaptured && !_simliConnecting) {
+            if (!_daisyAudioCaptured && !_simliConnecting && _elevenLabsActive) {
               _onDaisyAudioCaptured(tracks[0], 'HTMLMediaElement.srcObject');
             }
           }, 200);
@@ -6616,6 +6618,46 @@ function _startAudioScan() {
 }
 function _stopAudioScan() {
   if (_audioScanInterval) { clearInterval(_audioScanInterval); _audioScanInterval = null; }
+}
+
+/* Method 5: MutationObserver on ElevenLabs shadow DOM — watch for new audio elements */
+let _shadowObserver = null;
+function _startShadowObserver() {
+  if (_shadowObserver) return;
+  const widget = document.querySelector('elevenlabs-convai');
+  if (!widget || !widget.shadowRoot) return;
+  _shadowObserver = new MutationObserver((mutations) => {
+    if (_daisyAudioCaptured || !_elevenLabsActive) return;
+    for (const m of mutations) {
+      for (const node of m.addedNodes) {
+        if (!(node instanceof HTMLElement)) continue;
+        /* Check the added node and its children for audio/video elements */
+        const elements = node.tagName === 'AUDIO' || node.tagName === 'VIDEO'
+          ? [node] : Array.from(node.querySelectorAll('audio, video'));
+        for (const el of elements) {
+          const checkEl = () => {
+            if (_daisyAudioCaptured) return;
+            if (el.srcObject instanceof MediaStream) {
+              const tracks = el.srcObject.getAudioTracks();
+              if (tracks.length > 0) {
+                console.log('[Daisy] MutationObserver: new <' + el.tagName.toLowerCase() + '> in shadow DOM');
+                _onDaisyAudioCaptured(tracks[0], 'shadow-dom-observer');
+              }
+            }
+          };
+          /* Check immediately and after a short delay (srcObject may be set after DOM insert) */
+          checkEl();
+          setTimeout(checkEl, 300);
+          setTimeout(checkEl, 1000);
+        }
+      }
+    }
+  });
+  _shadowObserver.observe(widget.shadowRoot, { childList: true, subtree: true });
+  console.log('[Daisy] MutationObserver watching ElevenLabs shadow DOM');
+}
+function _stopShadowObserver() {
+  if (_shadowObserver) { _shadowObserver.disconnect(); _shadowObserver = null; }
 }
 
 /* ── Simli Avatar Init ── */
@@ -7454,6 +7496,7 @@ function initChatLogging() {
     _daisyAudioCaptured = false;
     _capturedAudioTrack = null;
     _startAudioScan();
+    _startShadowObserver();
     console.log('[Daisy] ElevenLabs conversation started — audio capture armed');
     const saved = getSavedParent();
     db.from('chat_logs').insert({
@@ -7468,6 +7511,7 @@ function initChatLogging() {
   widget.addEventListener('elevenlabs-convai:call-ended', () => {
     _elevenLabsActive = false;
     _stopAudioScan();
+    _stopShadowObserver();
     if (chatSessionId && chatMessages.length > 0) {
       const summary = chatMessages.slice(0, 3).map(m => m.text.slice(0, 60)).join(' → ');
       db.from('chat_logs').update({
