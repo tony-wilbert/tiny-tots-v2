@@ -6384,11 +6384,20 @@ function toggleFaq(btn) {
 }
 
 
-/* ═══ DAISY REAL-TIME LIP-SYNC AVATAR ═══ */
+/* ═══ DAISY REAL-TIME LIP-SYNC AVATAR (SIMLI + CANVAS FALLBACK) ═══ */
 const _DAISY_STILL_URI = 'daisy-still.jpg';
+const _SIMLI_FACE_ID = 'afdb6a3e-3939-40aa-92df-01604c23101c'; /* Zahra */
+const _SIMLI_TOKEN_URL = 'https://udhgdtiezzzudczckaaw.supabase.co/functions/v1/simli-token';
+
+/* ── Simli State ── */
+let _simliClient = null;
+let _simliReady = false;
+let _simliLoading = false;
+let _SimliClass = null; /* cached after first dynamic import */
+let _capturedAudioTrack = null;
 
 /* ── WebRTC Audio Intercept ── */
-/* Monkey-patch RTCPeerConnection to capture remote audio for real-time analysis */
+/* Monkey-patch RTCPeerConnection to capture ElevenLabs remote audio track */
 let _daisyAnalyser = null;
 let _daisyAudioCtx = null;
 let _daisyFreqData = null;
@@ -6405,6 +6414,19 @@ let _daisyAudioCaptured = false;
     pc.addEventListener('track', (evt) => {
       if (evt.track.kind === 'audio' && !_daisyAudioCaptured) {
         try {
+          /* Store raw track reference for Simli */
+          _capturedAudioTrack = evt.track;
+          console.log('[Daisy] Audio track captured from ElevenLabs');
+
+          /* If Simli is already connected, pipe audio immediately */
+          if (_simliClient && _simliReady) {
+            try {
+              _simliClient.listenToMediastreamTrack(_capturedAudioTrack);
+              console.log('[Daisy] Audio piped to Simli (immediate)');
+            } catch(e) { console.warn('[Daisy] Simli pipe failed:', e); }
+          }
+
+          /* Also set up local analyser for canvas fallback lip sync */
           if (!_daisyAudioCtx) {
             _daisyAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
           }
@@ -6418,7 +6440,6 @@ let _daisyAudioCaptured = false;
           const source = _daisyAudioCtx.createMediaStreamSource(stream);
           source.connect(_daisyAnalyser);
           _daisyAudioCaptured = true;
-          console.log('[Daisy] Real-time audio captured for lip sync');
         } catch(e) { console.warn('[Daisy] Audio capture failed:', e); }
       }
     });
@@ -6426,7 +6447,6 @@ let _daisyAudioCaptured = false;
   };
   window.RTCPeerConnection.prototype = _OrigProto;
   if (window.webkitRTCPeerConnection) window.webkitRTCPeerConnection = window.RTCPeerConnection;
-  // Copy static props (generateCertificate, etc.)
   for (const k of Object.getOwnPropertyNames(_OrigRTC)) {
     if (k !== 'prototype' && k !== 'length' && k !== 'name') {
       try { window.RTCPeerConnection[k] = _OrigRTC[k]; } catch(e) {}
@@ -6434,15 +6454,111 @@ let _daisyAudioCaptured = false;
   }
 })();
 
-/* ── Canvas Lip-Sync Renderer ── */
+/* ── Simli Avatar Init ── */
+async function _initSimliAvatar() {
+  if (_simliLoading || _simliClient) return;
+  _simliLoading = true;
+
+  const videoEl = document.getElementById('daisyVideo');
+  const audioEl = document.getElementById('daisyAudio');
+  if (!videoEl || !audioEl) { _simliLoading = false; return; }
+
+  try {
+    /* 1. Load Simli SDK from CDN (cached after first import) */
+    if (!_SimliClass) {
+      console.log('[Daisy] Loading Simli SDK…');
+      const mod = await import('https://esm.sh/simli-client@3.0.2');
+      _SimliClass = mod.SimliClient;
+      console.log('[Daisy] Simli SDK loaded');
+    }
+
+    /* 2. Get session token from Supabase Edge Function */
+    console.log('[Daisy] Fetching Simli session token…');
+    const res = await fetch(_SIMLI_TOKEN_URL, { method: 'POST' });
+    if (!res.ok) {
+      const errBody = await res.text();
+      throw new Error('Token fetch ' + res.status + ': ' + errBody);
+    }
+    const tokenData = await res.json();
+    if (!tokenData.session_token) throw new Error('No session_token in response: ' + JSON.stringify(tokenData));
+    console.log('[Daisy] Session token received');
+
+    /* 3. Create SimliClient — livekit mode, no ICE servers needed */
+    _simliClient = new _SimliClass(
+      tokenData.session_token,
+      videoEl,
+      audioEl,
+      null,           /* iceServers — null for livekit */
+      1,              /* LogLevel (0=DEBUG 1=INFO) */
+      'livekit',      /* transport */
+      'websockets',   /* signaling */
+      'wss://api.simli.ai',
+      3000            /* audioBufferSize */
+    );
+
+    _simliClient.on('start', () => {
+      _simliReady = true;
+      console.log('[Daisy] Simli connected — avatar ready');
+      /* Show video, hide canvas fallback */
+      videoEl.style.display = 'block';
+      const canvas = document.getElementById('daisyCanvas');
+      if (canvas) canvas.style.display = 'none';
+      /* If audio track already captured, pipe it now */
+      if (_capturedAudioTrack) {
+        try {
+          _simliClient.listenToMediastreamTrack(_capturedAudioTrack);
+          console.log('[Daisy] Audio piped to Simli (deferred)');
+        } catch(e) { console.warn('[Daisy] Simli pipe failed:', e); }
+      }
+    });
+
+    _simliClient.on('error', (err) => {
+      console.error('[Daisy] Simli error:', err);
+      _showCanvasFallback();
+    });
+
+    /* 4. Connect */
+    console.log('[Daisy] Connecting to Simli…');
+    await _simliClient.start();
+
+  } catch(e) {
+    console.error('[Daisy] Simli init failed:', e);
+    _simliLoading = false;
+    _simliClient = null;
+    _simliReady = false;
+    _showCanvasFallback();
+  }
+}
+
+function _showCanvasFallback() {
+  const canvas = document.getElementById('daisyCanvas');
+  const videoEl = document.getElementById('daisyVideo');
+  if (canvas) canvas.style.display = 'block';
+  if (videoEl) videoEl.style.display = 'none';
+}
+
+function _cleanupSimli() {
+  if (_simliClient) {
+    try { _simliClient.stop(); } catch(e) {}
+    _simliClient = null;
+  }
+  _simliReady = false;
+  _simliLoading = false;
+  _capturedAudioTrack = null;
+  _daisyAudioCaptured = false;
+  const videoEl = document.getElementById('daisyVideo');
+  if (videoEl) { videoEl.style.display = 'none'; videoEl.srcObject = null; }
+  const canvas = document.getElementById('daisyCanvas');
+  if (canvas) canvas.style.display = 'block';
+}
+
+/* ── Canvas Fallback Renderer (still image + simple mouth animation) ── */
 let _daisyImg = null;
 let _daisyImgLoaded = false;
 let _daisyAnimating = false;
 let _daisySpeaking = false;
-let _daisySmooth = 0; // smoothed amplitude 0-1
-let _daisyMouthPhase = 0; // phase for simulated lip sync fallback
+let _daisySmooth = 0;
 const _DAISY_CANVAS_SIZE = 300;
-// Mouth region calibration — positioned for the generated Daisy face
 const _MOUTH = { cx: 0.50, cy: 0.73, w: 0.22, h: 0.06 };
 
 function _initDaisyCanvas() {
@@ -6452,31 +6568,24 @@ function _initDaisyCanvas() {
   canvas.height = _DAISY_CANVAS_SIZE;
   _daisyImg = new Image();
   _daisyImg.crossOrigin = 'anonymous';
-  _daisyImg.onload = () => {
-    _daisyImgLoaded = true;
-    _drawDaisyFrame(canvas); // draw still image initially
-  };
+  _daisyImg.onload = () => { _daisyImgLoaded = true; _drawDaisyFrame(canvas); };
   _daisyImg.src = _DAISY_STILL_URI;
 }
 
-/* Get real-time audio amplitude 0-1 */
 function _getDaisyAmplitude() {
-  if (!_daisyAnalyser || !_daisyTimeData) return -1; // no audio captured
+  if (!_daisyAnalyser || !_daisyTimeData) return -1;
   _daisyAnalyser.getByteTimeDomainData(_daisyTimeData);
   let sum = 0;
   for (let i = 0; i < _daisyTimeData.length; i++) {
-    const v = (_daisyTimeData[i] - 128) / 128;
-    sum += v * v;
+    const v = (_daisyTimeData[i] - 128) / 128; sum += v * v;
   }
   return Math.sqrt(sum / _daisyTimeData.length);
 }
 
-/* Get frequency bands for mouth shape variation */
 function _getDaisyFreqBands() {
   if (!_daisyAnalyser || !_daisyFreqData) return null;
   _daisyAnalyser.getByteFrequencyData(_daisyFreqData);
   const n = _daisyFreqData.length;
-  // Split into low (jaw), mid (lips), high (consonants)
   let lo = 0, mid = 0, hi = 0;
   const third = Math.floor(n / 3);
   for (let i = 0; i < third; i++) lo += _daisyFreqData[i];
@@ -6486,116 +6595,63 @@ function _getDaisyFreqBands() {
   return { lo, mid, hi };
 }
 
-/* Simulated lip-sync fallback — multi-frequency sine waves for natural mouth movement */
 function _getSimulatedAmplitude(t) {
   if (!_daisySpeaking) return 0;
   const s = t / 1000;
-  // Layer multiple frequencies for organic, non-repetitive motion
   return Math.max(0,
-    Math.sin(s * 11.7) * 0.28 +
-    Math.sin(s * 7.1 + 1.2) * 0.22 +
-    Math.sin(s * 18.3 + 0.7) * 0.15 +
-    Math.sin(s * 3.4 + 2.1) * 0.18 +
-    Math.sin(s * 25 + 0.3) * 0.08 +
-    (Math.random() - 0.5) * 0.06 + 0.05
+    Math.sin(s * 11.7) * 0.28 + Math.sin(s * 7.1 + 1.2) * 0.22 +
+    Math.sin(s * 18.3 + 0.7) * 0.15 + Math.sin(s * 3.4 + 2.1) * 0.18 +
+    Math.sin(s * 25 + 0.3) * 0.08 + (Math.random() - 0.5) * 0.06 + 0.05
   );
 }
 
-/* Draw one frame of the lip-synced avatar */
 function _drawDaisyFrame(canvas) {
   if (!_daisyImgLoaded || !canvas) return;
   const ctx = canvas.getContext('2d');
   const S = _DAISY_CANVAS_SIZE;
   const t = performance.now();
-
-  // Get audio level — real or simulated
   let rawAmp = _getDaisyAmplitude();
   const useReal = rawAmp >= 0;
   if (!useReal) rawAmp = _getSimulatedAmplitude(t);
   const targetAmp = _daisySpeaking ? Math.min(rawAmp * (useReal ? 3.5 : 1), 1) : 0;
-
-  // Smooth amplitude for natural movement
   _daisySmooth += (targetAmp - _daisySmooth) * 0.25;
   const amp = _daisySmooth;
-
-  // Get frequency bands for mouth shape variation (if real audio)
   const freq = useReal ? _getDaisyFreqBands() : null;
   const mouthWidth = freq ? (0.7 + freq.mid * 0.6) : (0.7 + Math.sin(t/1000 * 5) * 0.15 + 0.15);
   const jawDrop = freq ? (freq.lo * 0.6 + amp * 0.4) : amp;
-
   ctx.clearRect(0, 0, S, S);
   ctx.save();
-
-  // Clip to circle
-  ctx.beginPath();
-  ctx.arc(S/2, S/2, S/2, 0, Math.PI * 2);
-  ctx.clip();
-
-  // Draw face — split into upper and lower halves for jaw movement
-  const splitY = S * 0.68; // split just above the mouth
-  const jawOffset = jawDrop * amp * 4; // max 4px jaw drop
-
-  // Upper face — static
-  ctx.drawImage(_daisyImg, 0, 0, _daisyImg.naturalWidth, _daisyImg.naturalHeight * 0.68,
-                0, 0, S, splitY);
-
-  // Lower face — shifts down based on jaw drop
-  ctx.drawImage(_daisyImg, 0, _daisyImg.naturalHeight * 0.68,
-                _daisyImg.naturalWidth, _daisyImg.naturalHeight * 0.32,
-                0, splitY + jawOffset, S, S * 0.32 + jawOffset * 0.5);
-
-  // Draw mouth shape in the gap created by jaw drop
+  ctx.beginPath(); ctx.arc(S/2, S/2, S/2, 0, Math.PI * 2); ctx.clip();
+  const splitY = S * 0.68;
+  const jawOffset = jawDrop * amp * 4;
+  ctx.drawImage(_daisyImg, 0, 0, _daisyImg.naturalWidth, _daisyImg.naturalHeight * 0.68, 0, 0, S, splitY);
+  ctx.drawImage(_daisyImg, 0, _daisyImg.naturalHeight * 0.68, _daisyImg.naturalWidth, _daisyImg.naturalHeight * 0.32, 0, splitY + jawOffset, S, S * 0.32 + jawOffset * 0.5);
   if (amp > 0.02) {
-    const mcx = S * _MOUTH.cx;
-    const mcy = S * _MOUTH.cy + jawOffset * 0.4;
-    const mw = S * _MOUTH.w * mouthWidth;
-    const mh = S * _MOUTH.h + amp * S * 0.06;
-
-    // Dark mouth interior
-    ctx.fillStyle = `rgba(60, 30, 25, ${0.4 + amp * 0.5})`;
-    ctx.beginPath();
-    ctx.ellipse(mcx, mcy, mw * 0.85, mh * (0.3 + amp * 0.7), 0, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Teeth hint when mouth is open enough
-    if (amp > 0.15) {
-      ctx.fillStyle = `rgba(240, 235, 225, ${(amp - 0.15) * 1.5})`;
-      ctx.beginPath();
-      ctx.ellipse(mcx, mcy - mh * 0.15, mw * 0.6, mh * 0.25, 0, 0, Math.PI * 2);
-      ctx.fill();
-    }
-
-    // Upper lip
-    ctx.strokeStyle = `rgba(180, 110, 90, ${0.3 + amp * 0.4})`;
-    ctx.lineWidth = 1.5;
-    ctx.beginPath();
-    ctx.moveTo(mcx - mw, mcy - mh * 0.2);
-    ctx.quadraticCurveTo(mcx - mw * 0.3, mcy - mh * (0.6 + amp * 0.3), mcx, mcy - mh * 0.3);
-    ctx.quadraticCurveTo(mcx + mw * 0.3, mcy - mh * (0.6 + amp * 0.3), mcx + mw, mcy - mh * 0.2);
-    ctx.stroke();
-
-    // Lower lip
-    ctx.beginPath();
-    ctx.moveTo(mcx - mw * 0.9, mcy + mh * 0.1);
-    ctx.quadraticCurveTo(mcx, mcy + mh * (0.5 + amp * 0.5), mcx + mw * 0.9, mcy + mh * 0.1);
-    ctx.stroke();
+    const mcx = S * _MOUTH.cx, mcy = S * _MOUTH.cy + jawOffset * 0.4;
+    const mw = S * _MOUTH.w * mouthWidth, mh = S * _MOUTH.h + amp * S * 0.06;
+    ctx.fillStyle = `rgba(60,30,25,${0.4+amp*0.5})`; ctx.beginPath();
+    ctx.ellipse(mcx, mcy, mw*0.85, mh*(0.3+amp*0.7), 0, 0, Math.PI*2); ctx.fill();
+    if (amp > 0.15) { ctx.fillStyle = `rgba(240,235,225,${(amp-0.15)*1.5})`; ctx.beginPath(); ctx.ellipse(mcx, mcy-mh*0.15, mw*0.6, mh*0.25, 0, 0, Math.PI*2); ctx.fill(); }
+    ctx.strokeStyle = `rgba(180,110,90,${0.3+amp*0.4})`; ctx.lineWidth = 1.5; ctx.beginPath();
+    ctx.moveTo(mcx-mw, mcy-mh*0.2); ctx.quadraticCurveTo(mcx-mw*0.3, mcy-mh*(0.6+amp*0.3), mcx, mcy-mh*0.3);
+    ctx.quadraticCurveTo(mcx+mw*0.3, mcy-mh*(0.6+amp*0.3), mcx+mw, mcy-mh*0.2); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(mcx-mw*0.9, mcy+mh*0.1);
+    ctx.quadraticCurveTo(mcx, mcy+mh*(0.5+amp*0.5), mcx+mw*0.9, mcy+mh*0.1); ctx.stroke();
   }
-
   ctx.restore();
-
-  // Update level bar
   const fill = document.getElementById('daisyLevelFill');
   if (fill) fill.style.width = (amp * 100) + '%';
-
   if (_daisyAnimating) requestAnimationFrame(() => _drawDaisyFrame(canvas));
 }
 
 function _startDaisyLipSync() {
   _daisySpeaking = true;
-  _daisyAnimating = true;
   const wrap = document.getElementById('daisyAvatarWrap');
   if (wrap) wrap.classList.add('speaking');
-  // Resume audio context if suspended (needs user gesture)
+  /* If Simli is active, it handles lip sync via live video — nothing else needed */
+  if (_simliReady && _simliClient) { console.log('[Daisy] Simli handling lip sync'); return; }
+  /* Canvas fallback */
+  _daisyAnimating = true;
   if (_daisyAudioCtx && _daisyAudioCtx.state === 'suspended') _daisyAudioCtx.resume();
   const canvas = document.getElementById('daisyCanvas');
   _drawDaisyFrame(canvas);
@@ -6605,20 +6661,18 @@ function _stopDaisyLipSync() {
   _daisySpeaking = false;
   const wrap = document.getElementById('daisyAvatarWrap');
   if (wrap) wrap.classList.remove('speaking');
-  // Let animation wind down naturally
+  /* If Simli is active, face goes idle automatically */
+  if (_simliReady && _simliClient) { console.log('[Daisy] Simli idle'); return; }
+  /* Canvas fallback wind-down */
   setTimeout(() => {
     if (!_daisySpeaking) {
       _daisyAnimating = false;
-      // Redraw still image
       const canvas = document.getElementById('daisyCanvas');
       if (canvas && _daisyImgLoaded) {
-        const ctx = canvas.getContext('2d');
-        const S = _DAISY_CANVAS_SIZE;
-        ctx.clearRect(0, 0, S, S);
-        ctx.save();
+        const ctx = canvas.getContext('2d'); const S = _DAISY_CANVAS_SIZE;
+        ctx.clearRect(0, 0, S, S); ctx.save();
         ctx.beginPath(); ctx.arc(S/2, S/2, S/2, 0, Math.PI*2); ctx.clip();
-        ctx.drawImage(_daisyImg, 0, 0, S, S);
-        ctx.restore();
+        ctx.drawImage(_daisyImg, 0, 0, S, S); ctx.restore();
       }
       const fill = document.getElementById('daisyLevelFill');
       if (fill) fill.style.width = '0%';
@@ -6780,11 +6834,14 @@ function toggleVoice() {
 }
 
 /* Initialize Daisy canvas avatar on first voice modal open */
-let _daisyAvatarLoaded = false;
+let _daisyCanvasInited = false;
 function _loadDaisyAvatar() {
-  if (_daisyAvatarLoaded) return;
-  _daisyAvatarLoaded = true;
-  _initDaisyCanvas();
+  if (!_daisyCanvasInited) {
+    _daisyCanvasInited = true;
+    _initDaisyCanvas();
+  }
+  /* Start Simli connection for each session (client can't be reused) */
+  _initSimliAvatar();
 }
 
 /* Close modal without necessarily ending a call */
@@ -6798,8 +6855,9 @@ function endVoiceCall() {
   modal.setAttribute('aria-hidden', 'true');
   document.body.style.overflow = '';
   if (modal._escHandler) { document.removeEventListener('keydown', modal._escHandler); modal._escHandler = null; }
-  // Stop Daisy canvas lip sync
+  // Stop Daisy lip sync + clean up Simli
   _stopDaisyLipSync();
+  _cleanupSimli();
   // Restore focus to avatar
   const avatar = document.getElementById('avatarWrap');
   if (avatar) avatar.focus();
@@ -8219,6 +8277,8 @@ requestAnimationFrame(() => {
     <button class="voice-modal-close" onclick="closeVoiceModal()" aria-label="Close">&times;</button>
     <div class="voice-modal-name">Daisy</div>
     <div class="daisy-avatar-wrap" id="daisyAvatarWrap">
+      <video id="daisyVideo" autoplay playsinline muted width="300" height="300" style="border-radius:50%;object-fit:cover;display:none;background:#1B1B1F;"></video>
+      <audio id="daisyAudio" autoplay muted style="display:none;"></audio>
       <canvas id="daisyCanvas" width="300" height="300"></canvas>
       <div class="daisy-glow-ring"></div>
       <div class="daisy-glow-ring"></div>
