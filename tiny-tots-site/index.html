@@ -6396,6 +6396,38 @@ let _simliLoading = false;
 let _SimliClass = null; /* cached after first dynamic import */
 let _capturedAudioTrack = null;
 
+/* ── Silent Audio Keepalive ── */
+/* Simli/livekit disconnects after ~15s with no audio input. We create a silent
+   MediaStreamTrack and pipe it immediately on connect to keep the session alive
+   until ElevenLabs starts sending real speech audio. */
+let _silentAudioCtx = null;
+let _silentTrack = null;
+
+function _createSilentTrack() {
+  if (_silentTrack && _silentTrack.readyState === 'live') return _silentTrack;
+  try {
+    _silentAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = _silentAudioCtx.createOscillator();
+    const gain = _silentAudioCtx.createGain();
+    gain.gain.value = 0;
+    osc.connect(gain);
+    const dest = _silentAudioCtx.createMediaStreamDestination();
+    gain.connect(dest);
+    osc.start();
+    _silentTrack = dest.stream.getAudioTracks()[0];
+    console.log('[Daisy] Silent keepalive track created');
+    return _silentTrack;
+  } catch(e) {
+    console.warn('[Daisy] Failed to create silent track:', e);
+    return null;
+  }
+}
+
+function _cleanupSilentTrack() {
+  if (_silentTrack) { try { _silentTrack.stop(); } catch(e) {} _silentTrack = null; }
+  if (_silentAudioCtx) { _silentAudioCtx.close().catch(() => {}); _silentAudioCtx = null; }
+}
+
 /* ── WebRTC Audio Intercept ── */
 /* Monkey-patch RTCPeerConnection to capture ElevenLabs remote audio track */
 let _daisyAnalyser = null;
@@ -6505,12 +6537,21 @@ async function _initSimliAvatar() {
       videoEl.style.display = 'block';
       const canvas = document.getElementById('daisyCanvas');
       if (canvas) canvas.style.display = 'none';
-      /* If audio track already captured, pipe it now */
+      /* If ElevenLabs audio already captured, pipe it now */
       if (_capturedAudioTrack) {
         try {
           _simliClient.listenToMediastreamTrack(_capturedAudioTrack);
-          console.log('[Daisy] Audio piped to Simli (deferred)');
+          console.log('[Daisy] ElevenLabs audio piped to Simli (deferred)');
         } catch(e) { console.warn('[Daisy] Simli pipe failed:', e); }
+      } else {
+        /* No ElevenLabs audio yet — pipe silent keepalive to prevent 15s timeout */
+        const silent = _createSilentTrack();
+        if (silent) {
+          try {
+            _simliClient.listenToMediastreamTrack(silent);
+            console.log('[Daisy] Silent keepalive piped to Simli');
+          } catch(e) { console.warn('[Daisy] Silent keepalive pipe failed:', e); }
+        }
       }
     });
 
@@ -6552,6 +6593,7 @@ function _cleanupSimli() {
   _simliConnecting = false;
   _capturedAudioTrack = null;
   _daisyAudioCaptured = false;
+  _cleanupSilentTrack();
   const videoEl = document.getElementById('daisyVideo');
   if (videoEl) { videoEl.style.display = 'none'; videoEl.srcObject = null; }
   const canvas = document.getElementById('daisyCanvas');
