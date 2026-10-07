@@ -462,7 +462,7 @@ body.dark-mode .daisy-hint::after { background: #3A3A3E; }
 .day-num { font-size: 18px; font-weight: 800; color: var(--charcoal); }
 .avail-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--green); }
 .unavail-dot { width: 5px; height: 5px; border-radius: 50%; background: transparent; }
-.pill-time { font-size: 9px; font-weight: 700; color: var(--gold); letter-spacing: 0.2px; white-space: nowrap; line-height: 1; }
+.pill-time { font-size: 10px; font-weight: 800; color: var(--gold); letter-spacing: 0.3px; white-space: nowrap; line-height: 1; background: rgba(212,168,83,0.08); padding: 2px 6px; border-radius: 6px; margin-top: 2px; }
 .day-pill.selected .pill-time { color: var(--gold-light); }
 .day-pill:not(.available) { opacity: 0.35; position: relative; }
 .day-pill:not(.available):hover { border-color: transparent; cursor: pointer; }
@@ -483,6 +483,14 @@ body.dark-mode .daisy-hint::after { background: #3A3A3E; }
 .unavail-tip .tip-suggest { color: var(--gold); font-weight: 700; }
 body.dark-mode .unavail-tip { background: #3A3A3E; box-shadow: 0 4px 16px rgba(0,0,0,0.4); }
 body.dark-mode .unavail-tip::after { border-top-color: #3A3A3E; }
+/* Week at a glance */
+.week-glance {
+  text-align: center; padding: 8px 20px 4px; font-size: 13px; font-weight: 600;
+  color: var(--gray); line-height: 1.5;
+}
+.week-glance .wg-day { color: var(--gold); font-weight: 800; }
+.week-glance .wg-time { color: rgba(212,168,83,0.7); font-size: 11px; font-weight: 600; }
+body.dark-mode .week-glance { color: rgba(255,255,255,0.5); }
 .day-pill.available:active { transform: scale(0.93); }
 .day-pill.available { transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), border-color 0.2s; box-shadow: 0 0 0 0 rgba(212,168,83,0); animation: pill-glow 3s ease-in-out infinite; }
 /* Earliest-available badge */
@@ -3374,8 +3382,11 @@ body.dark-mode .book-guest .form-row input.field-invalid { border-color: var(--r
 .update-bubble {
   max-width: 85%; padding: 10px 14px; border-radius: 16px 16px 16px 4px;
   font-size: 13px; line-height: 1.5; text-align: left; margin-bottom: 8px;
-  opacity: 0; transform: translateY(12px) scale(0.95);
-  transition: opacity 0.4s ease, transform 0.4s cubic-bezier(.22,1,.36,1);
+  opacity: 0; transform: translateY(8px) scale(0.97);
+  transition: opacity 0.35s ease, transform 0.35s cubic-bezier(.22,1,.36,1);
+}
+.update-bubble.pre-visible {
+  opacity: 1; transform: translateY(0) scale(1);
 }
 .update-bubble.visible {
   opacity: 1; transform: translateY(0) scale(1);
@@ -3741,6 +3752,7 @@ body.dark-mode .scenario-pick:hover, body.dark-mode .scenario-pick.active { bord
     <span class="live-dot"></span> Quick pick — next available
   </div>
   <div class="quick-slots reveal" id="quickSlots" style="display:none;"></div>
+  <div class="week-glance reveal" id="weekGlance"></div>
   <div class="date-strip-wrap" id="dateStripWrap">
     <div class="date-strip" id="dateStrip"></div>
   </div>
@@ -5721,6 +5733,7 @@ async function loadAvailability(retries = 2) {
   initCalendarScroll();
   buildAvailInsights();
   buildQuickSlots();
+  buildWeekGlance();
   showNextAvailable();
   autoSelectFirstAvailable();
 }
@@ -5769,6 +5782,29 @@ function buildAvailInsights() {
   container.innerHTML = chips.map(c =>
     `<div class="avail-insight-chip ${c.cls}"><span class="chip-icon">${c.icon}</span>${c.text}</div>`
   ).join('');
+}
+
+/* ═══ WEEK AT A GLANCE ═══ */
+function buildWeekGlance() {
+  const el = document.getElementById('weekGlance');
+  if (!el) return;
+  const today = new Date();
+  const dayShort = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const fmt = t => { const [h] = t.split(':').map(Number); const ap = h>=12?'pm':'am'; return `${h>12?h-12:h||12}${ap}`; };
+  const thisWeek = [];
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(today); d.setDate(today.getDate() + i);
+    const key = d.toISOString().split('T')[0];
+    if (availabilityData[key]) {
+      const a = availabilityData[key];
+      const isToday = i === 0;
+      const label = isToday ? 'Today' : dayShort[d.getDay()];
+      thisWeek.push(`<span class="wg-day">${label}</span> <span class="wg-time">${fmt(a.start_time)}–${fmt(a.end_time)}</span>`);
+    }
+  }
+  if (thisWeek.length > 0) {
+    el.innerHTML = `This week: ${thisWeek.join(' · ')}`;
+  }
 }
 
 /* ═══ QUICK-PICK SLOT CARDS ═══ */
@@ -7486,6 +7522,12 @@ function initSessionUpdates() {
     phoneTime.textContent = `${dayNames[now.getDay()]} Evening`;
   }
 
+  // Show first 2 bubbles immediately so phone never looks empty
+  if (bubbles.length >= 2) {
+    bubbles[0].classList.add('pre-visible');
+    bubbles[1].classList.add('pre-visible');
+  }
+
   let animated = false;
   const observer = new IntersectionObserver(entries => {
     entries.forEach(entry => {
@@ -7495,7 +7537,7 @@ function initSessionUpdates() {
         observer.disconnect();
       }
     });
-  }, { threshold: 0.3 });
+  }, { threshold: 0.1 });
   observer.observe(section);
 }
 
@@ -7505,13 +7547,14 @@ function animateBubbles(bubbles, typing) {
     bubbles.forEach(b => b.classList.add('visible'));
     return;
   }
-  let delay = 300;
+  let delay = 200;
   bubbles.forEach((bubble, i) => {
-    const d = parseInt(bubble.dataset.delay || i);
+    // Skip already-visible bubbles
+    if (bubble.classList.contains('pre-visible')) return;
     // Show typing before each Poppy bubble
     if (bubble.classList.contains('poppy') || bubble.classList.contains('poppy-img')) {
       setTimeout(() => { typing.classList.add('visible'); }, delay);
-      delay += 800;
+      delay += 600;
       setTimeout(() => {
         typing.classList.remove('visible');
         bubble.classList.add('visible');
@@ -7519,12 +7562,12 @@ function animateBubbles(bubbles, typing) {
     } else {
       setTimeout(() => { bubble.classList.add('visible'); }, delay);
     }
-    delay += 900;
+    delay += 650;
   });
   // After all bubbles, show typing one last time briefly
   setTimeout(() => {
     typing.classList.add('visible');
-    setTimeout(() => typing.classList.remove('visible'), 1500);
+    setTimeout(() => typing.classList.remove('visible'), 1200);
   }, delay);
 }
 
