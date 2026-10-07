@@ -2611,30 +2611,25 @@ elevenlabs-convai {
 /* reduced-motion: consolidated below in accessibility section */
 
 /* ═══ HERO ENTRANCE ═══ */
-.hero-enter { opacity: 0; transform: translateY(24px); }
+.hero-enter {
+  opacity: 0; transform: translateY(24px);
+  transition: opacity 0.7s cubic-bezier(.22,1,.36,1), transform 0.7s cubic-bezier(.22,1,.36,1);
+}
 .hero-enter.animate-in {
-  animation: heroFadeIn 0.8s cubic-bezier(.22,1,.36,1) forwards;
+  opacity: 1; transform: translateY(0);
 }
-@keyframes heroFadeIn {
-  to { opacity: 1; transform: translateY(0); }
-}
-.hero .avatar-wrap { animation-delay: 0s; animation-name: heroAvatarIn; }
-@keyframes heroAvatarIn {
-  0% { opacity: 0; transform: scale(0.85) translateY(20px); }
-  60% { opacity: 1; transform: scale(1.03) translateY(-2px); }
-  100% { opacity: 1; transform: scale(1) translateY(0); }
-}
-.hero .welcome-back-badge { animation-delay: 0.08s; }
-.hero .hero-greeting { animation-delay: 0.1s; }
-.hero .profile-name { animation-delay: 0.12s; }
-.hero .quick-rebook { animation-delay: 0.15s; }
-.hero .profile-verified { animation-delay: 0.18s; }
-.hero .profile-bio { animation-delay: 0.24s; }
-.hero .stats-row { animation-delay: 0.32s; }
-.hero .hero-actions { animation-delay: 0.4s; }
-.hero .next-avail-card { animation-delay: 0.46s; }
-.hero .social-proof-strip { animation-delay: 0.52s; }
-.hero .hero-badges { animation-delay: 0.5s; }
+.hero .avatar-wrap.animate-in { transform: scale(1) translateY(0); transition-delay: 0s; }
+.hero .welcome-back-badge { transition-delay: 0.08s; }
+.hero .hero-greeting { transition-delay: 0.1s; }
+.hero .profile-name { transition-delay: 0.12s; }
+.hero .quick-rebook { transition-delay: 0.15s; }
+.hero .profile-verified { transition-delay: 0.18s; }
+.hero .profile-bio { transition-delay: 0.24s; }
+.hero .stats-row { transition-delay: 0.32s; }
+.hero .hero-actions { transition-delay: 0.4s; }
+.hero .next-avail-card { transition-delay: 0.46s; }
+.hero .social-proof-strip { transition-delay: 0.52s; }
+.hero .hero-badges { transition-delay: 0.5s; }
 
 /* ═══ ACTIVITY TICKER ═══ */
 .activity-ticker {
@@ -7698,11 +7693,24 @@ function initSocialProofNotifs() {
 }
 
 /* ═══ HERO ENTRANCE ═══ */
+let _heroAnimated = false;
 function animateHeroEntrance() {
+  if (_heroAnimated) return;
+  _heroAnimated = true;
   const els = document.querySelectorAll('.hero-enter');
+  // Stagger the reveal — CSS transitions handle the animation
   els.forEach((el, i) => {
-    setTimeout(() => el.classList.add('animate-in'), i * 120);
+    setTimeout(() => el.classList.add('animate-in'), i * 80);
   });
+  // Failsafe: force visible after all transitions should complete
+  setTimeout(() => {
+    els.forEach(el => {
+      if (getComputedStyle(el).opacity === '0') {
+        el.style.opacity = '1';
+        el.style.transform = 'translateY(0)';
+      }
+    });
+  }, els.length * 80 + 1200);
 }
 
 /* ═══ ACTIVITY TICKER (social proof) ═══ */
@@ -7838,9 +7846,10 @@ function initCardTilt() {
 
 /* ═══ GO ═══ */
 init();
-// Trigger hero entrance and scroll reveals after DOM paint
+// Trigger hero entrance immediately — no waiting for rAF
+animateHeroEntrance();
+// Scroll reveals and other enhancements after DOM paint
 requestAnimationFrame(() => {
-  animateHeroEntrance();
   initScrollReveal();
   initAnimationPauser();
   animateBioTyping();
