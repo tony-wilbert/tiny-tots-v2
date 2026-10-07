@@ -2293,36 +2293,48 @@ elevenlabs-convai {
   transform: translateZ(0) !important; contain: layout paint !important;
 }
 
-/* ═══ VOICE MODAL ═══ */
+/* ═══ VOICE MODAL — FULL-SCREEN AI ASSISTANT ═══ */
 .voice-modal-overlay {
   position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0,0,0,0.7); backdrop-filter: blur(16px);
-  z-index: 9000; opacity: 0; visibility: hidden; transition: all 0.3s ease;
-  display: flex; align-items: center; justify-content: center;
-  padding: 20px; overscroll-behavior: contain;
+  background: radial-gradient(ellipse at 50% 20%, rgba(212,168,83,0.06) 0%, #0d0d0f 60%);
+  backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+  z-index: 9000; opacity: 0; visibility: hidden; transition: all 0.35s ease;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 0; overscroll-behavior: contain;
 }
 .voice-modal-overlay.active { opacity: 1; visibility: visible; }
 .voice-modal {
-  width: 100%; max-width: 400px; background: linear-gradient(160deg, #2a2a2a, #1a1a1a);
-  border-radius: 28px; padding: 32px 24px 24px; text-align: center;
-  transform: scale(0.9) translateY(20px); transition: transform 0.4s cubic-bezier(.22,1,.36,1);
-  box-shadow: 0 20px 60px rgba(0,0,0,0.5); position: relative;
+  width: 100%; max-width: 100%; min-height: 100vh; min-height: 100dvh;
+  background: transparent;
+  border-radius: 0; padding: 48px 24px 120px; text-align: center;
+  transform: translateY(20px); opacity: 0;
+  transition: transform 0.5s cubic-bezier(.22,1,.36,1), opacity 0.4s ease;
+  position: relative;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 4px;
 }
-.voice-modal-overlay.active .voice-modal { transform: scale(1) translateY(0); }
+.voice-modal-overlay.active .voice-modal { transform: translateY(0); opacity: 1; }
 
 .voice-modal-close {
-  position: absolute; top: 12px; right: 16px; background: none;
-  color: rgba(255,255,255,0.4); font-size: 28px; line-height: 1; padding: 4px;
-  transition: color 0.2s; z-index: 20;
+  position: fixed; top: 16px; right: 20px; background: rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.6); font-size: 24px; line-height: 1; padding: 8px 12px;
+  transition: all 0.2s; z-index: 20; border-radius: 50%;
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
 }
-.voice-modal-close:hover { color: #fff; }
+.voice-modal-close:hover { color: #fff; background: rgba(255,255,255,0.15); }
 
 /* Daisy Video Avatar — lip-sync video plays when speaking */
 .daisy-video-wrap {
-  width: 200px; height: 200px; border-radius: 50%; overflow: hidden;
-  margin: 0 auto 12px; position: relative;
-  box-shadow: 0 0 0 4px rgba(212,168,83,0.3), 0 8px 40px rgba(0,0,0,0.4);
-  transition: box-shadow 0.4s ease;
+  width: 180px; height: 180px; border-radius: 50%; overflow: hidden;
+  margin: 0 auto 16px; position: relative;
+  box-shadow: 0 0 0 3px rgba(212,168,83,0.25), 0 0 60px rgba(212,168,83,0.08), 0 12px 48px rgba(0,0,0,0.5);
+  transition: box-shadow 0.4s ease, transform 0.4s ease;
+}
+@media (min-height: 700px) {
+  .daisy-video-wrap { width: 220px; height: 220px; }
+}
+@media (min-height: 800px) {
+  .daisy-video-wrap { width: 260px; height: 260px; }
 }
 .daisy-video-wrap video, .daisy-video-wrap img {
   width: 100%; height: 100%; object-fit: cover; display: block;
@@ -2369,15 +2381,34 @@ elevenlabs-convai {
 .voice-pulse { display: none; }
 
 .voice-modal-name {
-  font-family: var(--font-display); font-size: 24px; font-weight: 800;
-  color: #fff; margin-bottom: 4px;
+  font-family: var(--font-display); font-size: 28px; font-weight: 800;
+  color: #fff; margin-bottom: 2px;
+  letter-spacing: -0.5px;
 }
 .voice-modal-status {
-  font-size: 14px; color: rgba(255,255,255,0.5); margin-bottom: 20px;
-  transition: color 0.3s;
+  font-size: 14px; color: rgba(255,255,255,0.45); margin-bottom: 16px;
+  transition: color 0.3s; max-width: 300px;
 }
 .voice-modal-status.connected { color: var(--gold); font-weight: 600; }
 .voice-modal-status.ready { color: #34C759; }
+
+/* Quick-ask suggestion chips */
+.daisy-suggestions {
+  display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;
+  max-width: 380px; margin: 12px auto 8px; padding: 0 8px;
+}
+.daisy-chip {
+  padding: 10px 18px; border-radius: 20px; font-size: 13px; font-weight: 500;
+  background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.75);
+  border: 1px solid rgba(255,255,255,0.08); cursor: pointer;
+  transition: all 0.2s; -webkit-tap-highlight-color: transparent;
+  letter-spacing: 0.2px;
+}
+.daisy-chip:hover, .daisy-chip:active {
+  background: rgba(212,168,83,0.12); color: var(--gold);
+  border-color: rgba(212,168,83,0.25); transform: scale(1.03);
+}
+.voice-modal-overlay.active.speaking .daisy-suggestions { display: none; }
 /* Widget container — now HIDDEN behind video avatar, just handles audio */
 .voice-modal-overlay.active.speaking .voice-widget-container {
   filter: none;
@@ -2456,7 +2487,26 @@ elevenlabs-convai {
 .voice-end-btn:hover { transform: scale(1.05); box-shadow: 0 6px 24px rgba(192,57,43,0.4); }
 
 .voice-modal-hint {
-  font-size: 12px; color: rgba(255,255,255,0.35); margin-top: 12px; line-height: 1.4;
+  font-size: 13px; color: rgba(255,255,255,0.3); margin-top: 16px; line-height: 1.5;
+  max-width: 320px;
+}
+/* Ambient floating particles behind avatar */
+.voice-modal::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+  background:
+    radial-gradient(2px 2px at 20% 30%, rgba(212,168,83,0.15), transparent),
+    radial-gradient(2px 2px at 80% 20%, rgba(212,168,83,0.1), transparent),
+    radial-gradient(2px 2px at 50% 70%, rgba(212,168,83,0.08), transparent),
+    radial-gradient(3px 3px at 70% 60%, rgba(212,168,83,0.12), transparent),
+    radial-gradient(2px 2px at 30% 80%, rgba(212,168,83,0.06), transparent);
+  animation: particleDrift 12s ease-in-out infinite alternate;
+  pointer-events: none; z-index: 0;
+}
+.voice-modal > * { position: relative; z-index: 1; }
+@keyframes particleDrift {
+  0% { transform: translate(0,0) scale(1); }
+  50% { transform: translate(-8px, 5px) scale(1.05); }
+  100% { transform: translate(5px, -8px) scale(0.98); }
 }
 
 /* ═══ BIO TYPING ═══ */
@@ -7812,10 +7862,16 @@ requestAnimationFrame(() => {
       <div class="daisy-speaking-dot"></div>
     </div>
     <div class="voice-modal-status" id="voiceModalStatus">Poppy's AI assistant — tap below to start!</div>
+    <div class="daisy-suggestions" id="daisySuggestions">
+      <button class="daisy-chip" onclick="return false">What are Poppy's rates?</button>
+      <button class="daisy-chip" onclick="return false">Is she available Saturday?</button>
+      <button class="daisy-chip" onclick="return false">What activities does she do?</button>
+      <button class="daisy-chip" onclick="return false">Tell me about Poppy</button>
+    </div>
     <div class="voice-widget-container" id="voiceWidgetContainer">
       <!-- ElevenLabs widget — audio backend, visually hidden behind video avatar -->
     </div>
-    <div class="voice-tap-hint" id="voiceTapHint">👆 Tap "Chat with Daisy" to start talking</div>
+    <div class="voice-tap-hint" id="voiceTapHint">Tap to start a conversation with Daisy</div>
     <div class="voice-waveform" id="voiceWaveform">
       <div class="voice-bar"></div><div class="voice-bar"></div><div class="voice-bar"></div>
       <div class="voice-bar"></div><div class="voice-bar"></div><div class="voice-bar"></div>
@@ -7825,7 +7881,7 @@ requestAnimationFrame(() => {
       <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
       End Chat
     </button>
-    <div class="voice-modal-hint">Ask Daisy anything — babysitting, scheduling, rates, what Poppy does with kids & more</div>
+    <div class="voice-modal-hint">Daisy knows everything about Poppy's babysitting — ask anything!</div>
   </div>
 </div>
 
