@@ -5908,10 +5908,15 @@ function showNextAvailable() {
     const heroBtn = document.getElementById('heroBookBtn');
     if (heroBtn) {
       const hour = today.getHours();
-      if (isToday && hour >= 14) heroBtn.textContent = 'Book Tonight';
-      else if (isToday) heroBtn.textContent = 'Book Today';
-      else if (isTomorrow) heroBtn.textContent = 'Book Tomorrow';
-      else heroBtn.textContent = 'Book ' + dayLabel;
+      let _btnLabel;
+      if (isToday && hour >= 14) _btnLabel = 'Book Tonight';
+      else if (isToday) _btnLabel = 'Book Today';
+      else if (isTomorrow) _btnLabel = 'Book Tomorrow';
+      else _btnLabel = 'Book ' + dayLabel;
+      // Append price for first-time visitors (no saved parent)
+      const _sp = getSavedParent();
+      if (!_sp || !_sp.name) _btnLabel += ' — $12/hr';
+      heroBtn.textContent = _btnLabel;
     }
     // Update availability count badge
     let availCount = 0;
