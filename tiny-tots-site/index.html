@@ -2365,8 +2365,8 @@ elevenlabs-convai {
 @media (min-height: 800px) {
   .daisy-avatar-wrap { width: 260px; height: 260px; }
 }
-.daisy-avatar-wrap canvas {
-  width: 100%; height: 100%; display: block; border-radius: 50%;
+.daisy-avatar-wrap canvas, .daisy-avatar-wrap video {
+  width: 100%; height: 100%; display: block; border-radius: 50%; object-fit: cover; background: #1B1B1F;
 }
 /* Audio-reactive glow rings when speaking */
 .daisy-avatar-wrap.speaking {
@@ -6403,6 +6403,7 @@ let _daisyAudioCtx = null;
 let _daisyFreqData = null;
 let _daisyTimeData = null;
 let _daisyAudioCaptured = false;
+let _simliConnecting = false; /* true while Simli SDK is creating its own RTCPeerConnections */
 
 (function _interceptWebRTCAudio() {
   const _OrigRTC = window.RTCPeerConnection || window.webkitRTCPeerConnection;
@@ -6412,7 +6413,7 @@ let _daisyAudioCaptured = false;
   window.RTCPeerConnection = function(...args) {
     const pc = new _OrigRTC(...args);
     pc.addEventListener('track', (evt) => {
-      if (evt.track.kind === 'audio' && !_daisyAudioCaptured) {
+      if (evt.track.kind === 'audio' && !_daisyAudioCaptured && !_simliConnecting) {
         try {
           /* Store raw track reference for Simli */
           _capturedAudioTrack = evt.track;
@@ -6497,6 +6498,7 @@ async function _initSimliAvatar() {
     );
 
     _simliClient.on('start', () => {
+      _simliConnecting = false;
       _simliReady = true;
       console.log('[Daisy] Simli connected — avatar ready');
       /* Show video, hide canvas fallback */
@@ -6513,15 +6515,18 @@ async function _initSimliAvatar() {
     });
 
     _simliClient.on('error', (err) => {
+      _simliConnecting = false;
       console.error('[Daisy] Simli error:', err);
       _showCanvasFallback();
     });
 
-    /* 4. Connect */
+    /* 4. Connect — flag prevents monkey-patch from capturing Simli's own audio tracks */
+    _simliConnecting = true;
     console.log('[Daisy] Connecting to Simli…');
     await _simliClient.start();
 
   } catch(e) {
+    _simliConnecting = false;
     console.error('[Daisy] Simli init failed:', e);
     _simliLoading = false;
     _simliClient = null;
@@ -6544,6 +6549,7 @@ function _cleanupSimli() {
   }
   _simliReady = false;
   _simliLoading = false;
+  _simliConnecting = false;
   _capturedAudioTrack = null;
   _daisyAudioCaptured = false;
   const videoEl = document.getElementById('daisyVideo');
@@ -8277,7 +8283,7 @@ requestAnimationFrame(() => {
     <button class="voice-modal-close" onclick="closeVoiceModal()" aria-label="Close">&times;</button>
     <div class="voice-modal-name">Daisy</div>
     <div class="daisy-avatar-wrap" id="daisyAvatarWrap">
-      <video id="daisyVideo" autoplay playsinline muted width="300" height="300" style="border-radius:50%;object-fit:cover;display:none;background:#1B1B1F;"></video>
+      <video id="daisyVideo" autoplay playsinline muted style="display:none;"></video>
       <audio id="daisyAudio" autoplay muted style="display:none;"></audio>
       <canvas id="daisyCanvas" width="300" height="300"></canvas>
       <div class="daisy-glow-ring"></div>
