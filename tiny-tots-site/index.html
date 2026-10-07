@@ -4660,11 +4660,35 @@ function applySmartContext() {
   // Returning visitor recognition
   const savedParent = getSavedParent();
   if (!savedParent || !savedParent.name) {
-    // First-time visitor — show welcome nudge
+    // First-time visitor — optimize hero for clarity + conversion
+    // 1. Change title from "Ask Poppy" → "Meet Poppy" (clearer for newcomers)
+    if (heroTitle) heroTitle.innerHTML = 'Meet <em>Poppy</em>';
+
+    // 2. Override bio with clear value proposition
+    if (heroBio) {
+      heroBio.textContent = "Tahoe’s favorite young sitter — Red Cross certified, 4.9★ rated, and your kids will ask for her by name.";
+    }
+
+    // 3. Swap CTA priority — Book is primary for first-timers (they don't know Daisy yet)
+    const _bookBtn = document.getElementById('heroBookBtn');
+    const _heroActions = document.querySelector('.hero-actions');
+    if (_bookBtn && _heroActions) {
+      const _voiceBtn = _heroActions.querySelector('.action-btn.primary');
+      if (_voiceBtn && _voiceBtn !== _bookBtn) {
+        _voiceBtn.classList.remove('primary', 'pulse');
+        _voiceBtn.classList.add('secondary');
+      }
+      _bookBtn.classList.remove('secondary');
+      _bookBtn.classList.add('primary', 'pulse');
+      _bookBtn.textContent = 'Book Tonight — $12/hr';
+      // Move book button first visually
+      _heroActions.insertBefore(_bookBtn, _heroActions.firstChild);
+    }
+
+    // 4. Show first-visit nudge
     const nudge = document.getElementById('firstVisitNudge');
     if (nudge) {
       nudge.classList.add('visible');
-      // Auto-hide after they scroll past hero
       const heroEl = document.getElementById('hero');
       if (heroEl) {
         const hideObs = new IntersectionObserver(entries => {
@@ -4676,15 +4700,16 @@ function applySmartContext() {
         hideObs.observe(heroEl);
       }
     }
-    // First-visit Daisy chat bubble hint
+
+    // 5. Daisy chat bubble hint (delayed — don't overwhelm first impression)
     if (!localStorage.getItem('tt_daisy_hint')) {
       const daisyHint = document.getElementById('daisyHint');
       if (daisyHint) {
-        setTimeout(() => daisyHint.classList.add('show'), 2200);
+        setTimeout(() => daisyHint.classList.add('show'), 4000);
         setTimeout(() => {
           daisyHint.classList.remove('show');
           localStorage.setItem('tt_daisy_hint', '1');
-        }, 7000);
+        }, 9000);
         daisyHint.addEventListener('click', e => {
           e.stopPropagation();
           daisyHint.classList.remove('show');
