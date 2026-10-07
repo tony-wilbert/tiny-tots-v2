@@ -1134,36 +1134,40 @@ body.dark-mode .extended-note { color: #E8C97A; background: rgba(212,168,83,0.1)
 }
 .quick-slots::-webkit-scrollbar { display: none; }
 .quick-slot {
-  flex: 0 0 auto; min-width: 140px; scroll-snap-align: start;
-  background: var(--white); border-radius: 16px; padding: 14px 16px;
-  border: 2px solid rgba(212,168,83,0.15); cursor: pointer;
+  flex: 1 1 0; min-width: 100px; scroll-snap-align: start;
+  background: var(--white); border-radius: 18px; padding: 16px 14px;
+  border: 2px solid rgba(212,168,83,0.2); cursor: pointer;
   transition: all 0.25s ease; position: relative; overflow: hidden;
+  text-align: center;
 }
 .quick-slot::before {
   content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
-  background: var(--gradient-gold); opacity: 0; transition: opacity 0.2s;
+  background: var(--gradient-gold); opacity: 1;
 }
 .quick-slot:hover { border-color: var(--gold); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(212,168,83,0.15); }
-.quick-slot:hover::before { opacity: 1; }
 .quick-slot:active { transform: scale(0.96); }
 .quick-slot-day {
-  font-size: 13px; font-weight: 800; color: var(--charcoal); margin-bottom: 2px;
+  font-size: 15px; font-weight: 800; color: var(--charcoal); margin-bottom: 1px;
 }
 .quick-slot-date {
   font-size: 11px; color: var(--gray); font-weight: 600; margin-bottom: 8px;
 }
 .quick-slot-time {
-  font-size: 12px; font-weight: 700; color: var(--gold);
-  display: flex; align-items: center; gap: 5px;
+  font-size: 13px; font-weight: 700; color: var(--gold);
+  display: flex; align-items: center; justify-content: center; gap: 5px;
 }
 .quick-slot-time .live-dot {
-  width: 6px; height: 6px; border-radius: 50%; background: var(--green);
+  width: 7px; height: 7px; border-radius: 50%; background: var(--green);
   animation: live-pulse 2s ease-in-out infinite;
 }
 .quick-slot-price {
-  font-size: 11px; font-weight: 700; color: var(--charcoal); margin-top: 6px;
-  background: rgba(212,168,83,0.08); padding: 3px 8px; border-radius: 8px;
+  font-size: 11px; font-weight: 700; color: var(--charcoal); margin-top: 8px;
+  background: rgba(212,168,83,0.08); padding: 4px 10px; border-radius: 8px;
   display: inline-block;
+}
+.quick-slot-book {
+  font-size: 10px; font-weight: 800; color: var(--gold); text-transform: uppercase;
+  letter-spacing: 0.8px; margin-top: 8px; opacity: 0.7;
 }
 @keyframes live-pulse {
   0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(92,184,92,0.4); }
@@ -2857,7 +2861,7 @@ body.dark-mode .avail-insight-chip.urgent { background: rgba(232,139,139,0.15); 
   .reviews-scroll { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 20px; overflow-x: visible; scroll-snap-type: none; padding: 0 48px 16px; }
   .review-card { width: auto; scroll-snap-align: unset; }
   /* Quick-pick cards: grid on tablet */
-  .quick-slots { display: grid; grid-template-columns: repeat(3, 1fr); overflow-x: visible; scroll-snap-type: none; padding: 0 20px 14px; }
+  .quick-slots { display: grid; grid-template-columns: repeat(3, 1fr); overflow-x: visible; scroll-snap-type: none; padding: 0 20px 14px; gap: 12px; }
   .quick-slot { min-width: 0; scroll-snap-align: unset; }
   /* Wider bottom bar + booking elements */
   .bottom-bar { max-width: 560px; }
@@ -3229,6 +3233,7 @@ body.dark-mode .bottom-bar .bar-item { color: #9E9A92; }
 body.dark-mode .bottom-bar .bar-item.active { color: var(--gold); }
 body.dark-mode .quick-slot { background: #2A2A2E; border-color: rgba(255,255,255,0.06); }
 body.dark-mode .quick-slot:hover { border-color: var(--gold); }
+body.dark-mode .quick-slot-book { color: var(--gold-light); }
 body.dark-mode .trust-bar { background: transparent; }
 body.dark-mode .trust-row-bar { background: #333338; }
 body.dark-mode .price-display { background: #333338; border-color: rgba(255,255,255,0.08); }
@@ -3745,10 +3750,10 @@ body.dark-mode .scenario-pick:hover, body.dark-mode .scenario-pick.active { bord
   <div class="avail-header reveal">
     <p class="section-label">Schedule</p>
     <h2 class="section-title">Pick a Day</h2>
-    <p class="section-sub">Gold days = Poppy's free. Tap one to book in under a minute. Most families lock in their next session before the first one ends.</p>
+    <p class="section-sub">Gold days = Poppy's free. Tap one to book in under a minute.</p>
   </div>
   <div class="quick-slots-label reveal" id="quickSlotsLabel" style="display:none;">
-    <span class="live-dot"></span> Quick pick — next available
+    <span class="live-dot"></span> Poppy's next openings
   </div>
   <div class="quick-slots reveal" id="quickSlots" style="display:none;"></div>
   <div class="week-glance reveal" id="weekGlance"></div>
@@ -3757,13 +3762,6 @@ body.dark-mode .scenario-pick:hover, body.dark-mode .scenario-pick.active { bord
   </div>
   <div class="avail-insights" id="availInsights"></div>
   <div style="padding: 0 20px;">
-    <div class="comm-promise reveal">
-      <div class="comm-promise-icon">💬</div>
-      <div class="comm-promise-content">
-        <div class="comm-promise-text">Poppy texts you within 5 minutes</div>
-        <div class="comm-promise-sub">Confirmation the moment you book, photo updates mid-session, and a wrap-up text when you're headed home</div>
-      </div>
-    </div>
     <div class="book-sheet" id="bookSheet">
       <p class="book-date-label" id="bookDateLabel"></p>
       <p class="book-rate">&#9733; $12/hr &middot; Apple Pay or cash</p>
@@ -3876,6 +3874,13 @@ body.dark-mode .scenario-pick:hover, body.dark-mode .scenario-pick.active { bord
       </div>
 
       <div class="book-msg" id="bookMsg"></div>
+    </div>
+    <div class="comm-promise reveal" style="margin-top:16px;">
+      <div class="comm-promise-icon">💬</div>
+      <div class="comm-promise-content">
+        <div class="comm-promise-text">Poppy texts you within 5 minutes</div>
+        <div class="comm-promise-sub">Confirmation the moment you book, photo updates mid-session, and a wrap-up text when you're headed home</div>
+      </div>
     </div>
   </div>
 </section>
@@ -5870,6 +5875,7 @@ function buildQuickSlots() {
         ${fmt(s.avail.start_time)} – ${fmt(s.avail.end_time)}
       </div>
       <div class="quick-slot-price">${s.hrs} hr${s.hrs !== 1 ? 's' : ''} · $${s.price}</div>
+      <div class="quick-slot-book">Tap to book →</div>
     </div>
   `).join('');
 }
