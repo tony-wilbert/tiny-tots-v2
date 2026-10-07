@@ -6467,7 +6467,7 @@ async function _initSimliAvatar() {
     /* 1. Load Simli SDK from CDN (cached after first import) */
     if (!_SimliClass) {
       console.log('[Daisy] Loading Simli SDK…');
-      const mod = await import('https://esm.sh/simli-client@3.0.2');
+      const mod = await import('https://esm.sh/simli-client@3.0.2/dist/client.js');
       _SimliClass = mod.SimliClient;
       console.log('[Daisy] Simli SDK loaded');
     }
