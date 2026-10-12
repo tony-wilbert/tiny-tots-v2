@@ -2308,255 +2308,85 @@ img[loading="lazy"] { content-visibility: auto; }
 body.dark-mode .social-proof-notif { background: #2A2A2E; color: var(--white); box-shadow: 0 4px 24px rgba(0,0,0,0.3); }
 body.dark-mode .social-proof-notif .sp-time { color: rgba(255,255,255,0.4); }
 
-/* ═══ ElevenLabs widget — completely hidden by default ═══ */
-elevenlabs-convai {
-  position: fixed !important; bottom: -9999px !important; right: -9999px !important;
-  z-index: -1 !important; opacity: 0 !important; pointer-events: none !important;
-  width: 0 !important; height: 0 !important; overflow: hidden !important;
-  display: none !important;
+/* ═══ DAISY DOCK — talk to Daisy without leaving the page ═══ */
+.daisy-dock {
+  position: fixed; left: 12px; right: 12px;
+  bottom: calc(var(--bottom-h) + var(--safe-bottom) + 10px);
+  z-index: 150; display: flex; align-items: center; gap: 12px;
+  padding: 10px 10px 10px 12px; border-radius: 24px;
+  background: rgba(43,43,46,0.97); color: #F0EDE8;
+  box-shadow: 0 14px 40px rgba(0,0,0,0.28), 0 0 0 1px rgba(255,255,255,0.06);
+  transform: translateY(140%); opacity: 0; visibility: hidden;
+  transition: transform 0.4s cubic-bezier(.22,1,.36,1), opacity 0.3s ease, visibility 0.3s;
 }
-/* When voice modal is active, show widget VISIBLE inside modal (mic permissions require real user gesture) */
-.voice-modal-overlay.active elevenlabs-convai {
-  position: relative !important; bottom: auto !important; right: auto !important;
-  z-index: 10 !important; opacity: 1 !important; pointer-events: auto !important;
-  width: 100% !important; height: auto !important; overflow: visible !important;
-  display: block !important; max-width: 400px !important; margin: 0 auto !important;
-  /* Contain fixed-position shadow DOM children within this element */
-  transform: translateZ(0) !important; contain: layout paint !important;
+.daisy-dock.show { transform: translateY(0); opacity: 1; visibility: visible; }
+@media (min-width: 720px) {
+  .daisy-dock { left: auto; right: 24px; width: 440px; bottom: calc(var(--bottom-h) + var(--safe-bottom) + 16px); }
 }
-
-/* ═══ VOICE MODAL — FULL-SCREEN AI ASSISTANT ═══ */
-.voice-modal-overlay {
-  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-  background: radial-gradient(ellipse at 50% 20%, rgba(212,168,83,0.06) 0%, #0d0d0f 60%);
-  backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
-  z-index: 9000; opacity: 0; visibility: hidden; transition: all 0.35s ease;
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  padding: 0; overscroll-behavior: contain;
+.daisy-dock-face {
+  position: relative; width: 52px; height: 52px; flex-shrink: 0; border-radius: 50%;
 }
-.voice-modal-overlay.active { opacity: 1; visibility: visible; }
-.voice-modal {
-  width: 100%; max-width: 100%; min-height: 100vh; min-height: 100dvh;
-  background: transparent;
-  border-radius: 0; padding: 48px 24px 120px; text-align: center;
-  transform: translateY(20px); opacity: 0;
-  transition: transform 0.5s cubic-bezier(.22,1,.36,1), opacity 0.4s ease;
-  position: relative;
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  gap: 4px;
+.daisy-dock-img {
+  width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block;
+  box-shadow: 0 0 0 2px rgba(212,168,83,0.6);
 }
-.voice-modal-overlay.active .voice-modal { transform: translateY(0); opacity: 1; }
-
-.voice-modal-close {
-  position: fixed; top: 16px; right: 20px; background: rgba(255,255,255,0.08);
-  color: rgba(255,255,255,0.6); font-size: 24px; line-height: 1; padding: 8px 12px;
-  transition: all 0.2s; z-index: 20; border-radius: 50%;
-  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+.daisy-dock-ring {
+  position: absolute; inset: 0; border-radius: 50%; pointer-events: none; opacity: 0;
+  border: 2px solid rgba(212,168,83,0.55);
 }
-.voice-modal-close:hover { color: #fff; background: rgba(255,255,255,0.15); }
-
-/* Daisy Canvas Avatar — real-time audio-reactive lip sync */
-.daisy-avatar-wrap {
-  width: 180px; height: 180px; border-radius: 50%; overflow: hidden;
-  margin: 0 auto 16px; position: relative;
-  box-shadow: 0 0 0 3px rgba(212,168,83,0.25), 0 0 60px rgba(212,168,83,0.08), 0 12px 48px rgba(0,0,0,0.5);
-  transition: box-shadow 0.4s ease, transform 0.4s ease;
+.daisy-dock.speaking .daisy-dock-ring { animation: dockRing 1.6s ease-out infinite; }
+.daisy-dock.speaking .daisy-dock-ring:nth-child(3) { animation-delay: 0.55s; }
+@keyframes dockRing {
+  0% { transform: scale(1); opacity: 0.7; }
+  100% { transform: scale(1.75); opacity: 0; }
 }
-@media (min-height: 700px) {
-  .daisy-avatar-wrap { width: 220px; height: 220px; }
+.daisy-dock.listening .daisy-dock-img { box-shadow: 0 0 0 2px rgba(212,168,83,0.6), 0 0 0 6px rgba(52,199,89,0.18); }
+.daisy-dock-body { flex: 1; min-width: 0; }
+.daisy-dock-name {
+  font-family: var(--font-display); font-weight: 700; font-size: 15px; color: #fff;
+  display: flex; align-items: baseline; gap: 8px; line-height: 1.2;
 }
-@media (min-height: 800px) {
-  .daisy-avatar-wrap { width: 260px; height: 260px; }
+.daisy-dock-state { font-family: var(--font-body); font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.5); letter-spacing: 0.3px; text-transform: uppercase; }
+.daisy-dock.speaking .daisy-dock-state { color: var(--gold); }
+.daisy-dock.listening .daisy-dock-state { color: #6FD38A; }
+.daisy-dock.error .daisy-dock-state { color: #E88B8B; }
+.daisy-dock-caption {
+  margin-top: 3px; font-size: 13px; line-height: 1.35; color: rgba(255,255,255,0.82);
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  min-height: 18px;
 }
-.daisy-avatar-wrap img.daisy-still-img {
-  width: 100%; height: 100%; display: block; border-radius: 50%; object-fit: cover; background: #1B1B1F;
+.daisy-dock-btn {
+  width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0;
+  background: rgba(255,255,255,0.08); color: #fff; display: inline-flex; align-items: center; justify-content: center;
+  transition: background 0.2s, transform 0.15s;
 }
-/* Audio-reactive glow rings when speaking */
-.daisy-avatar-wrap.speaking {
-  animation: none;
+.daisy-dock-btn:active { transform: scale(0.92); }
+.daisy-dock-btn svg { width: 18px; height: 18px; fill: currentColor; }
+.daisy-dock-btn[aria-pressed="true"] { background: rgba(232,139,139,0.25); color: #E88B8B; }
+.daisy-dock-end { background: rgba(232,139,139,0.18); color: #F2A6A6; }
+.daisy-dock-end:hover { background: rgba(232,139,139,0.3); }
+.daisy-dock-chips { display: flex; gap: 6px; margin-top: 6px; overflow-x: auto; scrollbar-width: none; }
+.daisy-dock-chips::-webkit-scrollbar { display: none; }
+.daisy-dock-chip {
+  flex-shrink: 0; font-size: 12px; font-weight: 700; padding: 6px 10px; border-radius: 999px;
+  background: rgba(255,255,255,0.1); color: #fff; white-space: nowrap;
 }
-.daisy-glow-ring {
-  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-  border-radius: 50%; pointer-events: none; opacity: 0;
-  border: 2px solid rgba(212,168,83,0.4);
-  transition: opacity 0.3s;
+.daisy-dock.has-messages .daisy-dock-chips { display: none; }
+body.daisy-open { padding-bottom: calc(var(--bottom-h) + var(--safe-bottom) + 96px); }
+/* Pay Poppy */
+.pay-poppy-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 13px 22px; border-radius: 50px; font-weight: 800; font-size: 15px;
+  background: #1B1B1F; color: #fff; text-decoration: none; transition: transform 0.15s, box-shadow 0.2s;
+  box-shadow: 0 6px 20px rgba(27,27,31,0.25);
 }
-.daisy-avatar-wrap.speaking .daisy-glow-ring {
-  opacity: 1;
-  animation: ringPulse 2s ease-out infinite;
-}
-.daisy-glow-ring:nth-child(2) { animation-delay: 0.5s; }
-.daisy-glow-ring:nth-child(3) { animation-delay: 1s; }
-@keyframes ringPulse {
-  0% { width: 100%; height: 100%; opacity: 0.6; border-color: rgba(212,168,83,0.5); }
-  100% { width: 160%; height: 160%; opacity: 0; border-color: rgba(212,168,83,0); }
-}
-/* Subtle breathing animation when idle */
-.daisy-avatar-wrap:not(.speaking) {
-  animation: avatarBreathe 3s ease-in-out infinite;
-}
-@keyframes avatarBreathe {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.02); }
-}
-/* Speaking indicator dot */
-.daisy-speaking-dot {
-  position: absolute; bottom: 8px; right: 8px;
-  width: 16px; height: 16px; border-radius: 50%;
-  background: #34C759; border: 3px solid #2a2a2a;
-  opacity: 0; transition: opacity 0.3s; z-index: 2;
-}
-.daisy-avatar-wrap.speaking .daisy-speaking-dot {
-  opacity: 1; animation: dotPulse 1.5s ease-in-out infinite;
-}
-@keyframes dotPulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.3); }
-}
-/* Audio level indicator bar under avatar */
-.daisy-level-bar {
-  position: absolute; bottom: 0; left: 10%; right: 10%; height: 3px;
-  border-radius: 2px; background: rgba(212,168,83,0.15);
-  overflow: hidden; z-index: 2;
-}
-.daisy-level-fill {
-  height: 100%; width: 0%; border-radius: 2px;
-  background: linear-gradient(90deg, #D4A853, #E8C97A);
-  transition: width 0.05s linear;
-}
-
-/* Old avatar container — hidden */
-.voice-avatar-container { display: none; }
-.voice-avatar-ring { display: none; }
-.voice-pulse { display: none; }
-
-.voice-modal-name {
-  font-family: var(--font-display); font-size: 28px; font-weight: 800;
-  color: #fff; margin-bottom: 2px;
-  letter-spacing: -0.5px;
-}
-.voice-modal-status {
-  font-size: 14px; color: rgba(255,255,255,0.45); margin-bottom: 16px;
-  transition: color 0.3s; max-width: 300px;
-}
-.voice-modal-status.connected { color: var(--gold); font-weight: 600; }
-.voice-modal-status.ready { color: #34C759; }
-
-/* Quick-ask suggestion chips */
-.daisy-suggestions {
-  display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;
-  max-width: 380px; margin: 12px auto 8px; padding: 0 8px;
-}
-.daisy-chip {
-  padding: 10px 18px; border-radius: 20px; font-size: 13px; font-weight: 500;
-  background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.75);
-  border: 1px solid rgba(255,255,255,0.08); cursor: pointer;
-  transition: all 0.2s; -webkit-tap-highlight-color: transparent;
-  letter-spacing: 0.2px;
-}
-.daisy-chip:hover, .daisy-chip:active {
-  background: rgba(212,168,83,0.12); color: var(--gold);
-  border-color: rgba(212,168,83,0.25); transform: scale(1.03);
-}
-.voice-modal-overlay.active.speaking .daisy-suggestions { display: none; }
-/* Widget container — now HIDDEN behind video avatar, just handles audio */
-.voice-modal-overlay.active.speaking .voice-widget-container {
-  filter: none;
-}
-
-/* ElevenLabs widget container — HIDDEN, audio-only backend */
-.voice-widget-container {
-  margin: 0 auto; width: 100%; min-height: 0; max-height: 60px; overflow: hidden;
-  display: flex; flex-direction: column; justify-content: center; align-items: center;
-  gap: 8px;
-}
-/* Hint below widget — pulsing to draw attention */
-.voice-tap-hint {
-  font-size: 13px; color: rgba(240,237,232,0.5); text-align: center;
-  animation: tapHintPulse 2.5s ease-in-out infinite; margin-top: 8px;
-  letter-spacing: 0.3px;
-}
-/* Connected state: hide the start button area, waveform replaces */
-.voice-modal-overlay.active.speaking .voice-tap-hint { display: none; }
-@keyframes tapHintPulse {
-  0%, 100% { opacity: 0.5; transform: translateY(0); }
-  50% { opacity: 0.9; transform: translateY(-2px); }
-}
-/* Waveform bars — shown when connected */
-.voice-waveform {
-  display: none; align-items: center; justify-content: center; gap: 3px;
-  height: 40px; margin-bottom: 16px;
-}
-.voice-modal-overlay.active.speaking .voice-waveform { display: flex; }
-.voice-bar {
-  width: 4px; background: var(--gold); border-radius: 4px;
-  height: 8px; transition: height 0.1s ease;
-}
-.voice-modal-overlay.active.speaking .voice-bar {
-  animation: waveBar 0.8s ease-in-out infinite alternate;
-}
-.voice-bar:nth-child(1) { animation-delay: 0s; }
-.voice-bar:nth-child(2) { animation-delay: 0.1s; }
-.voice-bar:nth-child(3) { animation-delay: 0.2s; }
-.voice-bar:nth-child(4) { animation-delay: 0.3s; }
-.voice-bar:nth-child(5) { animation-delay: 0.15s; }
-.voice-bar:nth-child(6) { animation-delay: 0.25s; }
-.voice-bar:nth-child(7) { animation-delay: 0.05s; }
-.voice-bar:nth-child(8) { animation-delay: 0.35s; }
-.voice-bar:nth-child(9) { animation-delay: 0.12s; }
-@keyframes waveBar {
-  0% { height: 6px; opacity: 0.4; }
-  100% { height: 32px; opacity: 1; }
-}
-
-/* Start call button — prominent branded CTA */
-.voice-start-btn {
-  padding: 18px 44px; border-radius: 50px; font-size: 17px; font-weight: 700;
-  background: linear-gradient(135deg, var(--gold), #C4982F); color: #1B1B1F;
-  box-shadow: 0 6px 24px rgba(212,168,83,0.35), 0 0 0 0 rgba(212,168,83,0.4);
-  transition: all 0.25s; cursor: pointer; border: none;
-  display: inline-flex; align-items: center; gap: 10px;
-  animation: startPulse 2s ease-in-out infinite;
-  letter-spacing: 0.3px;
-}
-.voice-start-btn:hover { transform: scale(1.06); box-shadow: 0 8px 32px rgba(212,168,83,0.5); }
-.voice-start-btn:active { transform: scale(0.97); }
-@keyframes startPulse {
-  0%, 100% { box-shadow: 0 6px 24px rgba(212,168,83,0.35), 0 0 0 0 rgba(212,168,83,0.4); }
-  50% { box-shadow: 0 6px 32px rgba(212,168,83,0.55), 0 0 0 8px rgba(212,168,83,0); }
-}
-
-.voice-end-btn {
-  padding: 14px 32px; border-radius: 50px; font-size: 15px; font-weight: 700;
-  background: linear-gradient(135deg, #E88B8B, #c0392b); color: #fff;
-  box-shadow: 0 4px 16px rgba(192,57,43,0.3); transition: all 0.2s;
-  display: none; align-items: center; gap: 8px;
-}
-.voice-modal-overlay.active.speaking .voice-end-btn { display: inline-flex; }
-.voice-modal-overlay.active.speaking .voice-start-btn { display: none; }
-.voice-end-btn:hover { transform: scale(1.05); box-shadow: 0 6px 24px rgba(192,57,43,0.4); }
-
-.voice-modal-hint {
-  font-size: 13px; color: rgba(255,255,255,0.3); margin-top: 16px; line-height: 1.5;
-  max-width: 320px;
-}
-/* Ambient floating particles behind avatar */
-.voice-modal::before {
-  content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-  background:
-    radial-gradient(2px 2px at 20% 30%, rgba(212,168,83,0.15), transparent),
-    radial-gradient(2px 2px at 80% 20%, rgba(212,168,83,0.1), transparent),
-    radial-gradient(2px 2px at 50% 70%, rgba(212,168,83,0.08), transparent),
-    radial-gradient(3px 3px at 70% 60%, rgba(212,168,83,0.12), transparent),
-    radial-gradient(2px 2px at 30% 80%, rgba(212,168,83,0.06), transparent);
-  animation: particleDrift 12s ease-in-out infinite alternate;
-  pointer-events: none; z-index: 0;
-}
-.voice-modal > * { position: relative; z-index: 1; }
-@keyframes particleDrift {
-  0% { transform: translate(0,0) scale(1); }
-  50% { transform: translate(-8px, 5px) scale(1.05); }
-  100% { transform: translate(5px, -8px) scale(0.98); }
+.pay-poppy-btn:active { transform: scale(0.97); }
+.pay-poppy-btn svg { width: 18px; height: 18px; fill: currentColor; }
+.pay-poppy-note { font-size: 12px; color: var(--gray); margin-top: 8px; line-height: 1.4; }
+/* Mobile cleanup: one way to book, no fake activity, hero clears the header */
+.sticky-cta, .social-proof-notif, .activity-ticker { display: none !important; }
+@media (max-width: 719px) {
+  .hero { padding-top: calc(var(--nav-h) + 44px) !important; }
 }
 
 /* ═══ BIO TYPING ═══ */
@@ -3064,7 +2894,7 @@ body.is-offline .sticky-cta-btn { opacity: 0.5; pointer-events: none; }
 @keyframes fadeSlideIn { from { opacity: 0; transform: translateY(6px); } }
 @media print {
   body { background: #fff; padding: 0; font-size: 12pt; }
-  .nav, .bottom-bar, .sticky-cta, .voice-modal-overlay, .auth-overlay,
+  .nav, .bottom-bar, .sticky-cta, .daisy-dock, .auth-overlay,
   .hero-blob, .activity-ticker, .share-section, .footer,
   .social-proof-strip, .tip-share, .voice-end-btn, .tab-btn { display: none !important; }
   .hero { min-height: auto; padding: 20px; }
@@ -4197,10 +4027,11 @@ body.dark-mode .scenario-pick:hover, body.dark-mode .scenario-pick.active { bord
     <div class="price-note">per hour — yep, same as my age!</div>
     <div class="price-compare">Less than a movie ticket for an evening of fun</div>
     <div class="price-details">
-      Pay with Apple Pay (via text) or cash at pickup<br>
+      Pay with Apple Cash (through Messages) or cash at pickup<br>
       No hidden fees. No contracts. Tips always make her smile.
     </div>
     <button class="action-btn primary" style="display:inline-flex;margin-top:20px;" onclick="scrollToSection('#avail')">Book Poppy</button>
+    <div style="margin-top:12px;"><a class="pay-poppy-btn" href="#" onclick="return openPayPoppy(event, '')" style="background:transparent;color:var(--charcoal);box-shadow:inset 0 0 0 2px rgba(212,168,83,0.6);"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm.9 15.2v1.3h-1.7v-1.25c-1.6-.2-2.6-1.1-2.8-2.5h1.9c.1.6.6.95 1.6.95.9 0 1.4-.35 1.4-.9 0-.5-.35-.8-1.5-1.05l-.9-.2c-1.7-.4-2.4-1.2-2.4-2.5 0-1.3.95-2.25 2.6-2.5V7.3h1.7v1.2c1.45.25 2.35 1.1 2.45 2.4h-1.85c-.1-.55-.55-.9-1.4-.9-.8 0-1.3.35-1.3.85 0 .45.35.75 1.4.95l.9.2c1.85.4 2.55 1.15 2.55 2.5 0 1.4-1 2.3-2.65 2.6z"/></svg> Pay Poppy with Apple Cash</a></div>
   </div>
 </section>
 
@@ -4352,6 +4183,8 @@ body.dark-mode .scenario-pick:hover, body.dark-mode .scenario-pick.active { bord
         Add to calendar
       </button>
     </div>
+    <a class="pay-poppy-btn" id="payPoppyBtn" href="#" onclick="return openPayPoppy(event)" style="width:100%;margin-bottom:8px;"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm.9 15.2v1.3h-1.7v-1.25c-1.6-.2-2.6-1.1-2.8-2.5h1.9c.1.6.6.95 1.6.95.9 0 1.4-.35 1.4-.9 0-.5-.35-.8-1.5-1.05l-.9-.2c-1.7-.4-2.4-1.2-2.4-2.5 0-1.3.95-2.25 2.6-2.5V7.3h1.7v1.2c1.45.25 2.35 1.1 2.45 2.4h-1.85c-.1-.55-.55-.9-1.4-.9-.8 0-1.3.35-1.3.85 0 .45.35.75 1.4.95l.9.2c1.85.4 2.55 1.15 2.55 2.5 0 1.4-1 2.3-2.65 2.6z"/></svg> Pay Poppy with Apple Cash</a>
+    <div class="pay-poppy-note" style="margin-bottom:14px;">Opens Messages to Poppy with the amount filled in. Tap the Apple Cash button in the thread to send. Cash at pickup works too.</div>
     <button class="confirm-close-btn" onclick="closeConfirmation()">Awesome!</button>
   </div>
 </div>
@@ -4718,7 +4551,7 @@ function applySmartContext() {
 
     // 2. Override bio with clear value proposition
     if (heroBio) {
-      heroBio.textContent = "Tahoe’s favorite young sitter — Red Cross certified, 4.9★ rated, and your kids will ask for her by name.";
+      heroBio.textContent = "Red Cross certified, and your kids will ask for her by name.";
     }
 
     // 3. Swap CTA priority — Book is primary for first-timers (they don't know Daisy yet)
@@ -6389,189 +6222,138 @@ function toggleFaq(btn) {
 
 
 
-let _elevenLabsLoaded = false;
-function loadElevenLabs() {
-  if (_elevenLabsLoaded) return Promise.resolve();
-  return new Promise(resolve => {
-    const container = document.getElementById('voiceWidgetContainer');
-    const el = document.createElement('elevenlabs-convai');
-    el.setAttribute('agent-id', 'agent_9201m47wf1t0e7wt6djfassmqy6t');
-    el.setAttribute('avatar-image-url', 'https://tinytots-v2.netlify.app/daisy-still.jpg');
-    container.appendChild(el);
-    const sc = document.createElement('script');
-    sc.src = 'https://elevenlabs.io/convai-widget/index.js';
-    sc.async = true;
-    sc.onload = () => {
-      _elevenLabsLoaded = true;
-      setTimeout(() => {
-        _setupWidgetListeners();
-        initChatLogging();
-        // Style the widget — make orb big, restyle buttons, replace "call" text
-        _hideFloatingWidgetButton();
-        // Re-check after delays — ElevenLabs script may render late
-        setTimeout(_hideFloatingWidgetButton, 1500);
-        setTimeout(_hideFloatingWidgetButton, 3000);
-        setTimeout(_hideFloatingWidgetButton, 5000);
-        resolve();
-      }, 800);
-    };
-    sc.onerror = () => { _elevenLabsLoaded = true; resolve(); };
-    document.body.appendChild(sc);
-  });
+
+/* ═══ DAISY DOCK (ElevenLabs JS SDK) — no modal, the page keeps scrolling ═══ */
+const DAISY_AGENT_ID = 'agent_9201m47wf1t0e7wt6djfassmqy6t';
+const DAISY_SDK_URL = 'https://cdn.jsdelivr.net/npm/@elevenlabs/client@1.27.0/+esm';
+let daisyConv = null, daisySdk = null, daisyMuted = false, daisyStarting = false;
+
+function daisyEl(id) { return document.getElementById(id); }
+function daisySetState(state, label) {
+  const dock = daisyEl('daisyDock');
+  dock.classList.remove('speaking', 'listening', 'error', 'connecting');
+  if (state) dock.classList.add(state);
+  daisyEl('daisyDockState').textContent = label;
+}
+function daisyCaption(text, fromUser) {
+  const cap = daisyEl('daisyDockCaption');
+  cap.textContent = fromUser ? 'You: ' + text : text;
+  daisyEl('daisyDock').classList.add('has-messages');
+}
+function daisyShowDock(show) {
+  const dock = daisyEl('daisyDock');
+  dock.classList.toggle('show', show);
+  dock.setAttribute('aria-hidden', show ? 'false' : 'true');
+  document.body.classList.toggle('daisy-open', show);
 }
 
-/* Style the ElevenLabs widget for Tiny Tots branding */
-function _hideFloatingWidgetButton() {
-  const _ttStyle = `
-    [class*="minimize"], [class*="avatarButton"] { display: none !important; }
-    [class*="_box_"] { opacity: 1 !important; margin: 0 auto; transform: none !important; pointer-events: auto !important; }
-    [class*="_feedback_"] { display: none !important; }
-    [class*="_wrapper_"] { width: 100% !important; justify-content: center !important; }
-    /* Style the call button for Tiny Tots branding */
-    button[class*="_call_"], button[class*="_start_"], [class*="_callButton_"] {
-      background: linear-gradient(135deg, #D4A853, #C4982F) !important;
-      color: #1B1B1F !important; border-radius: 50px !important;
-      font-weight: 700 !important; font-size: 16px !important;
-      padding: 14px 32px !important; border: none !important;
-      box-shadow: 0 6px 24px rgba(212,168,83,0.35) !important;
-      letter-spacing: 0.3px !important;
-      white-space: nowrap !important;
-      min-width: fit-content !important;
-    }
-    /* Hide the phone/call icon SVG inside the button */
-    button[class*="_call_"] svg, button[class*="_start_"] svg, [class*="_callButton_"] svg,
-    button[class*="_call_"] [class*="icon"], button[class*="_start_"] [class*="icon"] {
-      display: none !important;
-    }
-    /* Hide "Need help?" label */
-    [class*="_header_"], [class*="_title_"]:not([class*="_callButton_"]) {
-      display: none !important;
-    }
-    /* Compact layout — show orb/avatar + start/end button */
-    [class*="_content_"], [class*="_inner_"] {
-      display: flex !important; flex-direction: column !important;
-      align-items: center !important; justify-content: center !important;
-      gap: 8px !important; padding: 4px !important;
-    }
-  `;
-  document.querySelectorAll('elevenlabs-convai').forEach(widget => {
-    if (!widget.shadowRoot) return;
-    const shadow = widget.shadowRoot;
-    if (!shadow.querySelector('#tt-custom-style')) {
-      const style = document.createElement('style');
-      style.id = 'tt-custom-style';
-      style.textContent = _ttStyle;
-      shadow.appendChild(style);
-    }
-    // Replace "Start a call" text with "Chat with Daisy"
-    _replaceCallText(shadow);
-  });
-  // Keep only the first widget instance — remove duplicates created by the ElevenLabs script
-  const allWidgets = document.querySelectorAll('elevenlabs-convai');
-  if (allWidgets.length > 1) {
-    for (let i = 1; i < allWidgets.length; i++) allWidgets[i].remove();
-  }
+async function daisyLoadSdk() {
+  if (daisySdk) return daisySdk;
+  daisySdk = await import(DAISY_SDK_URL);
+  return daisySdk;
 }
 
-/* Replace "Start a call" with "Chat with Daisy" inside ElevenLabs Shadow DOM */
-function _replaceCallText(shadow) {
-  if (!shadow) return;
-  const walk = (node) => {
-    if (node.nodeType === 3) {
-      const t = node.textContent;
-      if (t.includes('Start a call')) node.textContent = t.replace('Start a call', 'Chat with Daisy');
-      if (t.includes('Need help')) node.textContent = t.replace(/Need help\??/, '');
-      if (t.includes('End call')) node.textContent = t.replace('End call', 'End chat');
-    } else if (node.childNodes) {
-      node.childNodes.forEach(walk);
-    }
-  };
-  walk(shadow);
-  // Keep watching for dynamically rendered content
-  const obs = new MutationObserver(() => walk(shadow));
-  obs.observe(shadow, { childList: true, subtree: true, characterData: true });
-  // Stop after 30s to avoid infinite observation
-  setTimeout(() => obs.disconnect(), 30000);
-}
-
-/* Open voice modal — widget loads VISIBLE so user can tap "Chat with Daisy" directly (required for Chrome mic permissions) */
+/* Entry point for the hero avatar, the Talk to Daisy buttons and the Ask tab */
 function toggleVoice() {
-  if (voiceActive) { endVoiceCall(); return; }
-  // Dismiss Daisy hint if showing
+  if (daisyConv || daisyStarting) { daisyEnd(); return; }
+  daisyStart();
+}
+
+async function daisyStart() {
+  daisyStarting = true;
   const dh = document.getElementById('daisyHint');
-  if (dh) { dh.classList.remove('show'); localStorage.setItem('tt_daisy_hint','1'); }
-  const modal = document.getElementById('voiceModal');
-  const statusEl = document.getElementById('voiceModalStatus');
-  modal.classList.add('active');
-  modal.setAttribute('aria-hidden', 'false');
-  modal.classList.remove('speaking');
-  document.body.style.overflow = 'hidden';
-  // Escape key to close + focus trap
-  modal._escHandler = (e) => {
-    if (e.key === 'Escape') { closeVoiceModal(); return; }
-    if (e.key === 'Tab') {
-      const focusable = modal.querySelectorAll('button, [href], input, [tabindex]:not([tabindex="-1"])');
-      if (!focusable.length) return;
-      const first = focusable[0], last = focusable[focusable.length - 1];
-      if (e.shiftKey) { if (document.activeElement === first) { last.focus(); e.preventDefault(); } }
-      else { if (document.activeElement === last) { first.focus(); e.preventDefault(); } }
-    }
-  };
-  document.addEventListener('keydown', modal._escHandler);
-  // Move focus to modal
-  const closeBtn = modal.querySelector('.voice-modal-close');
-  if (closeBtn) closeBtn.focus();
-
-  // Hide end button until call connects
-  const endBtn = document.getElementById('voiceEndBtn');
-  if (endBtn) endBtn.style.display = 'none';
-  statusEl.textContent = "Poppy's AI assistant — tap below to start!";
-  statusEl.className = 'voice-modal-status';
-
-  // Lazy-load widget into the modal container — widget is VISIBLE so user clicks it directly
-  loadElevenLabs();
-}
-
-
-/* Close modal without necessarily ending a call */
-function closeVoiceModal() {
-  endVoiceCall();
-}
-
-function endVoiceCall() {
-  const modal = document.getElementById('voiceModal');
-  modal.classList.remove('active', 'speaking');
-  modal.setAttribute('aria-hidden', 'true');
-  document.body.style.overflow = '';
-  if (modal._escHandler) { document.removeEventListener('keydown', modal._escHandler); modal._escHandler = null; }
-  // Restore focus to avatar
-  const avatar = document.getElementById('avatarWrap');
-  if (avatar) avatar.focus();
-
-  // Try to end the ElevenLabs call via shadow DOM
-  const widget = document.querySelector('elevenlabs-convai');
-  if (widget && widget.shadowRoot) {
-    const shadow = widget.shadowRoot;
-    const buttons = shadow.querySelectorAll('button');
-    // Look for end/stop/disconnect button
-    buttons.forEach(b => {
-      const text = (b.textContent || '').trim().toLowerCase();
-      if (text.includes('end') || text.includes('stop') || text.includes('disconnect') || text.includes('cancel')) {
-        b.click();
-      }
+  if (dh) { dh.classList.remove('show'); try { localStorage.setItem('tt_daisy_hint','1'); } catch {} }
+  daisyEl('daisyDockCaption').textContent = '';
+  daisyEl('daisyDock').classList.remove('has-messages');
+  daisyMuted = false; daisyUpdateMuteBtn();
+  daisySetState('connecting', 'Connecting');
+  daisyShowDock(true);
+  try {
+    // Ask for the mic inside the tap, so the browser prompt is tied to a real gesture
+    const probe = await navigator.mediaDevices.getUserMedia({ audio: true });
+    probe.getTracks().forEach(t => t.stop());
+    const sdk = await daisyLoadSdk();
+    const saved = getSavedParent() || {};
+    daisyConv = await sdk.Conversation.startSession({
+      agentId: DAISY_AGENT_ID,
+      connectionType: 'webrtc',
+      dynamicVariables: {
+        parent_name: saved.name || '',
+        parent_phone: saved.phone || '',
+        kid_name: (saved.kids && saved.kids[0]) || ''
+      },
+      onConnect: () => { daisySetState('listening', 'Listening'); daisyLogStart(); },
+      onDisconnect: () => { daisyCleanup(); },
+      onModeChange: ({ mode }) => {
+        if (mode === 'speaking') daisySetState('speaking', 'Daisy is talking');
+        else daisySetState('listening', daisyMuted ? 'Muted' : 'Listening');
+      },
+      onMessage: ({ source, message }) => {
+        if (!message) return;
+        const fromUser = source === 'user';
+        daisyCaption(message, fromUser);
+        chatMessages.push({ role: fromUser ? 'visitor' : 'ai', text: message, time: new Date().toISOString() });
+      },
+      onError: (err) => { console.warn('[Daisy]', err); }
     });
+    voiceActive = true; updateVoiceUI();
+  } catch (err) {
+    console.warn('[Daisy] could not start', err);
+    const denied = err && (err.name === 'NotAllowedError' || err.name === 'NotFoundError');
+    daisySetState('error', denied ? 'Mic blocked' : 'Trouble connecting');
+    daisyEl('daisyDockCaption').textContent = denied
+      ? 'Allow the microphone for this site to talk to Daisy, or book with the Book button.'
+      : 'Daisy is unreachable right now. The Book button works, or text Poppy.';
+    daisyConv = null;
+    setTimeout(() => { if (!daisyConv) daisyShowDock(false); }, 6000);
   }
-  voiceActive = false;
-  updateVoiceUI();
+  daisyStarting = false;
 }
+
+function daisyEnd() {
+  const c = daisyConv;
+  daisyConv = null;
+  if (c) { try { c.endSession(); } catch {} }
+  daisyCleanup();
+}
+
+function daisyCleanup() {
+  daisyConv = null; daisyStarting = false;
+  voiceActive = false; updateVoiceUI();
+  daisyShowDock(false);
+  daisyLogEnd();
+  const avatar = document.getElementById('avatarWrap');
+  if (avatar && document.activeElement && document.activeElement.closest('#daisyDock')) avatar.focus();
+}
+
+function daisyToggleMute() {
+  if (!daisyConv) return;
+  daisyMuted = !daisyMuted;
+  try { daisyConv.setMicMuted(daisyMuted); } catch {}
+  daisyUpdateMuteBtn();
+  if (!daisyEl('daisyDock').classList.contains('speaking')) daisySetState('listening', daisyMuted ? 'Muted' : 'Listening');
+}
+function daisyUpdateMuteBtn() {
+  const b = daisyEl('daisyMuteBtn');
+  b.setAttribute('aria-pressed', daisyMuted ? 'true' : 'false');
+  b.setAttribute('aria-label', daisyMuted ? 'Unmute microphone' : 'Mute microphone');
+}
+function daisyAsk(text) {
+  if (!daisyConv) return;
+  try { daisyConv.sendUserMessage(text); daisyCaption(text, true); } catch {}
+}
+/* Kept for older buttons */
+function endVoiceCall() { daisyEnd(); }
+function closeVoiceModal() { daisyEnd(); }
 
 function updateVoiceUI() {
   const wrap = document.getElementById('avatarWrap');
   const status = document.getElementById('avatarStatus');
   const btnText = document.getElementById('voiceBtnText');
+  if (!wrap || !status || !btnText) return;
   if (voiceActive) {
     wrap.classList.add('voice-active');
-    status.textContent = 'Chatting with Daisy...';
+    status.textContent = 'Chatting with Daisy';
     btnText.textContent = 'End Chat';
   } else {
     wrap.classList.remove('voice-active');
@@ -6580,34 +6362,19 @@ function updateVoiceUI() {
   }
 }
 
-/* Listen for ElevenLabs widget events to update modal UI + drive canvas lip sync */
-function _setupWidgetListeners() {
-  const widget = document.querySelector('elevenlabs-convai');
-  if (!widget) return;
-  const modal = document.getElementById('voiceModal');
-  const statusEl = document.getElementById('voiceModalStatus');
-
-  widget.addEventListener('elevenlabs-convai:call', e => {
-    if (e.detail?.status === 'connected') {
-      voiceActive = true;
-      statusEl.textContent = 'Connected — say hi to Daisy!';
-      statusEl.className = 'voice-modal-status connected';
-      modal.classList.add('speaking');
-      const endBtn = document.getElementById('voiceEndBtn');
-      if (endBtn) endBtn.style.display = 'flex';
-      updateVoiceUI();
-    }
-  });
-  widget.addEventListener('elevenlabs-convai:call-end', () => {
-    voiceActive = false;
-    modal.classList.remove('speaking');
-    const statusEl2 = document.getElementById('voiceModalStatus');
-    statusEl2.textContent = 'Chat ended — tap below to chat again!';
-    const endBtn = document.getElementById('voiceEndBtn');
-    if (endBtn) endBtn.style.display = 'none';
-    updateVoiceUI();
-  });
-
+/* ═══ PAY POPPY (Apple Cash through Messages) ═══ */
+const POPPY_PAY_NUMBER = '+14154194206';
+function payPoppyLink(amountLabel) {
+  const body = 'Hi Poppy! Sending ' + (amountLabel ? amountLabel + ' ' : 'your babysitting payment ') + 'with Apple Cash';
+  const sep = /android/i.test(navigator.userAgent) ? '?' : '&';
+  return 'sms:' + POPPY_PAY_NUMBER + sep + 'body=' + encodeURIComponent(body);
+}
+function openPayPoppy(ev, amountLabel) {
+  if (ev) ev.preventDefault();
+  if (!POPPY_PAY_NUMBER) return false;
+  const amt = amountLabel || (window._lastBooking ? '$' + (window._lastBooking.priceCents / 100) : '');
+  window.location.href = payPoppyLink(amt);
+  return false;
 }
 
 /* ═══ SHARING / VIRAL ═══ */
@@ -6913,18 +6680,11 @@ async function loadAdminParents() {
 let chatSessionId = null;
 let chatMessages = [];
 
-function initChatLogging() {
-  // Listen for ElevenLabs widget events to capture conversations
-  const widget = document.querySelector('elevenlabs-convai');
-  if (!widget) return;
+function daisyLogStart() {
   chatSessionId = 'chat_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8);
-
-  // Observe widget for conversation activity
-  widget.addEventListener('elevenlabs-convai:call-started', () => {
-    chatSessionId = 'chat_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8);
-    chatMessages = [];
-    console.log('[Daisy] ElevenLabs conversation started');
-    const saved = getSavedParent();
+  chatMessages = [];
+  const saved = getSavedParent();
+  try {
     db.from('chat_logs').insert({
       session_id: chatSessionId,
       visitor_name: saved?.name || 'Anonymous',
@@ -6932,46 +6692,24 @@ function initChatLogging() {
       messages: [],
       message_count: 0
     }).then(() => {});
-  });
-
-  widget.addEventListener('elevenlabs-convai:call-ended', () => {
-    if (chatSessionId && chatMessages.length > 0) {
-      const summary = chatMessages.slice(0, 3).map(m => m.text.slice(0, 60)).join(' → ');
-      db.from('chat_logs').update({
-        messages: chatMessages,
-        message_count: chatMessages.length,
-        summary: summary,
-        ended_at: new Date().toISOString()
-      }).eq('session_id', chatSessionId).then(() => {});
-    }
-  });
-
-  // Capture user/agent messages via MutationObserver on widget shadow DOM
-  const observeWidget = () => {
-    try {
-      const shadow = widget.shadowRoot;
-      if (!shadow) { setTimeout(observeWidget, 2000); return; }
-      const observer = new MutationObserver(() => {
-        const transcriptEls = shadow.querySelectorAll('[class*="transcript"], [class*="message"]');
-        transcriptEls.forEach(el => {
-          const text = el.textContent?.trim();
-          if (text && text.length > 2 && !chatMessages.some(m => m.text === text)) {
-            const isAgent = el.className?.includes('agent') || el.className?.includes('assistant');
-            chatMessages.push({
-              role: isAgent ? 'ai' : 'visitor',
-              text: text,
-              time: new Date().toISOString()
-            });
-          }
-        });
-      });
-      observer.observe(shadow, { childList: true, subtree: true, characterData: true });
-    } catch (e) {
-      // Shadow DOM not accessible — graceful degradation
-    }
-  };
-  setTimeout(observeWidget, 3000);
+  } catch {}
 }
+
+function daisyLogEnd() {
+  if (!chatSessionId) return;
+  const sid = chatSessionId; chatSessionId = null;
+  if (!chatMessages.length) return;
+  const summary = chatMessages.slice(0, 3).map(m => m.text.slice(0, 60)).join(' → ');
+  try {
+    db.from('chat_logs').update({
+      messages: chatMessages,
+      message_count: chatMessages.length,
+      summary: summary,
+      ended_at: new Date().toISOString()
+    }).eq('session_id', sid).then(() => {});
+  } catch {}
+}
+
 
 async function loadChatLogs() {
   const el = document.getElementById('dashChatsList');
@@ -7765,7 +7503,7 @@ function showActivityTicker() {
 }
 
 // Start ticker after 6 seconds on page
-setTimeout(showActivityTicker, 6000);
+// activity ticker retired (invented names)
 
 /* ═══ CONFETTI ═══ */
 function launchConfetti() {
@@ -7903,10 +7641,8 @@ requestAnimationFrame(() => {
     initParallax();
     initScrollMotion();
     initRotatingProof();
-    initSocialProofNotifs();
     initReviewAutoScroll();
   }, { timeout: 2000 });
-  setTimeout(initChatLogging, 3000);
   // Register service worker for PWA install
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js').catch(() => {});
@@ -7928,43 +7664,23 @@ requestAnimationFrame(() => {
 });
 </script>
 
-<!-- ═══ VOICE MODAL ═══ -->
-<div class="voice-modal-overlay" id="voiceModal" role="dialog" aria-modal="true" aria-label="Chat with Daisy, Poppy's AI assistant" aria-hidden="true">
-  <div class="voice-modal">
-    <button class="voice-modal-close" onclick="closeVoiceModal()" aria-label="Close">&times;</button>
-    <div class="voice-modal-name">Daisy</div>
-    <div class="daisy-avatar-wrap" id="daisyAvatarWrap">
-      <img src="daisy-still.jpg" alt="Daisy — Poppy's AI assistant" class="daisy-still-img">
-      <div class="daisy-glow-ring"></div>
-      <div class="daisy-glow-ring"></div>
-      <div class="daisy-glow-ring"></div>
-      <div class="daisy-speaking-dot"></div>
-    </div>
-    <div class="voice-modal-status" id="voiceModalStatus">Poppy's AI assistant — tap below to start!</div>
-    <div class="daisy-suggestions" id="daisySuggestions">
-      <button class="daisy-chip" onclick="return false">What are Poppy's rates?</button>
-      <button class="daisy-chip" onclick="return false">Is she available Saturday?</button>
-      <button class="daisy-chip" onclick="return false">What activities does she do?</button>
-      <button class="daisy-chip" onclick="return false">Tell me about Poppy</button>
-    </div>
-    <div class="voice-widget-container" id="voiceWidgetContainer">
-      <!-- ElevenLabs widget with avatar -->
-    </div>
-    <div class="voice-tap-hint" id="voiceTapHint">Tap to start a conversation with Daisy</div>
-    <div class="voice-waveform" id="voiceWaveform">
-      <div class="voice-bar"></div><div class="voice-bar"></div><div class="voice-bar"></div>
-      <div class="voice-bar"></div><div class="voice-bar"></div><div class="voice-bar"></div>
-      <div class="voice-bar"></div><div class="voice-bar"></div><div class="voice-bar"></div>
-    </div>
-    <button class="voice-end-btn" id="voiceEndBtn" onclick="endVoiceCall()" style="display:none">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
-      End Chat
-    </button>
-    <div class="voice-modal-hint">Daisy knows everything about Poppy's babysitting — ask anything!</div>
+<!-- ═══ DAISY DOCK: talk to Daisy while the page keeps scrolling ═══ -->
+<div class="daisy-dock" id="daisyDock" role="region" aria-label="Daisy, Poppy's AI assistant" aria-hidden="true">
+  <div class="daisy-dock-face" id="daisyDockFace">
+    <img src="daisy-still.jpg" alt="" class="daisy-dock-img" width="52" height="52">
+    <span class="daisy-dock-ring"></span><span class="daisy-dock-ring"></span>
   </div>
+  <div class="daisy-dock-body">
+    <div class="daisy-dock-name">Daisy <span class="daisy-dock-state" id="daisyDockState">Connecting</span></div>
+    <div class="daisy-dock-caption" id="daisyDockCaption" aria-live="polite"></div>
+    <div class="daisy-dock-chips" id="daisyDockChips">
+      <button class="daisy-dock-chip" onclick="daisyAsk('Is Poppy free this Saturday?')">Free Saturday?</button>
+      <button class="daisy-dock-chip" onclick="daisyAsk('What are Poppy\'s rates?')">Rates</button>
+      <button class="daisy-dock-chip" onclick="daisyAsk('Can you book Poppy for me?')">Book her</button>
+    </div>
+  </div>
+  <button class="daisy-dock-btn" id="daisyMuteBtn" onclick="daisyToggleMute()" aria-label="Mute microphone" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-3.08A7 7 0 0 0 19 11h-2z"/></svg></button>
+  <button class="daisy-dock-btn daisy-dock-end" onclick="daisyEnd()" aria-label="End conversation"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button>
 </div>
-
-<!-- ElevenLabs Conversational AI — lazy-loaded on first voice interaction -->
-<div id="elevenLabsSlot"></div>
 </body>
 </html>
