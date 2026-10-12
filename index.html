@@ -8,20 +8,20 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22Tiny%20Tots%22%2C%22short_name%22%3A%22Tiny%20Tots%22%2C%22start_url%22%3A%22%2F%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23FFF8F5%22%2C%22theme_color%22%3A%22%23FFF8F5%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%2C%253Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%20100%20100%27%253E%253Ccircle%20cx%3D%2750%27%20cy%3D%2750%27%20r%3D%2748%27%20fill%3D%27%23D4A853%27%2F%253E%253Ctext%20x%3D%2750%25%27%20y%3D%2758%25%27%20text-anchor%3D%27middle%27%20font-size%3D%2746%27%20fill%3D%27white%27%253ETT%253C%2Ftext%253E%253C%2Fsvg%253E%22%2C%22sizes%22%3A%22any%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%7D%5D%7D">
-<meta name="description" content="Poppy Wilbert, age 12, Red Cross certified babysitter in North Lake Tahoe. See her open days, book in a minute, or ask Daisy, her AI assistant.">
+<meta name="description" content="Poppy Wilbert, age 12, Red Cross certified babysitter in Marin County. See her open days and book in a minute, or ask Daisy, her assistant. Ski days in Truckee on request.">
 <!-- Open Graph — beautiful previews on iMessage, WhatsApp, Instagram, Twitter -->
 <meta property="og:title" content="Meet Poppy, Tiny Tots Babysitting">
 <meta property="og:description" content="Red Cross certified, age 12, $12 an hour. See Poppy's open days and book in a minute.">
-<meta property="og:image" content="https://tinytots-v2.netlify.app/og-image.jpg">
+<meta property="og:image" content="https://tinytots-v2.netlify.app/og-image.jpg?v=3">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Meet Poppy. Tiny Tots babysitting: Red Cross certified, age 12, $12/hr.">
+<meta property="og:image:alt" content="Meet Poppy. Tiny Tots babysitting: Red Cross certified, age 12, $12 an hour.">
 <meta property="og:url" content="https://tinytots-v2.netlify.app">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Meet Poppy, Tiny Tots Babysitting">
 <meta name="twitter:description" content="Red Cross certified, age 12, $12 an hour. See Poppy's open days and book in a minute.">
-<meta name="twitter:image" content="https://tinytots-v2.netlify.app/og-image.jpg">
+<meta name="twitter:image" content="https://tinytots-v2.netlify.app/og-image.jpg?v=3">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://udhgdtiezzzudczckaaw.supabase.co">
@@ -3655,6 +3655,16 @@ body, body.dark-mode { background: var(--warm); color: var(--charcoal); font-fam
 .toast { background: var(--charcoal); color: var(--white); border-radius: 999px; font-weight: 700; }
 .toast.warn { background: var(--bubble-dark); }
 
+/* ─── Ski days ─── */
+.v3-ski { background: var(--sky); border-radius: 18px; padding: 16px 18px; margin-top: 8px; }
+.v3-ski h3 { font-size: 18px; margin-bottom: 2px; }
+.v3-ski p { font-size: 15px; margin: 0 0 8px; color: var(--charcoal); }
+.v3-price-alt { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; background: var(--white); border: 2px solid var(--sky); border-radius: 20px; padding: 16px 18px; margin-top: 12px; }
+.v3-price-alt .alt-amount { font-family: var(--font-display); font-weight: 700; font-size: 30px; line-height: 1; color: var(--charcoal); font-variant-numeric: tabular-nums; }
+.v3-price-alt .alt-amount small { font-size: 15px; font-weight: 600; color: var(--bubble-dark); margin-left: 4px; }
+.v3-price-alt .alt-label { font-size: 14px; font-weight: 700; color: var(--gray); margin-top: 4px; }
+.v3-price-alt .v3-btn { height: 46px; font-size: 16px; padding: 0 20px; }
+
 /* ─── Fit and finish ─── */
 .book-guest .form-row { flex-direction: column; gap: 10px; }
 @media (min-width: 480px) { .book-guest .form-row { flex-direction: row; } }
@@ -3699,17 +3709,25 @@ section[id], .v3-section, .avail-section { scroll-margin-top: calc(var(--nav-h) 
   "description": "Babysitting by Poppy Wilbert, age 12, Red Cross certified. $12 an hour. See her open days and book online, or ask Daisy, her assistant.",
   "url": "https://tinytots-v2.netlify.app",
   "priceRange": "$12 an hour",
-  "areaServed": "North Lake Tahoe, California",
+  "areaServed": ["Marin County, California", "Truckee, California"],
   "openingHoursSpecification": [
     { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Tuesday", "Thursday"], "opens": "15:45", "closes": "20:00" },
     { "@type": "OpeningHoursSpecification", "dayOfWeek": "Saturday", "opens": "16:00", "closes": "23:00" }
   ],
-  "makesOffer": {
-    "@type": "Offer",
-    "itemOffered": { "@type": "Service", "name": "Babysitting", "description": "In-home babysitting, Red Cross certified" },
-    "price": "12.00", "priceCurrency": "USD",
-    "priceSpecification": { "@type": "UnitPriceSpecification", "price": "12.00", "priceCurrency": "USD", "unitCode": "HUR" }
-  }
+  "makesOffer": [
+    {
+      "@type": "Offer",
+      "itemOffered": { "@type": "Service", "name": "Babysitting", "description": "In-home babysitting in Marin County, Red Cross certified", "areaServed": "Marin County, California" },
+      "price": "12.00", "priceCurrency": "USD",
+      "priceSpecification": { "@type": "UnitPriceSpecification", "price": "12.00", "priceCurrency": "USD", "unitCode": "HUR" }
+    },
+    {
+      "@type": "Offer",
+      "itemOffered": { "@type": "Service", "name": "Ski day", "description": "Ski nanny for the day in Truckee, on request", "areaServed": "Truckee, California" },
+      "price": "150.00", "priceCurrency": "USD",
+      "priceSpecification": { "@type": "UnitPriceSpecification", "price": "150.00", "priceCurrency": "USD", "unitCode": "DAY" }
+    }
+  ]
 }
 </script>
 </head>
@@ -3910,10 +3928,10 @@ section[id], .v3-section, .avail-section { scroll-margin-top: calc(var(--nav-h) 
   <div class="v3-about">
     <img class="v3-about-photo" src="poppy-photo.jpg" alt="Poppy Wilbert at the lake" loading="lazy" decoding="async" width="404" height="505">
     <div>
-      <div class="meta">Age 12 &middot; North Lake Tahoe &middot; Red Cross certified</div>
-      <p>Poppy is a mountain kid who skis, hikes, and has babysat since she was ten. She is good with everyone from toddlers to fourth graders, and she arrives with a plan: a craft, a game, something outside, and a book before bed.</p>
-      <p>Parents get a straight answer and a kid who asks when she is coming back.</p>
-      <div class="v3-quote">My favorite part is when a shy kid finally laughs so hard they can't stop.<small>Poppy</small></div>
+      <div class="meta">Age 12 &middot; Marin County &middot; Red Cross certified</div>
+      <p>Poppy is twelve, lives in Marin County, and skis. She is Red Cross certified and arrives with a plan: a craft, a game, something outside, and a book before bed.</p>
+      <p>Parents get a straight answer, a text when they want one, and a kid who had a good afternoon.</p>
+      <div class="v3-ski"><h3>Ski days in Truckee</h3><p>Heading up for the weekend? Poppy can come along as a ski nanny, on request. $150 a day.</p><a class="v3-link" href="#" onclick="return openTextPoppy(event, 'Hi Poppy, we would like a ski day in Truckee. Dates: ')">Ask about a ski day</a></div>
     </div>
   </div>
 </section>
@@ -3941,6 +3959,10 @@ section[id], .v3-section, .avail-section { scroll-margin-top: calc(var(--nav-h) 
       <a class="v3-link" href="#avail" onclick="scrollToSection('#avail'); return false;">Book a day</a>
     </div>
   </div>
+  <div class="v3-price-alt">
+    <div><div class="alt-amount">$150<small>a day</small></div><div class="alt-label">Ski days in Truckee, on request</div></div>
+    <a class="v3-btn white" href="#" onclick="return openTextPoppy(event, 'Hi Poppy, we would like a ski day in Truckee. Dates: ')">Text Poppy</a>
+  </div>
 </section>
 <!-- ═══ FAQ ═══ -->
 <section class="v3-section faq-section" id="faq" aria-label="Questions parents ask">
@@ -3964,6 +3986,10 @@ section[id], .v3-section, .avail-section { scroll-margin-top: calc(var(--nav-h) 
       <div class="faq-a-wrap"><div class="faq-a">Text Poppy before the sit starts. No fee. Rebooking takes a minute.</div></div>
     </div>
     <div class="faq-item" role="listitem">
+      <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">Does Poppy do ski days in Truckee?<svg class="faq-chevron" viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg></button>
+      <div class="faq-a-wrap"><div class="faq-a">Yes, on request. $150 a day. Text Poppy with the dates and she will confirm.</div></div>
+    </div>
+    <div class="faq-item" role="listitem">
       <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">How do we pay?<svg class="faq-chevron" viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg></button>
       <div class="faq-a-wrap"><div class="faq-a">At pickup. Apple Cash through Messages (the Pay Poppy button opens the thread with the amount filled in), or cash.</div></div>
     </div>
@@ -3974,7 +4000,7 @@ section[id], .v3-section, .avail-section { scroll-margin-top: calc(var(--nav-h) 
   <div class="v3-invite">
     <p class="v3-eyebrow">Invite</p>
     <h2 class="v3-h2">Know a family that needs Poppy?</h2>
-    <p>Send them the link. One text is how every one of Poppy's families found her.</p>
+    <p>Send them the link. Daisy does the rest.</p>
     <div class="v3-invite-actions">
       <button class="v3-btn pink" onclick="shareViaText()">Text a friend</button>
       <button class="v3-btn white" id="copyLinkBtn" onclick="copyInviteLink()"><span id="copyLinkText">Copy link</span></button>
@@ -3987,7 +4013,7 @@ section[id], .v3-section, .avail-section { scroll-margin-top: calc(var(--nav-h) 
 </main>
 <footer class="v3-footer" id="footer">
   <div class="wm"><svg class="tt-star" aria-hidden="true"><use href="#tt-star"/></svg>Tiny Tots</div>
-  <div>Poppy Wilbert &middot; North Lake Tahoe, California</div>
+  <div>Poppy Wilbert &middot; Marin County, California &middot; Ski days in Truckee on request</div>
   <div>tinytotsbabysitting.com</div>
 </footer>
 
@@ -6206,6 +6232,13 @@ function payPoppyLink(amountLabel) {
   const body = 'Hi Poppy! Sending ' + (amountLabel ? amountLabel + ' ' : 'your babysitting payment ') + 'with Apple Cash';
   const sep = /android/i.test(navigator.userAgent) ? '?' : '&';
   return 'sms:' + POPPY_PAY_NUMBER + sep + 'body=' + encodeURIComponent(body);
+}
+function openTextPoppy(ev, body) {
+  if (ev) ev.preventDefault();
+  if (!POPPY_PAY_NUMBER) return false;
+  const sep = /android/i.test(navigator.userAgent) ? '?' : '&';
+  window.location.href = 'sms:' + POPPY_PAY_NUMBER + sep + 'body=' + encodeURIComponent(body);
+  return false;
 }
 function openPayPoppy(ev, amountLabel) {
   if (ev) ev.preventDefault();
