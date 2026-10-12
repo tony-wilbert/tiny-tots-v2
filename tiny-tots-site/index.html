@@ -3,15 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Tiny Tots — Poppy's Babysitting Network</title>
-<meta name="theme-color" content="#FFF8F5">
+<title>Tiny Tots Babysitting</title>
+<meta name="theme-color" content="#FFF8FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22Tiny%20Tots%22%2C%22short_name%22%3A%22Tiny%20Tots%22%2C%22start_url%22%3A%22%2F%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23FFF8F5%22%2C%22theme_color%22%3A%22%23FFF8F5%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%2C%253Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%20100%20100%27%253E%253Ccircle%20cx%3D%2750%27%20cy%3D%2750%27%20r%3D%2748%27%20fill%3D%27%23D4A853%27%2F%253E%253Ctext%20x%3D%2750%25%27%20y%3D%2758%25%27%20text-anchor%3D%27middle%27%20font-size%3D%2746%27%20fill%3D%27white%27%253ETT%253C%2Ftext%253E%253C%2Fsvg%253E%22%2C%22sizes%22%3A%22any%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%7D%5D%7D">
-<meta name="description" content="Meet Poppy — your 12-year-old Red Cross certified babysitter. Talk to her, book instantly, get parenting tips. The babysitting service parents actually share.">
+<meta name="description" content="Poppy Wilbert, age 12, Red Cross certified babysitter in North Lake Tahoe. See her open days, book in a minute, or ask Daisy, her AI assistant.">
 <!-- Open Graph — beautiful previews on iMessage, WhatsApp, Instagram, Twitter -->
-<meta property="og:title" content="Meet Poppy — Babysitter Extraordinaire">
-<meta property="og:description" content="Red Cross certified, $12/hr, and she has an AI voice assistant. The babysitting service parents actually share with other parents.">
+<meta property="og:title" content="Meet Poppy, Tiny Tots Babysitting">
+<meta property="og:description" content="Red Cross certified, age 12, $12 an hour. See Poppy's open days and book in a minute.">
 <meta property="og:image" content="https://tinytots-v2.netlify.app/og-image.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -19,8 +19,8 @@
 <meta property="og:url" content="https://tinytots-v2.netlify.app">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Meet Poppy — Babysitter Extraordinaire">
-<meta name="twitter:description" content="Red Cross certified, $12/hr, AI-powered parenting tips. The babysitting service parents actually share.">
+<meta name="twitter:title" content="Meet Poppy, Tiny Tots Babysitting">
+<meta name="twitter:description" content="Red Cross certified, age 12, $12 an hour. See Poppy's open days and book in a minute.">
 <meta name="twitter:image" content="https://tinytots-v2.netlify.app/og-image.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -28,8 +28,8 @@
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="dns-prefetch" href="https://elevenlabs.io">
 <link rel="preload" as="image" href="poppy-photo.jpg" fetchpriority="high">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
-<noscript><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet"></noscript>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet"></noscript>
 <style>
 /* ═══ VARIABLES & RESET ═══ */
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
@@ -2403,7 +2403,7 @@ body.daisy-open { padding-bottom: calc(var(--bottom-h) + var(--safe-bottom) + 96
   position: relative; display: inline-block;
 }
 .stat-sparkle::after {
-  content: '✦'; position: absolute; top: -8px; right: -14px;
+  content: ''; position: absolute; top: -8px; right: -14px;
   font-size: 12px; color: var(--gold); opacity: 0; transform: scale(0);
   animation: sparkle-pop 0.6s cubic-bezier(.22,1,.36,1) forwards;
 }
@@ -3400,240 +3400,403 @@ body.dark-mode .scenario-pick:hover, body.dark-mode .scenario-pick.active { bord
   }
 }
 </style>
+<style id="v3">
+/* ══════════════════════════════════════════════════════════════════════
+   TINY TOTS v3. Pink, baby blue, and twelve-year-old professional.
+   Tokens and layout follow brand/tiny-tots-brand-guide.html (v3.0).
+   ══════════════════════════════════════════════════════════════════════ */
+:root {
+  --pink: #FBE3EA; --pink-deep: #F6C9D7;
+  --bubble: #EE5B90; --bubble-dark: #D94F82;
+  --sky: #D6EEFA; --sky-deep: #8CCDF0; --sky-ink: #1F75AD;
+  --gold: #E6C76B; --gold-light: #F1DC9C;
+  --warm: #FFF8FA; --white: #FFFFFF; --charcoal: #2F2A33; --gray: #766F7B; --mint: #6FD38A; --mint-deep: #1F7F42;
+  --green: #1F7F42; --red-soft: #D94F82; --line: #F0E6EA;
+  --font-display: 'Fredoka', 'Nunito', sans-serif; --font-body: 'Nunito', sans-serif;
+  --gradient-gold: linear-gradient(135deg, var(--bubble), var(--sky-deep));
+  --glass: rgba(255,248,250,0.92); --glass-border: rgba(238,91,144,0.12);
+  --shadow-sm: 0 6px 16px rgba(238,91,144,0.12); --shadow-md: 0 10px 30px rgba(238,91,144,0.12);
+  --shadow-pink: 0 10px 26px rgba(238,91,144,0.32);
+  --radius: 20px;
+}
+html { color-scheme: light; }
+body, body.dark-mode { background: var(--warm); color: var(--charcoal); font-family: var(--font-body); }
+.tt-sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
+.tt-star { width: 0.733em; height: 0.7em; display: inline-block; vertical-align: baseline; color: var(--bubble); flex: none; }
+.v3-eyebrow { font-size: 12px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: var(--sky-ink); margin-bottom: 8px; }
+.v3-h2 { font-family: var(--font-display); font-weight: 700; font-size: 28px; line-height: 32px; letter-spacing: -0.01em; color: var(--charcoal); text-wrap: balance; }
+.v3-sub { font-size: 16px; color: #5A5460; margin-top: 8px; line-height: 1.6; max-width: 40ch; }
+.v3-section { padding: 56px 20px; max-width: 640px; margin: 0 auto; }
+.v3-section + .v3-section { padding-top: 8px; }
+@media (min-width: 720px) { .v3-section { padding: 72px 32px; } .v3-h2 { font-size: 36px; line-height: 40px; } }
+
+/* ─── Nav + progress ─── */
+.nav { background: var(--glass); border-bottom: 1px solid var(--glass-border); padding: 0 18px; height: var(--nav-h); }
+.nav.scrolled { background: rgba(255,248,250,0.97); padding: 0 18px; box-shadow: 0 2px 14px rgba(238,91,144,0.08); }
+.nav-logo { font-family: var(--font-display); font-weight: 700; font-size: 21px; letter-spacing: -0.02em; color: var(--charcoal); display: inline-flex; align-items: baseline; gap: 0; line-height: 1; }
+.nav-logo .tt-star { margin-right: 0.18em; }
+.nav-btn { font-family: var(--font-display); font-weight: 600; font-size: 14px; color: var(--charcoal); padding: 8px 12px; background: transparent; }
+.nav-btn:hover { background: var(--pink); }
+.nav-btn.primary { background: var(--white); color: var(--charcoal); border: 2px solid var(--sky-deep); padding: 7px 14px; }
+.nav-btn.primary:hover { background: var(--sky); }
+.nav-user { border-color: var(--bubble); }
+.dark-toggle { display: none !important; }
+.scroll-progress { background: var(--bubble); height: 2px; }
+
+/* ─── Hero ─── */
+.hero {
+  min-height: 0; padding: calc(var(--nav-h) + 28px) 20px 64px; animation: none;
+  background: linear-gradient(180deg, #FFF8FA 0%, var(--pink) 58%, var(--sky) 100%);
+}
+.hero::before, .hero::after { content: none; }
+.hero .v3-dots {
+  position: absolute; inset: 0; pointer-events: none; z-index: 0;
+  background:
+    radial-gradient(circle, rgba(230,199,107,0.9) 2.5px, transparent 3.5px) 0 0 / 72px 72px,
+    radial-gradient(circle, rgba(255,255,255,0.95) 2px, transparent 3px) 36px 36px / 72px 72px,
+    radial-gradient(circle, rgba(140,205,240,0.8) 2px, transparent 3px) 18px 54px / 72px 72px;
+  -webkit-mask-image: linear-gradient(180deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.45) 50%, rgba(0,0,0,0) 85%);
+          mask-image: linear-gradient(180deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.45) 50%, rgba(0,0,0,0) 85%);
+}
+@media (min-width: 720px) { .hero .v3-dots { background-size: 96px 96px, 96px 96px, 96px 96px; background-position: 0 0, 48px 48px, 24px 72px; } }
+.hero-blob { display: none !important; }
+.hero > * { position: relative; z-index: 1; }
+.avatar-wrap { margin-bottom: 16px; }
+.avatar-ring {
+  width: 158px; height: 158px; padding: 4px; animation: none;
+  background: linear-gradient(135deg, var(--bubble) 0%, var(--sky-deep) 100%);
+  box-shadow: 0 14px 34px rgba(238,91,144,0.28);
+}
+.avatar-ring img { border: 4px solid var(--white); background: var(--pink); }
+.avatar-ring::after { background: radial-gradient(circle, rgba(140,205,240,0.4) 0%, transparent 70%); animation: none; }
+.avatar-wave { display: none !important; }
+.avatar-status { background: var(--sky-ink); color: var(--white); font-family: var(--font-display); font-weight: 600; font-size: 12.5px; letter-spacing: 0.02em; padding: 6px 14px; box-shadow: 0 4px 14px rgba(31,117,173,0.3); }
+.avatar-wrap.voice-active .avatar-status { background: var(--bubble); }
+.daisy-hint { background: var(--bubble); color: var(--white); font-family: var(--font-display); font-weight: 600; box-shadow: 0 6px 18px rgba(238,91,144,0.3); }
+.daisy-hint::after { border-top-color: var(--bubble); }
+.welcome-back-badge { background: var(--white); color: var(--charcoal); box-shadow: var(--shadow-sm); border: 0; font-weight: 800; }
+.welcome-back-badge svg { fill: var(--bubble); }
+.first-visit-nudge, .social-proof-strip, .stats-row, .hero-badges, .nudge-arrow, .hero-greeting { display: none !important; }
+.profile-name { font-family: var(--font-display); font-weight: 700; font-size: 40px; letter-spacing: -0.01em; line-height: 44px; margin: 0; }
+.profile-name em { color: var(--bubble-dark); font-style: normal; }
+.profile-verified { display: none !important; }
+.live-now-badge { background: var(--white); color: var(--charcoal); border: 0; box-shadow: var(--shadow-sm); font-weight: 800; margin-top: 12px; }
+.live-now-badge .live-now-dot { background: var(--mint); }
+.live-now-until { color: var(--gray); }
+.profile-bio { font-family: var(--font-display); font-weight: 500; font-size: 18px; line-height: 24px; color: var(--charcoal); max-width: 340px; margin-top: 8px; }
+.v3-facts { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 16px; position: relative; z-index: 1; }
+.v3-fact { display: inline-flex; align-items: center; gap: 7px; height: 32px; background: var(--white); color: var(--charcoal); font-weight: 800; font-size: 13.5px; padding: 0 12px; border-radius: 999px; box-shadow: var(--shadow-sm); white-space: nowrap; }
+.v3-fact .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--mint); }
+.v3-fact.blue { background: var(--sky); color: var(--charcoal); box-shadow: none; }
+.v3-fact.pink { background: var(--bubble); color: var(--white); font-family: var(--font-display); font-weight: 700; font-size: 18px; box-shadow: var(--shadow-pink); }
+.hero-actions { margin-top: 20px; gap: 10px; flex-direction: column; align-items: stretch; width: 100%; max-width: 350px; }
+.action-btn { font-family: var(--font-display); font-weight: 700; font-size: 18px; line-height: 24px; height: 52px; padding: 0 26px; justify-content: center; letter-spacing: 0; }
+.action-btn::after { content: none; }
+.action-btn.primary { background: var(--bubble); color: var(--white); box-shadow: var(--shadow-pink); animation: none; }
+.action-btn.primary:hover { background: var(--bubble-dark); transform: translateY(-1px); box-shadow: 0 12px 30px rgba(238,91,144,0.4); }
+.action-btn.primary.pulse { animation: none; }
+.action-btn.secondary { background: var(--white); color: var(--charcoal); border: 2px solid var(--sky-deep); box-shadow: none; }
+.action-btn.secondary:hover { background: var(--sky); }
+.action-btn .mic-dot { background: var(--sky-ink); animation: none; width: 10px; height: 10px; }
+.quick-rebook-btn { background: var(--white); color: var(--sky-ink); border: 2px solid var(--sky-deep); font-weight: 800; }
+.next-avail-card { margin-top: 14px; width: 100%; max-width: 350px; }
+.next-avail-inner { background: var(--white); border: 2px solid var(--sky); border-radius: 16px; box-shadow: none; display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 14px; text-align: left; }
+.next-avail-inner::before, .next-avail-inner::after { content: none !important; }
+.next-avail-inner > div { min-width: 0; }
+.next-avail-label { display: block; color: var(--sky-ink); font-weight: 800; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; }
+.next-avail-label .live-dot { display: none !important; }
+.next-avail-detail { display: block; font-family: var(--font-display); font-weight: 600; color: var(--charcoal); font-size: 16px; line-height: 1.3; }
+.next-avail-arrow { color: var(--sky-ink); font-weight: 800; font-size: 20px; flex: none; }
+.wave-divider.hero-wave { color: var(--warm); margin-top: -40px; }
+
+/* ─── Booking ─── */
+.avail-section { background: var(--warm); padding: 36px 0 8px; }
+.avail-header { padding: 0 20px 14px; }
+.section-label { color: var(--sky-ink); letter-spacing: 0.12em; font-size: 12px; font-weight: 800; }
+.section-title { font-family: var(--font-display); font-weight: 700; font-size: 28px; line-height: 32px; letter-spacing: -0.01em; }
+.section-sub { font-size: 16px; color: #5A5460; }
+#quickSlotsLabel, #quickSlots, #weekGlance, #availInsights, #bookProgress, #sessionPlan, .trust-micros, .comm-promise, .book-reassurance { display: none !important; }
+.date-strip-wrap { padding: 4px 0 6px; }
+.day-pill { background: var(--white); border: 2px solid transparent; border-radius: 16px; box-shadow: none; color: var(--gray); }
+.day-pill .day-name { color: var(--gray); font-weight: 800; letter-spacing: 0.06em; }
+.day-pill .day-num { font-family: var(--font-display); font-weight: 600; color: var(--gray); }
+.day-pill.available { border-color: var(--sky-deep); animation: none !important; box-shadow: none; color: var(--charcoal); }
+.day-pill.available .day-name { color: var(--sky-ink); }
+.day-pill.available .day-num { color: var(--charcoal); }
+.day-pill.available .avail-dot { background: var(--mint); }
+.day-pill .pill-time { background: var(--sky); color: var(--charcoal); font-weight: 800; }
+.day-pill.selected { background: var(--bubble); border-color: var(--bubble); box-shadow: var(--shadow-pink) !important; }
+.day-pill.selected .day-name, .day-pill.selected .day-num { color: var(--white); }
+.day-pill.selected .pill-time { background: rgba(255,255,255,0.22); color: var(--white); }
+.day-pill.selected .avail-dot { background: var(--white); }
+.day-pill.today::before, .pill-today { background: var(--sky-ink); color: var(--white); }
+.book-sheet { background: var(--white); border-radius: 24px; box-shadow: var(--shadow-md); border: 0; padding: 20px 18px 18px; }
+.book-date-label { font-family: var(--font-display); font-weight: 600; font-size: 20px; line-height: 26px; color: var(--charcoal); }
+.book-rate { color: var(--gray); font-weight: 700; font-size: 14px; }
+.time-picker { background: var(--warm); border: 0; border-radius: 18px; }
+.time-picker-title { font-family: var(--font-display); font-weight: 600; font-size: 16px; letter-spacing: 0; text-transform: none; color: var(--charcoal); }
+.time-picker-hint { color: var(--gray); font-weight: 700; }
+.time-confirmed-flash { background: var(--mint-deep); color: var(--white); }
+.time-slider-container { padding-top: 34px; }
+.time-slider-track { background: #F1E8EC; }
+.time-slider-avail-zone { background: var(--sky); }
+.time-slider-extend-zone { background: repeating-linear-gradient(135deg, rgba(238,91,144,0.12) 0 6px, transparent 6px 12px); }
+.time-slider-selection { background: linear-gradient(90deg, var(--bubble), var(--bubble-dark)); }
+.time-slider-sel-extend { background: rgba(217,79,130,0.5); }
+.time-slider-handle { background: var(--white); border: 3px solid var(--bubble); box-shadow: 0 4px 12px rgba(238,91,144,0.3); }
+.time-slider-handle-grip { background: var(--bubble); }
+.time-slider-tip { font-family: var(--font-display); font-weight: 600; font-size: 13px; color: var(--charcoal); top: -30px; background: var(--white); padding: 2px 8px; border-radius: 999px; box-shadow: var(--shadow-sm); }
+.time-slider-dur { color: var(--white); font-weight: 800; font-size: 12px; }
+.time-slider-marker { color: var(--gray); font-weight: 700; }
+.time-slider-marker.is-extend { color: rgba(217,79,130,0.7); }
+.extended-note { background: var(--pink); color: var(--charcoal); border: 0; font-weight: 700; }
+.extended-note-icon { display: none; }
+.time-quick-btn, .scenario-pick { background: var(--sky); border: 2px solid transparent; color: var(--charcoal); font-family: var(--font-display); font-weight: 600; font-size: 15px; border-radius: 999px; }
+.time-quick-btn.active, .scenario-pick.active { background: var(--sky-ink); border-color: var(--sky-ink); color: var(--white); }
+.price-preview { background: var(--sky); border: 0; border-radius: 14px; }
+.price-preview-label, .price-preview-calc { color: var(--charcoal); font-weight: 700; }
+.price-total-label { color: var(--sky-ink); font-weight: 800; letter-spacing: 0.1em; }
+.price-total-amount { font-family: var(--font-display); font-weight: 700; font-size: 28px; color: var(--charcoal); font-variant-numeric: tabular-nums; }
+.google-btn { border: 2px solid var(--sky); background: var(--white); font-weight: 800; border-radius: 999px; }
+.google-btn:hover { border-color: var(--sky-deep); background: var(--sky); }
+.or-divider { color: var(--gray); }
+.form-autofill-badge { background: var(--sky); color: var(--charcoal); font-weight: 800; }
+.form-row input, #kidNameSigned { border: 2px solid var(--sky) !important; border-radius: 14px !important; background: var(--white); font-family: var(--font-body); font-size: 16px !important; color: var(--charcoal); padding: 13px 14px !important; }
+.form-row input::placeholder, #kidNameSigned::placeholder { color: var(--gray); opacity: 1; }
+.form-row input:focus, #kidNameSigned:focus { border-color: var(--sky-ink) !important; box-shadow: 0 0 0 4px rgba(31,117,173,0.15); outline: none; }
+.form-row input.field-valid { border-color: var(--sky-deep) !important; }
+.form-row input.field-invalid { border-color: var(--bubble-dark) !important; }
+.book-btn { background: var(--bubble); border-radius: 999px; font-family: var(--font-display); font-weight: 700; font-size: 18px; letter-spacing: 0; box-shadow: var(--shadow-pink); padding: 14px; min-height: 52px; }
+.book-btn:hover { background: var(--bubble-dark); box-shadow: 0 12px 30px rgba(238,91,144,0.4); }
+.book-btn.form-ready { background: var(--bubble-dark); animation: none; box-shadow: var(--shadow-pink); }
+.book-btn.morphing { background: var(--bubble-dark); }
+.book-btn.morph-done { background: var(--mint-deep); }
+.signed-in-greeting .greeting-text { font-family: var(--font-display); font-weight: 600; }
+.greeting-sub { color: var(--gray); }
+.book-msg.error { background: var(--pink); color: var(--charcoal); }
+.retry-btn { background: var(--bubble); color: var(--white); }
+
+/* ─── Content sections ─── */
+.v3-steps { display: grid; gap: 12px; margin-top: 22px; }
+.v3-step { display: grid; grid-template-columns: 40px 1fr; gap: 12px; align-items: start; background: var(--white); border-radius: var(--radius); padding: 18px 18px 18px 16px; box-shadow: var(--shadow-sm); }
+.v3-step-num { font-family: var(--font-display); font-weight: 700; font-size: 24px; color: var(--bubble-dark); line-height: 1; padding-top: 1px; }
+.v3-step h3 { font-family: var(--font-display); font-weight: 600; font-size: 18px; color: var(--charcoal); margin: 0 0 4px; }
+.v3-step p { font-size: 15px; color: #5A5460; line-height: 1.55; margin: 0; }
+.v3-about { display: grid; gap: 20px; margin-top: 22px; }
+.v3-about-photo { width: 100%; aspect-ratio: 4 / 5; max-height: 420px; object-fit: cover; object-position: 50% 30%; border-radius: 20px; box-shadow: 0 14px 36px rgba(238,91,144,0.2); display: block; }
+.v3-about h3 { font-family: var(--font-display); font-weight: 600; font-size: 20px; margin: 0 0 4px; }
+.v3-about .meta { font-size: 12px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--sky-ink); margin-bottom: 10px; }
+.v3-about p { font-size: 16px; color: #5A5460; line-height: 1.6; margin: 0 0 12px; }
+.v3-quote { font-family: var(--font-display); font-weight: 500; font-size: 18px; line-height: 1.35; color: var(--charcoal); background: var(--white); border-left: 4px solid var(--bubble); padding: 14px 16px; border-radius: 0 16px 16px 0; margin-top: 8px; }
+.v3-quote small { display: block; font-family: var(--font-body); font-size: 12px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gray); margin-top: 8px; }
+@media (min-width: 720px) { .v3-about { grid-template-columns: 240px 1fr; align-items: start; } }
+.v3-daisy { background: var(--charcoal); color: var(--white); border-radius: 26px; padding: 22px 20px; display: grid; grid-template-columns: 64px 1fr; gap: 14px; align-items: center; margin-top: 22px; box-shadow: 0 16px 40px rgba(47,42,51,0.3); }
+.v3-daisy img { width: 64px; height: 64px; border-radius: 50%; object-fit: cover; box-shadow: 0 0 0 3px var(--bubble); }
+.v3-daisy h3 { font-family: var(--font-display); font-weight: 600; font-size: 20px; margin: 0 0 4px; color: var(--white); }
+.v3-daisy p { font-size: 15px; color: rgba(255,255,255,0.8); line-height: 1.5; margin: 0; }
+.v3-daisy .v3-daisy-cta { grid-column: 1 / -1; margin-top: 4px; }
+.v3-btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; font-family: var(--font-display); font-weight: 700; font-size: 18px; line-height: 24px; height: 52px; padding: 0 26px; border-radius: 999px; border: 0; cursor: pointer; text-decoration: none; transition: transform 0.15s, background 0.2s, box-shadow 0.2s; white-space: nowrap; }
+.v3-btn:active { transform: scale(0.97); }
+.v3-btn.pink { background: var(--bubble); color: var(--white); box-shadow: var(--shadow-pink); }
+.v3-btn.pink:hover { background: var(--bubble-dark); }
+.v3-btn.white { background: var(--white); color: var(--charcoal); border: 2px solid var(--sky-deep); }
+.v3-btn.white:hover { background: var(--sky); }
+.v3-btn.blue { background: var(--sky-ink); color: var(--white); box-shadow: 0 8px 22px rgba(31,117,173,0.28); }
+.v3-btn.blue:hover { background: #1A6598; }
+.v3-btn .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--sky-ink); }
+.v3-btn svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.v3-price { background: var(--white); border-radius: 26px; padding: 28px 22px; text-align: center; box-shadow: var(--shadow-md); margin-top: 22px; }
+.v3-price .amount { font-family: var(--font-display); font-weight: 700; font-size: 64px; line-height: 1; color: var(--charcoal); letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.v3-price .amount small { font-size: 22px; color: var(--bubble-dark); font-weight: 600; letter-spacing: 0; margin-left: 4px; }
+.v3-price p { font-size: 16px; color: #5A5460; margin: 12px auto 0; max-width: 34ch; line-height: 1.55; }
+.v3-price .v3-price-actions { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; align-items: center; }
+.v3-link { font-weight: 800; color: var(--sky-ink); text-decoration: underline; text-underline-offset: 3px; }
+.faq-section { background: transparent; }
+.faq-item { background: var(--white); border-radius: 18px; border: 0; box-shadow: var(--shadow-sm); }
+.faq-q { font-family: var(--font-display); font-weight: 600; font-size: 17px; color: var(--charcoal); }
+.faq-chevron { fill: var(--sky-ink); }
+.faq-a { color: #5A5460; font-size: 15px; line-height: 1.6; }
+.v3-invite { background: linear-gradient(180deg, var(--sky) 0%, var(--white) 100%); border-radius: 26px; padding: 28px 22px; text-align: center; margin-top: 22px; }
+.v3-invite p { font-size: 16px; color: #5A5460; margin: 8px auto 18px; max-width: 32ch; line-height: 1.55; }
+.v3-invite .v3-invite-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+.v3-footer { text-align: center; padding: 40px 20px 32px; color: var(--gray); font-size: 14px; line-height: 1.7; }
+.v3-footer .wm { font-family: var(--font-display); font-weight: 700; font-size: 22px; letter-spacing: -0.02em; color: var(--charcoal); display: inline-flex; align-items: baseline; line-height: 1; margin-bottom: 6px; }
+.v3-footer .wm .tt-star { margin-right: 0.18em; }
+
+/* ─── Tab bar ─── */
+.bottom-bar { background: rgba(255,248,250,0.97); border-top: 1px solid var(--line); }
+.tab-btn { color: var(--gray); font-weight: 800; font-size: 11px; }
+.tab-btn.active { color: var(--bubble-dark); }
+
+/* ─── Confirmation ─── */
+.confirm-card { border-radius: 26px; }
+.confirm-title { font-family: var(--font-display); font-weight: 700; }
+.confirm-emoji { display: none !important; }
+.confirm-details { background: var(--warm); border-radius: 16px; }
+.confirm-total .confirm-row-value { color: var(--charcoal); font-family: var(--font-display); font-weight: 700; }
+.confirm-close-btn { background: var(--bubble); border-radius: 999px; font-family: var(--font-display); font-weight: 700; font-size: 18px; }
+.confirm-action-btn { border: 2px solid var(--sky-deep); border-radius: 14px; font-weight: 800; }
+.watch-notif-icon { color: var(--bubble); }
+.confirm-step-icon { color: var(--mint-deep); }
+.pay-poppy-btn { background: var(--sky-ink); box-shadow: 0 8px 22px rgba(31,117,173,0.28); font-family: var(--font-display); font-weight: 700; font-size: 18px; }
+.pay-poppy-note { color: var(--gray); }
+
+/* ─── Daisy dock + toast ─── */
+.daisy-dock { background: rgba(47,42,51,0.97); }
+.daisy-dock-img { box-shadow: 0 0 0 3px var(--bubble); }
+.daisy-dock-ring { border-color: rgba(238,91,144,0.7); }
+.daisy-dock-state { color: rgba(255,255,255,0.75); }
+.daisy-dock.speaking .daisy-dock-state { color: rgba(255,255,255,0.75); }
+.daisy-dock.listening .daisy-dock-img { box-shadow: 0 0 0 3px var(--mint); }
+.daisy-dock.listening .daisy-dock-state { color: rgba(255,255,255,0.75); }
+.daisy-dock.muted .daisy-dock-img { box-shadow: 0 0 0 3px var(--gray); }
+.daisy-dock.error .daisy-dock-chips { display: none; }
+.daisy-dock-name { font-family: var(--font-display); font-weight: 600; }
+.toast { background: var(--charcoal); color: var(--white); border-radius: 999px; font-weight: 700; }
+.toast.warn { background: var(--bubble-dark); }
+
+/* ─── Fit and finish ─── */
+.book-guest .form-row { flex-direction: column; gap: 10px; }
+@media (min-width: 480px) { .book-guest .form-row { flex-direction: row; } }
+.book-open { display: block; font-family: var(--font-body); font-size: 14px; font-weight: 800; color: var(--mint-deep); margin-top: 4px; }
+.time-slider-tip-l { left: 50%; transform: translateX(-50%); right: auto; }
+.time-slider-tip-r { display: none; }
+.time-slider-marker { font-size: 11px; }
+.price-total-amount.updating { animation: none; }
+.price-total-amount.counting { color: var(--charcoal); transform: none; }
+section[id], .v3-section, .avail-section { scroll-margin-top: calc(var(--nav-h) + 8px); }
+.watch-notif { background: rgba(255,255,255,0.1); }
+.watch-notif-title { font-family: var(--font-display); font-weight: 600; }
+.watch-notif-action { background: var(--bubble); color: var(--white); }
+.watch-screen { background: var(--charcoal); }
+.confirm-action-btn svg, .pay-poppy-btn svg { fill: currentColor; }
+.next-avail-label { background: none; padding: 0; animation: none; }
+.day-pill.today-pill { border-color: transparent !important; }
+.day-pill.today-pill.available { border-color: var(--sky-deep) !important; }
+.day-pill.today-pill .day-name { color: var(--gray); }
+.day-pill.today-pill.available .day-name { color: var(--sky-ink); }
+.today-badge { background: var(--sky-ink); color: var(--white); }
+.pill-time { color: var(--charcoal); }
+.day-pill.selected .pill-time { color: var(--white); }
+.time-confirmed-flash { display: none !important; }
+.time-slider-marker { white-space: nowrap; }
+.confirm-action-btn { background: var(--white); }
+.confirm-action-btn:hover { background: var(--sky); }
+.confirm-action-btn.copied { background: var(--mint-deep); border-color: var(--mint-deep); }
+
+/* ─── Retired ─── */
+.sticky-cta, .social-proof-notif, .activity-ticker, .updates-phone { display: none !important; }
+.reveal { opacity: 1 !important; transform: none !important; }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.001s !important; transition-duration: 0.001s !important; } }
+</style>
 
 <!-- ═══ STRUCTURED DATA (JSON-LD) ═══ -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "LocalBusiness",
-  "name": "Tiny Tots — Poppy's Babysitting",
-  "description": "Red Cross certified babysitting by Poppy Wilbert. $12/hr, instant online booking, activity reports, and an AI voice assistant for parenting tips.",
+  "name": "Tiny Tots Babysitting",
+  "description": "Babysitting by Poppy Wilbert, age 12, Red Cross certified. $12 an hour. See her open days and book online, or ask Daisy, her assistant.",
   "url": "https://tinytots-v2.netlify.app",
-  "telephone": "",
-  "priceRange": "$12/hr",
-  "address": {
-    "@type": "PostalAddress",
-    "addressLocality": "Local neighborhood",
-    "addressCountry": "US"
-  },
-  "aggregateRating": {
-    "@type": "AggregateRating",
-    "ratingValue": "4.9",
-    "reviewCount": "12",
-    "bestRating": "5"
-  },
+  "priceRange": "$12 an hour",
+  "areaServed": "North Lake Tahoe, California",
   "openingHoursSpecification": [
-    {
-      "@type": "OpeningHoursSpecification",
-      "dayOfWeek": ["Tuesday", "Thursday"],
-      "opens": "15:45",
-      "closes": "20:00"
-    },
-    {
-      "@type": "OpeningHoursSpecification",
-      "dayOfWeek": "Saturday",
-      "opens": "16:00",
-      "closes": "23:00"
-    }
+    { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Tuesday", "Thursday"], "opens": "15:45", "closes": "20:00" },
+    { "@type": "OpeningHoursSpecification", "dayOfWeek": "Saturday", "opens": "16:00", "closes": "23:00" }
   ],
   "makesOffer": {
     "@type": "Offer",
-    "itemOffered": {
-      "@type": "Service",
-      "name": "Babysitting",
-      "description": "In-home babysitting with activity reports, Red Cross certified"
-    },
-    "price": "12.00",
-    "priceCurrency": "USD",
-    "priceSpecification": {
-      "@type": "UnitPriceSpecification",
-      "price": "12.00",
-      "priceCurrency": "USD",
-      "unitCode": "HUR"
-    }
+    "itemOffered": { "@type": "Service", "name": "Babysitting", "description": "In-home babysitting, Red Cross certified" },
+    "price": "12.00", "priceCurrency": "USD",
+    "priceSpecification": { "@type": "UnitPriceSpecification", "price": "12.00", "priceCurrency": "USD", "unitCode": "HUR" }
   }
 }
 </script>
 </head>
 <body>
-
-<!-- Skip to main content for keyboard users -->
-<a href="#hero" class="skip-link">Skip to content</a>
-
-<!-- Noscript fallback -->
-<noscript>
-  <div class="noscript-notice">
-    <h2>&#9733; Tiny Tots</h2>
-    <p>Poppy's babysitting site needs JavaScript to show the calendar and booking system.</p>
-    <p>Please enable JavaScript, or call/text to book directly.</p>
-  </div>
-</noscript>
-
+<svg class="tt-sprite" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg"><symbol id="tt-star" viewBox="4.15 2 91.7 87.6"><path d="M50 6L61.17 34.63L91.85 36.4L68.07 55.87L75.86 85.6L50 69L24.14 85.6L31.93 55.87L8.15 36.4L38.83 34.63Z" fill="currentColor" stroke="currentColor" stroke-width="8" stroke-linejoin="round"/></symbol></svg>
 <!-- ═══ TOP NAV ═══ -->
 <nav class="nav" id="nav" role="navigation" aria-label="Site navigation">
-  <a href="#" class="nav-logo" aria-label="Tiny Tots home"><span>&#9733;</span> Tiny Tots</a>
+  <a href="#" class="nav-logo" aria-label="Tiny Tots home"><svg class="tt-star" aria-hidden="true"><use href="#tt-star"/></svg>Tiny Tots</a>
   <div class="nav-right">
     <img class="nav-user" id="navUserPic" onclick="openAuthModal()" alt="Your profile" role="button" tabindex="0">
-    <button class="dark-toggle" id="darkToggle" onclick="toggleDarkMode()" aria-label="Toggle dark mode" title="Toggle dark mode">🌙</button>
-    <button class="nav-btn" onclick="scrollToSection('#avail')">Book</button>
-    <button class="nav-btn primary" id="navAuthBtn" onclick="openAuthModal()">Sign In</button>
+        <button class="nav-btn" onclick="scrollToSection('#avail')">Book</button>
+    <button class="nav-btn primary" id="navAuthBtn" onclick="openAuthModal()">Sign in</button>
   </div>
 </nav>
 <div class="scroll-progress" id="scrollProgress"></div>
 
-<!-- ═══ PROFILE HERO ═══ -->
 <main>
+<!-- ═══ HERO ═══ -->
 <section class="hero" id="hero" aria-label="Meet Poppy">
-  <div class="hero-blob hero-blob-1"></div>
-  <div class="hero-blob hero-blob-2"></div>
-  <div class="hero-blob hero-blob-3"></div>
-  <div class="avatar-wrap hero-enter" id="avatarWrap" onclick="toggleVoice()" role="button" tabindex="0" aria-label="Talk to Daisy — tap to start voice chat">
-    <div class="daisy-hint" id="daisyHint">Hi! I'm Daisy — tap to chat!</div>
-    <div class="avatar-wave"></div>
+  <div class="v3-dots" aria-hidden="true"></div>
+  <div class="avatar-wrap hero-enter" id="avatarWrap" onclick="toggleVoice()" role="button" tabindex="0" aria-label="Talk to Daisy, Poppy's assistant">
+    <div class="daisy-hint" id="daisyHint">Hi, I'm Daisy. Tap to talk.</div>
     <div class="avatar-ring">
-      <img src="poppy-photo.jpg" alt="Poppy Wilbert" fetchpriority="high" decoding="async" width="154" height="154"
-           onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 200 200%22><circle cx=%22100%22 cy=%22100%22 r=%22100%22 fill=%22%23F5E0DC%22/><text x=%2250%25%22 y=%2255%25%22 text-anchor=%22middle%22 font-size=%2272%22>P</text></svg>'">
+      <img src="poppy-photo.jpg" alt="Poppy Wilbert" fetchpriority="high" decoding="async" width="160" height="160">
     </div>
     <div class="avatar-status" id="avatarStatus">Tap to talk</div>
   </div>
-
   <div class="welcome-back-badge hero-enter" id="welcomeBackBadge">
     <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-    <span id="welcomeBackText">Welcome back!</span>
+    <span id="welcomeBackText">Welcome back</span>
   </div>
-  <div class="first-visit-nudge hero-enter" id="firstVisitNudge">
-    ✨ First time here? Pick a gold day below — booking takes 60 seconds
-    <span class="nudge-arrow">↓</span>
-  </div>
+  <div class="first-visit-nudge" id="firstVisitNudge" hidden></div>
   <div class="hero-greeting hero-enter" id="heroGreeting"></div>
-  <h1 class="profile-name hero-enter" id="heroTitle">Ask <em>Poppy</em></h1>
-  <!-- Quick rebook for returning visitors -->
+  <h1 class="profile-name hero-enter" id="heroTitle">Meet <em>Poppy</em></h1>
   <div class="quick-rebook hero-enter" id="quickRebook">
     <button class="quick-rebook-btn" onclick="quickRebook()">
       <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M17.65 6.35A7.958 7.958 0 0012 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0112 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
       <span id="rebookLabel">Book again</span>
     </button>
   </div>
-  <!-- My Sessions (returning visitors) -->
   <div class="my-sessions hero-enter" id="mySessions" style="display:none;">
     <div class="my-sessions-header">
-      <span class="my-sessions-title">My Sessions</span>
-      <span class="my-sessions-toggle" id="mySessionsToggle" onclick="toggleMySessions()">▾</span>
+      <span class="my-sessions-title">My sessions</span>
+      <span class="my-sessions-toggle" id="mySessionsToggle" onclick="toggleMySessions()">&#9662;</span>
     </div>
     <div class="my-sessions-list" id="mySessionsList"></div>
   </div>
-  <div class="profile-verified hero-enter">
-    <svg viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
-    Red Cross Certified · Age 12
-  </div>
   <div class="live-now-badge hero-enter" id="liveNowBadge">
     <span class="live-now-dot"></span>
-    <span>Available Right Now</span>
+    <span>Available right now</span>
     <span class="live-now-until" id="liveNowUntil"></span>
   </div>
-  <p class="profile-bio hero-enter" id="heroBio">Hi! I'm the sitter your kids ask for by name. Blanket forts, slime labs, dance battles — every session is an adventure. Parents love the text updates. Kids love the fun. Tap my face to chat!</p>
-
-  <div class="stats-row hero-enter">
-    <div class="stat-item"><div class="stat-num" data-count="50" data-suffix="">0</div><div class="stat-label">Sits</div></div>
-    <div class="stat-item"><div class="stat-num" data-count="12" data-suffix="">0</div><div class="stat-label">Families</div></div>
-    <div class="stat-item"><div class="stat-num" data-count="4.9" data-suffix="" data-decimals="1">0</div><div class="stat-label">Rating</div></div>
-    <div class="stat-item"><div class="stat-num stat-zero-cancel" data-count="0" data-suffix="">0</div><div class="stat-label">Cancellations</div></div>
+  <p class="profile-bio hero-enter" id="heroBio">Babysitting by a kid who gets kids.</p>
+  <div class="v3-facts hero-enter" aria-label="About Poppy">
+    <span class="v3-fact"><span class="dot"></span>Red Cross certified</span>
+    <span class="v3-fact blue">Age 12</span>
+    <span class="v3-fact blue">$12 an hour</span>
   </div>
-
   <div class="hero-actions hero-enter">
-    <button class="action-btn primary pulse" onclick="toggleVoice()">
+    <button class="action-btn primary" id="heroBookBtn" onclick="bookNextAvailable()">Book a day</button>
+    <button class="action-btn secondary" onclick="toggleVoice()">
       <span class="mic-dot"></span>
       <span id="voiceBtnText">Talk to Daisy</span>
     </button>
-    <button class="action-btn secondary" id="heroBookBtn" onclick="bookNextAvailable()">Book Today</button>
   </div>
-
-  <!-- Next available session callout -->
   <div class="next-avail-card hero-enter" id="nextAvailCard" style="display:none;">
-    <div class="next-avail-inner glow-border" id="nextAvailInner" onclick="bookNextAvailable()">
-      <span class="next-avail-label"><span class="live-dot" style="width:6px;height:6px;border-radius:50%;background:var(--green);display:inline-block;animation:live-pulse 2s ease-in-out infinite;margin-right:4px;vertical-align:middle;"></span>Next available</span>
-      <span class="next-avail-detail" id="nextAvailDetail"></span>
-      <span class="next-avail-arrow">→</span>
+    <div class="next-avail-inner" id="nextAvailInner" onclick="bookNextAvailable()" role="button" tabindex="0">
+      <div><span class="next-avail-label">Next opening</span><span class="next-avail-detail" id="nextAvailDetail"></span></div>
+      <span class="next-avail-arrow" aria-hidden="true">&rarr;</span>
     </div>
   </div>
-
-  <div class="social-proof-strip hero-enter" id="socialProofStrip">
-    <span class="proof-avatars">
-      <span class="proof-avatar" style="background:linear-gradient(135deg,#FF6B6B,#FFE66D)">S</span>
-      <span class="proof-avatar" style="background:linear-gradient(135deg,#4ECDC4,#A8E6CF)">R</span>
-      <span class="proof-avatar" style="background:linear-gradient(135deg,#A18CD1,#FBC2EB)">J</span>
-    </span>
-    <span class="proof-text proof-text-rotate" id="proofText">5 families booked this week</span>
-  </div>
-
-  <div class="hero-badges hero-enter">
-    <div class="badge">&#9733; $12/hr</div>
-    <div class="badge">Apple Pay or Cash</div>
-    <div class="badge"><span class="dot"></span> <span id="availCountBadge">Available This Week</span></div>
-  </div>
+  <div id="socialProofStrip" hidden><span id="proofText"></span></div>
 </section>
-
-<div class="wave-divider hero-wave">
-  <svg viewBox="0 0 1440 48" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M0,32 C240,48 480,8 720,24 C960,40 1200,12 1440,28 L1440,48 L0,48 Z" fill="currentColor"/>
-  </svg>
+<div class="wave-divider hero-wave" aria-hidden="true">
+  <svg viewBox="0 0 1440 48" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg"><path d="M0,24 C240,48 480,0 720,24 C960,48 1200,0 1440,24 L1440,48 L0,48 Z" fill="currentColor"/></svg>
 </div>
-
-<!-- ═══ PARENT SPOTLIGHT ═══ -->
-<div class="parent-spotlight reveal">
-  <div class="parent-spotlight-stars">★★★★★</div>
-  <p class="parent-spotlight-quote">"Poppy is incredible with our kids. They literally ask for her every weekend."</p>
-  <p class="parent-spotlight-attr">— Sarah M., Tahoe Donner · Booked 8 times</p>
-</div>
-
-<!-- ═══ HOW IT WORKS ═══ -->
-<section class="how-section" id="howItWorks" aria-label="How it works">
-  <p class="how-section-label reveal">How It Works</p>
-  <h2 class="how-section-title reveal">Three taps. That's it.</h2>
-  <p class="how-section-sub reveal">No apps to download, no accounts required. Just pick a time and Poppy handles the rest.</p>
-  <div class="how-steps">
-    <div class="how-step reveal reveal-delay-1">
-      <div class="how-step-num">1</div>
-      <div class="how-card">
-        <div class="how-icon">📅</div>
-        <div class="how-label">Pick a Time</div>
-        <div class="how-desc">Gold slots show when Poppy's free. Tap one that works for your family.</div>
-        <span class="how-hint">Takes 30 seconds</span>
-      </div>
-    </div>
-    <div class="how-step reveal reveal-delay-2">
-      <div class="how-step-num">2</div>
-      <div class="how-card">
-        <div class="how-icon">💬</div>
-        <div class="how-label">Instant Confirm</div>
-        <div class="how-desc">Poppy texts you within 5 minutes. You'll know exactly what she has planned.</div>
-        <span class="how-hint">One tap to book</span>
-      </div>
-    </div>
-    <div class="how-step reveal reveal-delay-3">
-      <div class="how-step-num">3</div>
-      <div class="how-card">
-        <div class="how-icon">🎉</div>
-        <div class="how-label">Relax & Enjoy</div>
-        <div class="how-desc">Photo updates all session. Pay after — Apple Pay or cash. No surprises.</div>
-        <span class="how-hint">On time, every time</span>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ═══ CALENDAR / BOOKING ═══ -->
 <section class="avail-section" id="avail" aria-label="Schedule and booking">
-  <div class="avail-header reveal">
-    <p class="section-label">Schedule</p>
-    <h2 class="section-title">Pick a Day</h2>
-    <p class="section-sub">Gold days = Poppy's free. Tap one to book in under a minute.</p>
+  <div class="avail-header">
+    <p class="section-label">Book</p>
+    <h2 class="section-title">Pick a day</h2>
+    <p class="section-sub">Blue days are open. Tap one and Poppy's hours fill in.</p>
   </div>
-  <div class="quick-slots-label reveal" id="quickSlotsLabel" style="display:none;">
+  <div class="quick-slots-label" id="quickSlotsLabel" style="display:none;">
     <span class="live-dot"></span> Poppy's next openings
   </div>
-  <div class="quick-slots reveal" id="quickSlots" style="display:none;"></div>
-  <div class="week-glance reveal" id="weekGlance"></div>
+  <div class="quick-slots" id="quickSlots" style="display:none;"></div>
+  <div class="week-glance" id="weekGlance"></div>
   <div class="date-strip-wrap" id="dateStripWrap">
     <div class="date-strip" id="dateStrip"></div>
   </div>
@@ -3641,22 +3804,12 @@ body.dark-mode .scenario-pick:hover, body.dark-mode .scenario-pick.active { bord
   <div style="padding: 0 20px;">
     <div class="book-sheet" id="bookSheet">
       <p class="book-date-label" id="bookDateLabel"></p>
-      <p class="book-rate">&#9733; $12/hr &middot; Apple Pay or cash</p>
+      <p class="book-rate">$12 an hour &middot; one hour minimum &middot; Apple Cash or cash</p>
 
-      <!-- Booking Progress -->
-      <div class="book-progress" id="bookProgress">
-        <div class="book-progress-step done" id="progStep1"><span class="step-icon">✓</span> Date</div>
-        <span class="book-progress-arrow">›</span>
-        <div class="book-progress-step active" id="progStep2"><span class="step-icon">2</span> Time</div>
-        <span class="book-progress-arrow">›</span>
-        <div class="book-progress-step" id="progStep3"><span class="step-icon">3</span> Info</div>
-        <span class="book-progress-arrow">›</span>
-        <div class="book-progress-step" id="progStep4"><span class="step-icon">✓</span> Booked!</div>
-      </div>
 
       <!-- Time Range Picker — Visual Drag Slider -->
       <div class="time-picker" id="timePicker" style="display:none;">
-        <div class="time-confirmed-flash" id="timeConfirmedFlash">✓ Locked in</div>
+        <div class="time-confirmed-flash" id="timeConfirmedFlash">Locked in</div>
         <div class="time-picker-header">
           <span class="time-picker-title">Pick your hours</span>
           <span class="time-picker-hint" id="timePickerHint">Drag to adjust</span>
@@ -3677,8 +3830,7 @@ body.dark-mode .scenario-pick:hover, body.dark-mode .scenario-pick.active { bord
           <div class="time-slider-markers" id="sliderMarkers"></div>
         </div>
         <div class="extended-note" id="extendedNote">
-          <span class="extended-note-icon">⏰</span>
-          <span>Past Poppy's posted hours — she'll review & confirm</span>
+          <span>Past Poppy's posted hours. She will confirm by text.</span>
         </div>
         <input type="hidden" id="timeStart" value="">
         <input type="hidden" id="timeEnd" value="">
@@ -3698,14 +3850,6 @@ body.dark-mode .scenario-pick:hover, body.dark-mode .scenario-pick.active { bord
         </div>
       </div>
 
-      <!-- Session Plan Preview -->
-      <div class="session-plan" id="sessionPlan">
-        <div class="session-plan-header">
-          <div class="session-plan-icon">📋</div>
-          <div class="session-plan-title">Poppy's Plan</div>
-        </div>
-        <div class="session-plan-timeline" id="planTimeline"></div>
-      </div>
 
       <!-- Signed-in booking (one tap) -->
       <div class="book-signed-in" id="bookSignedIn">
@@ -3713,11 +3857,11 @@ body.dark-mode .scenario-pick:hover, body.dark-mode .scenario-pick.active { bord
           <img id="bookUserPic" src="" alt="">
           <div>
             <div class="greeting-text" id="bookUserName">Hey!</div>
-            <div class="greeting-sub">One tap — Poppy confirms in minutes</div>
+            <div class="greeting-sub">One tap and it is on Poppy's calendar</div>
           </div>
         </div>
         <div class="form-row" style="display:flex;gap:8px;margin-bottom:10px;">
-          <input type="text" id="kidNameSigned" placeholder="Your kiddo's name" aria-label="Your child's name for session plan" style="flex:1;padding:13px 16px;border-radius:12px;border:2px solid #eee;font-size:14px;outline:none;">
+          <input type="text" id="kidNameSigned" placeholder="Your child's name" aria-label="Your child's name for session plan" style="flex:1;padding:13px 16px;border-radius:12px;border:2px solid #eee;font-size:14px;outline:none;">
         </div>
         <button type="button" class="book-btn" onclick="submitBooking()" aria-label="Book Poppy now"><span class="btn-spinner"></span><span class="btn-text">Book Poppy</span><span class="morph-ring"></span><svg class="morph-check" viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"/></svg></button>
       </div>
@@ -3734,406 +3878,124 @@ body.dark-mode .scenario-pick:hover, body.dark-mode .scenario-pick.active { bord
         <div class="form-autofill-badge" id="autofillBadge"><span class="draft-saved-dot"></span> Saved from last booking</div>
         <div class="form-row">
           <input type="text" id="parentName" placeholder="Your first name" required autocomplete="given-name" enterkeyhint="next" aria-label="Your first name">
-          <input type="tel" id="parentPhone" placeholder="Best number for updates" required autocomplete="tel" inputmode="tel" enterkeyhint="next" aria-label="Phone number for updates">
+          <input type="tel" id="parentPhone" placeholder="Mobile number" required autocomplete="tel" inputmode="tel" enterkeyhint="next" aria-label="Phone number for updates">
         </div>
         <div class="form-row">
-          <input type="text" id="kidName" placeholder="Your kiddo's name" required enterkeyhint="next" aria-label="Your child's name">
+          <input type="text" id="kidName" placeholder="Your child's name" required enterkeyhint="next" aria-label="Your child's name">
           <input type="email" id="parentEmail" placeholder="Email (optional)" style="font-size:13px;" autocomplete="email" inputmode="email" enterkeyhint="done" aria-label="Email address (optional)">
         </div>
         <button type="button" class="book-btn" onclick="submitBooking()" aria-label="Book Poppy now"><span class="btn-spinner"></span><span class="btn-text">Book Poppy</span><span class="morph-ring"></span><svg class="morph-check" viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"/></svg></button>
-        <div class="book-reassurance">Poppy responds in under 5 minutes</div>
-      </div>
+              </div>
 
-      <div class="trust-micros" role="list" aria-label="Booking benefits">
-        <span class="trust-micro" role="listitem"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Confirmed in minutes</span>
-        <span class="trust-micro" role="listitem"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Free cancellation</span>
-        <span class="trust-micro" role="listitem"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Photo updates included</span>
-      </div>
 
       <div class="book-msg" id="bookMsg"></div>
     </div>
-    <div class="comm-promise reveal" style="margin-top:16px;">
-      <div class="comm-promise-icon">💬</div>
-      <div class="comm-promise-content">
-        <div class="comm-promise-text">Poppy texts you within 5 minutes</div>
-        <div class="comm-promise-sub">Confirmation the moment you book, photo updates mid-session, and a wrap-up text when you're headed home</div>
-      </div>
+  </div>
+</section>
+<!-- ═══ A SIT WITH POPPY ═══ -->
+<section class="v3-section" id="howItWorks" aria-label="How a sit with Poppy works">
+  <p class="v3-eyebrow">How it works</p>
+  <h2 class="v3-h2">A sit with Poppy</h2>
+  <div class="v3-steps">
+    <div class="v3-step"><div class="v3-step-num">1</div><div><h3>Pick a day</h3><p>Open days are above. Choose your hours; the price shows before you book.</p></div></div>
+    <div class="v3-step"><div class="v3-step-num">2</div><div><h3>You both get a text</h3><p>Your confirmation arrives right away, and the booking lands on Poppy's watch.</p></div></div>
+    <div class="v3-step"><div class="v3-step-num">3</div><div><h3>Poppy runs the afternoon</h3><p>Games, crafts, outside time, reading, homework help, snacks. Tell her the house rules and how often you'd like an update.</p></div></div>
+    <div class="v3-step"><div class="v3-step-num">4</div><div><h3>Pay at pickup</h3><p>Apple Cash through Messages, or cash. $12 an hour, no extras.</p></div></div>
+  </div>
+</section>
+<!-- ═══ ABOUT POPPY ═══ -->
+<section class="v3-section" id="about" aria-label="About Poppy">
+  <p class="v3-eyebrow">Your sitter</p>
+  <h2 class="v3-h2">Poppy Wilbert</h2>
+  <div class="v3-about">
+    <img class="v3-about-photo" src="poppy-photo.jpg" alt="Poppy Wilbert at the lake" loading="lazy" decoding="async" width="404" height="505">
+    <div>
+      <div class="meta">Age 12 &middot; North Lake Tahoe &middot; Red Cross certified</div>
+      <p>Poppy is a mountain kid who skis, hikes, and has babysat since she was ten. She is good with everyone from toddlers to fourth graders, and she arrives with a plan: a craft, a game, something outside, and a book before bed.</p>
+      <p>Parents get a straight answer and a kid who asks when she is coming back.</p>
+      <div class="v3-quote">My favorite part is when a shy kid finally laughs so hard they can't stop.<small>Poppy</small></div>
     </div>
   </div>
 </section>
-
-<!-- ═══ DURING YOUR SESSION — ANIMATED CHAT PREVIEW ═══ -->
-<section class="session-updates-section" id="sessionUpdates" aria-label="Session updates preview">
-  <p class="section-label reveal">During Your Session</p>
-  <h2 class="section-title reveal">Poppy keeps you posted</h2>
-  <p class="section-sub reveal" style="max-width:340px;margin:8px auto 0;">Real-time updates, photos, and check-ins — so you can relax and enjoy your evening.</p>
-
-  <div class="updates-phone reveal">
-    <div class="phone-header">
-      <div class="phone-header-avatar">P</div>
-      <div class="phone-header-info">
-        <div class="phone-header-name">Poppy W.</div>
-        <div class="phone-header-status">Babysitting Session</div>
-      </div>
-    </div>
-    <div class="phone-time" id="updatePhoneTime">Today 6:15 PM</div>
-    <div id="updateBubbles">
-      <div class="update-bubble poppy" data-delay="0">Hey! We're all settled in and having a blast 🎉<div class="bubble-time">6:15 PM</div></div>
-      <div class="update-bubble poppy-img" data-delay="1"><div class="img-placeholder">🎨</div><div class="img-caption">We made friendship bracelets!</div><div class="bubble-time">6:42 PM</div></div>
-      <div class="update-bubble parent" data-delay="2">Omg those are so cute!! 😍<div class="bubble-time">6:43 PM</div></div>
-      <div class="update-bubble poppy" data-delay="3">Snack time done — everyone had apple slices & PB 🍎 Now we're reading stories<div class="bubble-time">7:30 PM</div></div>
-      <div class="update-bubble poppy" data-delay="4">Both kids brushed teeth and are in PJs. Story time winding down 📖<div class="bubble-time">8:15 PM</div></div>
-      <div class="update-bubble parent" data-delay="5">You're the best, Poppy!! 💛<div class="bubble-time">8:16 PM</div></div>
-    </div>
-    <div class="typing-indicator" id="typingIndicator">
-      <div class="typing-dot"></div>
-      <div class="typing-dot"></div>
-      <div class="typing-dot"></div>
-    </div>
-  </div>
-  <p class="updates-caption reveal">Every parent gets photo updates & instant responses</p>
-</section>
-
-<!-- ═══ POPPY'S WORLD — AI CONTENT FEED ═══ -->
-<section class="feed-section" id="feed" aria-label="Parent activity feed">
-  <div class="feed-header reveal">
-    <p class="section-label">Poppy's World</p>
-    <h2 class="section-title">Tips & Tricks</h2>
-    <p class="section-sub">Real words from real parents — after 50 sessions and counting.</p>
-  </div>
-  <div class="feed-scroll" id="feedScroll">
-    <!-- Tip cards rendered by JS -->
-  </div>
-  <div class="swipe-hint">swipe for more ›</div>
-</section>
-
-<div class="wave-divider wave-to-warm">
-  <svg viewBox="0 0 1440 48" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M0,20 C180,44 360,4 540,28 C720,52 900,8 1080,32 C1260,52 1380,16 1440,24 L1440,48 L0,48 Z" fill="currentColor"/>
-  </svg>
-</div>
-
-<!-- ═══ ADVENTURES WITH POPPY ═══ -->
-<section class="adventures-section" id="adventures" aria-label="Adventures with Poppy">
-  <div class="adventures-header reveal">
-    <p class="section-label">The Fun Stuff</p>
-    <h2 class="section-title">Adventures with Poppy</h2>
-    <p class="section-sub">No screens, no boredom. Here's what your kids will actually do.</p>
-  </div>
-  <div class="adventures-scroll">
-    <div class="adventure-card c1 reveal">
-      <span class="adventure-tag popular">Popular</span>
-      <span class="adventure-emoji-big">🎨</span>
-      <div class="adventure-name">Arts & Crafts</div>
-      <div class="adventure-desc">Glitter, glue, and gigantic imaginations. Every session ends with a masterpiece for the fridge.</div>
-    </div>
-    <div class="adventure-card c2 reveal">
-      <span class="adventure-tag new">New</span>
-      <span class="adventure-emoji-big">🔬</span>
-      <div class="adventure-name">Science Fun</div>
-      <div class="adventure-desc">Volcanoes, slime, and stuff that fizzes. Kids learn without even realizing it.</div>
-    </div>
-    <div class="adventure-card c3 reveal">
-      <span class="adventure-tag fave">Kid Fave</span>
-      <span class="adventure-emoji-big">💃</span>
-      <div class="adventure-name">Dance Party</div>
-      <div class="adventure-desc">Bluetooth speaker + favorite songs = living room turned dance floor. Energy guaranteed.</div>
-    </div>
-    <div class="adventure-card c4 reveal">
-      <span class="adventure-tag popular">Popular</span>
-      <span class="adventure-emoji-big">🏔️</span>
-      <div class="adventure-name">Outdoor Play</div>
-      <div class="adventure-desc">Tag, scavenger hunts, and exploring. Tahoe backyards are the best playground.</div>
-    </div>
-    <div class="adventure-card c5 reveal">
-      <span class="adventure-tag fave">Kid Fave</span>
-      <span class="adventure-emoji-big">🏗️</span>
-      <div class="adventure-name">Fort Building</div>
-      <div class="adventure-desc">Blankets, pillows, and flashlights. The coziest forts in the neighborhood.</div>
-    </div>
-    <div class="adventure-card c6 reveal">
-      <span class="adventure-emoji-big">🎬</span>
-      <div class="adventure-name">Movie Night</div>
-      <div class="adventure-desc">Popcorn, cozy blankets, and a great movie pick. The perfect wind-down after a big day.</div>
-    </div>
-  </div>
-  <div class="adventures-cta reveal">
-    <p class="adventures-cta-text">Ask Daisy what Poppy would plan for <span>your kids</span> →  tap "Talk to Daisy" above</p>
+<!-- ═══ DAISY ═══ -->
+<section class="v3-section" id="daisy" aria-label="Daisy, Poppy's assistant">
+  <p class="v3-eyebrow">Questions</p>
+  <h2 class="v3-h2">Ask Daisy anything</h2>
+  <p class="v3-sub">Daisy is Poppy's AI assistant. She knows the calendar, the rates and what a sit looks like, and she can book Poppy for you. Talk to her right here; the page keeps scrolling.</p>
+  <div class="v3-daisy">
+    <img src="daisy-still.jpg" alt="" width="72" height="72">
+    <div><h3>Daisy</h3><p>"Is Poppy free Saturday?" "What does she do with a three-year-old?" "Book her for Friday at 5."</p></div>
+    <div class="v3-daisy-cta"><button class="v3-btn white" onclick="toggleVoice()"><span class="dot"></span>Talk to Daisy</button></div>
   </div>
 </section>
-
-<div class="wave-divider wave-to-white">
-  <svg viewBox="0 0 1440 48" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M0,36 C320,8 480,44 720,20 C960,0 1120,40 1440,16 L1440,48 L0,48 Z" fill="currentColor"/>
-  </svg>
-</div>
-
-<!-- ═══ REVIEWS ═══ -->
-<section class="section reviews-section" id="reviews" aria-label="Parent reviews">
-  <div class="section-header reveal">
-    <p class="section-label">From Parents</p>
-    <h2 class="section-title">What Parents Are Saying</h2>
-  </div>
-  <div class="trust-bar reveal">
-    <div class="trust-rating">
-      <div class="trust-big-num">4.9</div>
-      <div class="trust-stars">★★★★★</div>
-      <div class="trust-count">12 reviews</div>
-    </div>
-    <div class="trust-breakdown">
-      <div class="trust-row"><span class="trust-row-label">5</span><div class="trust-row-bar"><div class="trust-row-fill" style="width:92%"></div></div></div>
-      <div class="trust-row"><span class="trust-row-label">4</span><div class="trust-row-bar"><div class="trust-row-fill" style="width:8%"></div></div></div>
-      <div class="trust-row"><span class="trust-row-label">3</span><div class="trust-row-bar"><div class="trust-row-fill" style="width:0%"></div></div></div>
-      <div class="trust-row"><span class="trust-row-label">2</span><div class="trust-row-bar"><div class="trust-row-fill" style="width:0%"></div></div></div>
-      <div class="trust-row"><span class="trust-row-label">1</span><div class="trust-row-bar"><div class="trust-row-fill" style="width:0%"></div></div></div>
-    </div>
-  </div>
-  <!-- Safety Promise Card -->
-  <div class="safety-promise reveal">
-    <div class="safety-promise-title">
-      <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
-      Poppy's Safety Promise
-    </div>
-    <div class="safety-items">
-      <div class="safety-item float-badge" style="animation-delay:0s"><div class="safety-item-icon">🩹</div><span>Red Cross Certified</span></div>
-      <div class="safety-item float-badge" style="animation-delay:1s"><div class="safety-item-icon">📱</div><span>Real-time updates</span></div>
-      <div class="safety-item float-badge" style="animation-delay:2s"><div class="safety-item-icon">👨‍👩‍👧</div><span>Parent-approved</span></div>
-      <div class="safety-item float-badge" style="animation-delay:3s"><div class="safety-item-icon">🏠</div><span>Neighborhood local</span></div>
-      <div class="safety-item float-badge" style="animation-delay:4s"><div class="safety-item-icon">⏰</div><span>Always punctual</span></div>
-      <div class="safety-item float-badge" style="animation-delay:5s"><div class="safety-item-icon">📋</div><span>Activity reports</span></div>
-    </div>
-    <div class="safety-stats">
-      <div class="safety-stat"><span class="safety-stat-num">50+</span> sessions</div>
-      <div class="safety-stat"><span class="safety-stat-num">&lt;5min</span> response</div>
-      <div class="safety-stat"><span class="safety-stat-num">100%</span> on-time</div>
-    </div>
-  </div>
-
-  <div class="reviews-scroll" id="reviewsScroll">
-    <!-- Rendered by JS -->
-  </div>
-  <div class="review-dots" id="reviewDots"></div>
-  <div class="swipe-hint" id="reviewSwipeHint">swipe for more ›</div>
-</section>
-
-<!-- ═══ MEET POPPY ═══ -->
-<section class="meet-section" id="about" aria-label="About Poppy">
-  <h2 class="section-title reveal">Meet Your Sitter</h2>
-  <div class="meet-card reveal">
-    <div class="meet-top">
-      <img src="poppy-photo.jpg" alt="Poppy" class="meet-photo" loading="lazy" decoding="async">
-      <div class="meet-intro">
-        <div class="meet-name">Poppy Wilbert</div>
-        <div class="meet-age">12 years old · Tahoe City, CA</div>
-      </div>
-    </div>
-    <p class="meet-bio">
-      Hey! I'm Poppy — I love making kids laugh, building epic blanket forts, and turning snack time into an adventure. I treat every kiddo like my own little sibling and always make sure everyone's safe, happy, and having the best time ever.
-    </p>
-    <div class="meet-badges">
-      <span class="meet-badge"><span class="meet-badge-icon">🏥</span> Red Cross Certified</span>
-      <span class="meet-badge"><span class="meet-badge-icon">⭐</span> 4.9 Rating</span>
-      <span class="meet-badge"><span class="meet-badge-icon">🛡️</span> Parent-Approved</span>
-      <span class="meet-badge"><span class="meet-badge-icon">📱</span> Quick Responder</span>
-    </div>
-    <div class="meet-fun">
-      <div class="meet-fun-item">
-        <div class="meet-fun-emoji">🎨</div>
-        <div class="meet-fun-label">Arts &<br>Crafts</div>
-      </div>
-      <div class="meet-fun-item">
-        <div class="meet-fun-emoji">📚</div>
-        <div class="meet-fun-label">Story<br>Time</div>
-      </div>
-      <div class="meet-fun-item">
-        <div class="meet-fun-emoji">🏔️</div>
-        <div class="meet-fun-label">Outdoor<br>Play</div>
-      </div>
-      <div class="meet-fun-item">
-        <div class="meet-fun-emoji">🧩</div>
-        <div class="meet-fun-label">Games &<br>Puzzles</div>
-      </div>
-    </div>
-    <div class="meet-quote">
-      My favorite part of babysitting? When a shy kid finally laughs so hard they can't stop. That's when I know we're having the best night ever.
-      <span class="meet-quote-attr">— Poppy</span>
-    </div>
-  </div>
-</section>
-
-<!-- ═══ POPPY'S PROMISE ═══ -->
-<section class="guarantee-section reveal" aria-label="Poppy's Promise guarantee">
-  <div class="guarantee-card">
-    <div class="guarantee-shield">🛡️</div>
-    <div class="guarantee-label">Poppy's Promise</div>
-    <div class="guarantee-headline">Not thrilled? Your first session is free.</div>
-    <div class="guarantee-sub">
-      If you're not <strong>100% comfortable</strong> within the first 30 minutes, just say the word — no charge, no questions, no awkwardness.
-    </div>
-    <div class="guarantee-fine">50 sessions and counting. Zero refunds requested.</div>
-  </div>
-</section>
-
-<!-- ═══ FAQ ═══ -->
-<section class="faq-section" id="faq" aria-label="Frequently asked questions">
-  <h2 class="section-title">Parents Ask</h2>
-  <div class="faq-list" role="list">
-    <div class="faq-item" role="listitem">
-      <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">
-        Is Poppy certified in first aid & safety?
-        <svg class="faq-chevron" viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg>
-      </button>
-      <div class="faq-a-wrap"><div class="faq-a">Absolutely! Poppy holds a current American Red Cross babysitting certification covering first aid, child safety, and emergency response — and she re-certifies every year because your kids' safety is her #1 priority. 💛</div></div>
-    </div>
-    <div class="faq-item">
-      <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">
-        What ages does Poppy sit for?
-        <svg class="faq-chevron" viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg>
-      </button>
-      <div class="faq-a-wrap"><div class="faq-a">Poppy loves hanging out with kids ages 2–10! She matches activities to each age — puzzles and building blocks for the little ones, art projects and outdoor games for the bigger kids. Every session is tailored, never one-size-fits-all.</div></div>
-    </div>
-    <div class="faq-item">
-      <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">
-        What does Poppy bring to each session?
-        <svg class="faq-chevron" viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg>
-      </button>
-      <div class="faq-a-wrap"><div class="faq-a">Poppy never shows up empty-handed! Her "fun bag" is packed with art supplies, stickers, coloring books, mini games, and a kid-approved music playlist. Your kids will be asking when Poppy's coming back before you even get home. 🎨</div></div>
-    </div>
-    <div class="faq-item">
-      <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">
-        What's the cancellation policy?
-        <svg class="faq-chevron" viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg>
-      </button>
-      <div class="faq-a-wrap"><div class="faq-a">Totally flexible! Cancel anytime before the session starts — zero fees, zero guilt. Just send Poppy a quick text so she knows. You can rebook in literally 30 seconds whenever you're ready.</div></div>
-    </div>
-    <div class="faq-item">
-      <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">
-        How does Poppy communicate during sessions?
-        <svg class="faq-chevron" viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg>
-      </button>
-      <div class="faq-a-wrap"><div class="faq-a">You'll never wonder what's going on! Poppy sends photo updates throughout every session so you can see your kids having the best time. She responds to texts within minutes and will call right away if anything comes up — your peace of mind matters most. 📸</div></div>
-    </div>
-  </div>
-</section>
-
 <!-- ═══ PRICING ═══ -->
-<section class="section pricing-section" id="pricing" aria-label="Pricing">
-  <div class="section-header reveal">
-    <p class="section-label">Pricing</p>
-    <h2 class="section-title">Simple & Fair</h2>
-  </div>
-  <div class="price-spotlight reveal reveal-delay-1">
-    <div class="price-amount">$12</div>
-    <div class="price-note">per hour — yep, same as my age!</div>
-    <div class="price-compare">Less than a movie ticket for an evening of fun</div>
-    <div class="price-details">
-      Pay with Apple Cash (through Messages) or cash at pickup<br>
-      No hidden fees. No contracts. Tips always make her smile.
-    </div>
-    <button class="action-btn primary" style="display:inline-flex;margin-top:20px;" onclick="scrollToSection('#avail')">Book Poppy</button>
-    <div style="margin-top:12px;"><a class="pay-poppy-btn" href="#" onclick="return openPayPoppy(event, '')" style="background:transparent;color:var(--charcoal);box-shadow:inset 0 0 0 2px rgba(212,168,83,0.6);"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm.9 15.2v1.3h-1.7v-1.25c-1.6-.2-2.6-1.1-2.8-2.5h1.9c.1.6.6.95 1.6.95.9 0 1.4-.35 1.4-.9 0-.5-.35-.8-1.5-1.05l-.9-.2c-1.7-.4-2.4-1.2-2.4-2.5 0-1.3.95-2.25 2.6-2.5V7.3h1.7v1.2c1.45.25 2.35 1.1 2.45 2.4h-1.85c-.1-.55-.55-.9-1.4-.9-.8 0-1.3.35-1.3.85 0 .45.35.75 1.4.95l.9.2c1.85.4 2.55 1.15 2.55 2.5 0 1.4-1 2.3-2.65 2.6z"/></svg> Pay Poppy with Apple Cash</a></div>
-  </div>
-</section>
-
-<!-- ═══ SITTER NETWORK ═══ -->
-<section class="section sitters-section" id="sitters" aria-label="Our sitters">
-  <div class="section-header reveal">
-    <p class="section-label">The Network</p>
-    <h2 class="section-title">Tiny Tots Sitters</h2>
-    <p class="section-sub">Every sitter is trained, certified, and parent-vetted before joining.</p>
-  </div>
-  <div id="sittersList">
-    <!-- Rendered by JS -->
-  </div>
-</section>
-
-<div class="wave-divider wave-to-dark">
-  <svg viewBox="0 0 1440 56" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M0,28 C200,52 400,4 600,32 C800,56 1000,12 1200,36 C1350,48 1420,20 1440,28 L1440,56 L0,56 Z" fill="currentColor"/>
-  </svg>
-</div>
-
-<!-- ═══ SHARE / INVITE ═══ -->
-<section class="section share-section" id="share" aria-label="Invite friends">
-  <div class="section-header reveal">
-    <p class="section-label">Spread the Word</p>
-    <h2 class="section-title">Know a Family<br>That Needs Poppy?</h2>
-    <p class="section-sub">One family tells another. That's how every sitter here got started.</p>
-  </div>
-  <div class="msg-preview reveal reveal-delay-1">
-    <div class="msg-bubble" id="msgBubble">
-      Hey! My babysitter Poppy is amazing — the kids BEG for her to come back 😂 She's $12/hr and super responsible. Check her out:
-      <a class="msg-link" id="inviteUrl">
-        <div class="msg-link-domain">tinytots-v2.netlify.app</div>
-        <div class="msg-link-title">⭐ Tiny Tots — Book Poppy</div>
-        <div class="msg-link-desc">Red Cross certified · AI voice assistant · $12/hr</div>
-      </a>
-    </div>
-    <div class="msg-time" id="msgTime">now</div>
-    <div class="msg-delivered">Delivered</div>
-  </div>
-
-  <div class="share-channels reveal reveal-delay-1">
-    <button class="share-channel-btn ch-text" onclick="shareViaText()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
-      Text a Friend
-    </button>
-    <button class="share-channel-btn ch-copy" id="copyLinkBtn" onclick="copyInviteLink()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
-      <span id="copyLinkText">Copy Link</span>
-    </button>
-    <button class="share-channel-btn ch-email" onclick="emailInvite()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-      Email
-    </button>
-  </div>
-
-  <div class="referral-ripple reveal reveal-delay-2">
-    <div class="ripple-visual">
-      <div class="ripple-ring"></div>
-      <div class="ripple-ring"></div>
-      <div class="ripple-ring"></div>
-      <div class="ripple-center"></div>
-    </div>
-    <div class="ripple-stats">
-      <div><span class="stat-num">23</span> shares</div>
-      <div><strong>4 families</strong> joined via word-of-mouth</div>
+<section class="v3-section" id="pricing" aria-label="Pricing">
+  <p class="v3-eyebrow">Pricing</p>
+  <h2 class="v3-h2">Simple and the same every time</h2>
+  <div class="v3-price">
+    <div class="amount">$12<small>an hour</small></div>
+    <p>One hour minimum, billed in quarter hours. Going past Poppy's posted window turns the booking into a request she confirms by text.</p>
+    <p>Pay at pickup with Apple Cash through Messages, or cash.</p>
+    <div class="v3-price-actions">
+      <a class="v3-btn blue" href="#" onclick="return openPayPoppy(event, '')"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="6" width="20" height="12" rx="3"/><circle cx="12" cy="12" r="3"/><path d="M6 12h.01M18 12h.01"/></svg>Pay Poppy with Apple Cash</a>
+      <a class="v3-link" href="#avail" onclick="scrollToSection('#avail'); return false;">Book a day</a>
     </div>
   </div>
 </section>
-<!-- Screen reader live region for dynamic updates -->
+<!-- ═══ FAQ ═══ -->
+<section class="v3-section faq-section" id="faq" aria-label="Questions parents ask">
+  <p class="v3-eyebrow">Parents ask</p>
+  <h2 class="v3-h2">Good questions</h2>
+  <div class="faq-list" role="list" style="margin-top:20px;">
+    <div class="faq-item" role="listitem">
+      <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">Is Poppy certified?<svg class="faq-chevron" viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg></button>
+      <div class="faq-a-wrap"><div class="faq-a">Yes. She holds the American Red Cross babysitting certification, which covers first aid, child safety and what to do in an emergency.</div></div>
+    </div>
+    <div class="faq-item" role="listitem">
+      <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">What ages does she sit?<svg class="faq-chevron" viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg></button>
+      <div class="faq-a-wrap"><div class="faq-a">Two to ten is her sweet spot. Blocks and puzzles for the little ones, art and outdoor games for the bigger kids. Ask Daisy or text Poppy about anything outside that range.</div></div>
+    </div>
+    <div class="faq-item" role="listitem">
+      <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">How do updates work during the sit?<svg class="faq-chevron" viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg></button>
+      <div class="faq-a-wrap"><div class="faq-a">Tell Poppy what you want: a photo an hour, a text at bedtime, or only if something comes up. She will call right away if anything needs you.</div></div>
+    </div>
+    <div class="faq-item" role="listitem">
+      <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">What if we need to cancel?<svg class="faq-chevron" viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg></button>
+      <div class="faq-a-wrap"><div class="faq-a">Text Poppy before the sit starts. No fee. Rebooking takes a minute.</div></div>
+    </div>
+    <div class="faq-item" role="listitem">
+      <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">How do we pay?<svg class="faq-chevron" viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg></button>
+      <div class="faq-a-wrap"><div class="faq-a">At pickup. Apple Cash through Messages (the Pay Poppy button opens the thread with the amount filled in), or cash.</div></div>
+    </div>
+  </div>
+</section>
+<!-- ═══ INVITE ═══ -->
+<section class="v3-section" id="share" aria-label="Invite a family">
+  <div class="v3-invite">
+    <p class="v3-eyebrow">Invite</p>
+    <h2 class="v3-h2">Know a family that needs Poppy?</h2>
+    <p>Send them the link. One text is how every one of Poppy's families found her.</p>
+    <div class="v3-invite-actions">
+      <button class="v3-btn pink" onclick="shareViaText()">Text a friend</button>
+      <button class="v3-btn white" id="copyLinkBtn" onclick="copyInviteLink()"><span id="copyLinkText">Copy link</span></button>
+    </div>
+    <a class="msg-link" id="inviteUrl" hidden></a><span id="msgTime" hidden></span>
+  </div>
+</section>
+<div id="reviewsScroll" hidden></div>
 <div id="srAnnounce" class="sr-only" aria-live="polite" aria-atomic="true"></div>
 </main>
-
-<!-- ═══ FOOTER ═══ -->
-<footer class="footer" id="footer" role="contentinfo">
-  <div class="footer-inner">
-    <div class="footer-brand"><span class="footer-brand-star">&#9733;</span> Tiny Tots</div>
-    <div class="footer-tagline">Babysitting made simple — by kids who care, for families who do too</div>
-    <div class="footer-links">
-      <a href="#hero" class="footer-link" onclick="tabNav('hero')">Home</a>
-      <a href="#avail" class="footer-link" onclick="tabNav('avail')">Book</a>
-      <a href="#about" class="footer-link">Meet Poppy</a>
-      <a href="#pricing" class="footer-link">Pricing</a>
-      <a href="#reviews" class="footer-link">Reviews</a>
-    </div>
-    <div class="footer-divider"></div>
-    <div class="footer-safety">
-      <span class="footer-safety-badge"><span class="footer-safety-icon">🏥</span> Red Cross Certified</span>
-      <span class="footer-safety-badge"><span class="footer-safety-icon">🛡️</span> Parent-Verified</span>
-      <span class="footer-safety-badge"><span class="footer-safety-icon">📱</span> Instant Alerts</span>
-    </div>
-    <p class="footer-copy">&copy; 2026 Tiny Tots Babysitting &middot; Tahoe City, CA<br><a href="#/dashboard">Sitter Dashboard</a></p>
-  </div>
+<footer class="v3-footer" id="footer">
+  <div class="wm"><svg class="tt-star" aria-hidden="true"><use href="#tt-star"/></svg>Tiny Tots</div>
+  <div>Poppy Wilbert &middot; North Lake Tahoe, California</div>
+  <div>tinytotsbabysitting.com</div>
 </footer>
 
-<!-- ═══ STICKY CTA BAR ═══ -->
 <!-- Booking Confirmation Overlay -->
 <div class="confirm-overlay" id="confirmOverlay" role="dialog" aria-modal="true" aria-label="Booking confirmed">
   <div class="confirm-card">
-    <div class="confirm-emoji">🎉</div>
-    <h2 class="confirm-title">You're All Set!</h2>
-    <p class="confirm-sub">Your kiddo is in for an awesome time</p>
+        <h2 class="confirm-title">You're All Set!</h2>
+    <p class="confirm-sub">Poppy has the details. A confirmation text is on its way.</p>
     <div class="confirm-details">
       <div class="confirm-row"><span class="confirm-row-label">Date</span><span class="confirm-row-value" id="confirmDate"></span></div>
       <div class="confirm-row"><span class="confirm-row-label">Time</span><span class="confirm-row-value" id="confirmTime"></span></div>
@@ -4147,14 +4009,13 @@ body.dark-mode .scenario-pick:hover, body.dark-mode .scenario-pick.active { bord
           <div class="watch-time-top" id="watchTimeTop">10:32</div>
           <div class="watch-notif">
             <div class="watch-notif-header">
-              <span class="watch-notif-icon">⭐</span>
+              <span class="watch-notif-icon">&#9733;</span>
               <span class="watch-notif-app">Tiny Tots</span>
               <span class="watch-notif-now">now</span>
             </div>
-            <div class="watch-notif-title">New Booking!</div>
+            <div class="watch-notif-title">New booking</div>
             <div class="watch-notif-text" id="watchNotifText">Loading...</div>
             <div class="watch-notif-actions">
-              <div class="watch-notif-action">Confirm</div>
               <div class="watch-notif-action">View</div>
             </div>
           </div>
@@ -4162,15 +4023,15 @@ body.dark-mode .scenario-pick:hover, body.dark-mode .scenario-pick.active { bord
         <div class="watch-crown"></div>
         <div class="watch-btn"></div>
       </div>
-      <div class="watch-caption">Poppy sees this on her <strong>Watch</strong> right now</div>
+      <div class="watch-caption">This lands on Poppy's watch the moment you book</div>
     </div>
     <div class="confirm-expect" style="margin-bottom:20px;">
-      <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--gold);margin-bottom:10px;text-align:left;">What to Expect</div>
+      <div class="v3-eyebrow" style="text-align:left;">What to expect</div>
       <div class="confirm-expect-steps">
-        <div class="confirm-expect-step"><span class="confirm-step-icon">✓</span><span>Booking confirmed</span></div>
-        <div class="confirm-expect-step"><span class="confirm-step-icon" style="opacity:0.5">📱</span><span>Poppy confirms via text</span></div>
-        <div class="confirm-expect-step"><span class="confirm-step-icon" style="opacity:0.5">📸</span><span>Photo updates during the sit</span></div>
-        <div class="confirm-expect-step"><span class="confirm-step-icon" style="opacity:0.5">⭐</span><span>Rate your experience after</span></div>
+        <div class="confirm-expect-step"><span class="confirm-step-icon"></span><span>Booking confirmed</span></div>
+        <div class="confirm-expect-step"><span class="confirm-step-icon" style="opacity:0.5">&middot;</span><span>Poppy texts you before the sit</span></div>
+        <div class="confirm-expect-step"><span class="confirm-step-icon" style="opacity:0.5">&middot;</span><span>Tell her how often you want an update</span></div>
+        <div class="confirm-expect-step"><span class="confirm-step-icon" style="opacity:0.5">&middot;</span><span>Pay after, Apple Cash or cash</span></div>
       </div>
     </div>
     <div class="confirm-actions">
@@ -4185,21 +4046,8 @@ body.dark-mode .scenario-pick:hover, body.dark-mode .scenario-pick.active { bord
     </div>
     <a class="pay-poppy-btn" id="payPoppyBtn" href="#" onclick="return openPayPoppy(event)" style="width:100%;margin-bottom:8px;"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm.9 15.2v1.3h-1.7v-1.25c-1.6-.2-2.6-1.1-2.8-2.5h1.9c.1.6.6.95 1.6.95.9 0 1.4-.35 1.4-.9 0-.5-.35-.8-1.5-1.05l-.9-.2c-1.7-.4-2.4-1.2-2.4-2.5 0-1.3.95-2.25 2.6-2.5V7.3h1.7v1.2c1.45.25 2.35 1.1 2.45 2.4h-1.85c-.1-.55-.55-.9-1.4-.9-.8 0-1.3.35-1.3.85 0 .45.35.75 1.4.95l.9.2c1.85.4 2.55 1.15 2.55 2.5 0 1.4-1 2.3-2.65 2.6z"/></svg> Pay Poppy with Apple Cash</a>
     <div class="pay-poppy-note" style="margin-bottom:14px;">Opens Messages to Poppy with the amount filled in. Tap the Apple Cash button in the thread to send. Cash at pickup works too.</div>
-    <button class="confirm-close-btn" onclick="closeConfirmation()">Awesome!</button>
+    <button class="confirm-close-btn" onclick="closeConfirmation()">Done</button>
   </div>
-</div>
-
-<div class="social-proof-notif" id="socialProofNotif" aria-live="polite">
-  <div class="sp-icon">👋</div>
-  <div class="sp-text"><span class="sp-name" id="spName"></span> <span id="spAction"></span><br><span class="sp-time" id="spTime"></span></div>
-</div>
-<div class="sticky-cta" id="stickyCta" role="complementary" aria-label="Quick booking">
-  <div class="sticky-cta-info">
-    <span class="sticky-cta-label" id="stickyCtaLabel">Available tonight</span>
-    <span class="sticky-cta-detail" id="stickyCtaDetail"></span>
-    <span class="sticky-cta-urgency"><span class="pulse-dot"></span> <span id="stickyUrgency">Filling up fast</span></span>
-  </div>
-  <button class="sticky-cta-btn" onclick="bookNextAvailable()" aria-label="Book next available session">Book Poppy</button>
 </div>
 
 <!-- ═══ BOTTOM TAB BAR ═══ -->
@@ -4225,8 +4073,8 @@ body.dark-mode .scenario-pick:hover, body.dark-mode .scenario-pick.active { bord
 <!-- ═══ AUTH MODAL ═══ -->
 <div class="auth-overlay" id="authOverlay" role="dialog" aria-modal="true" aria-label="Sign in to Tiny Tots" onclick="if(event.target===this)closeAuthModal()">
   <div class="auth-sheet">
-    <h2>Join Poppy's Network</h2>
-    <p>Sign in once and book with one tap every time. Your info stays on file so you never fill forms again.</p>
+    <h2>Sign in</h2>
+    <p>Sign in once and book with one tap next time. Your details stay on file.</p>
     <button class="auth-google-btn" onclick="signInWithGoogle()">
       <svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
       Continue with Google
@@ -4386,17 +4234,11 @@ body.dark-mode .scenario-pick:hover, body.dark-mode .scenario-pick.active { bord
   </div>
 </div>
 
-<!-- ═══ ACTIVITY TICKER ═══ -->
-<div class="activity-ticker" id="activityTicker">
-  <span class="activity-dot"></span>
-  <span id="activityText"></span>
-</div>
-
 <!-- ═══ CONFETTI ═══ -->
 <canvas id="confettiCanvas"></canvas>
 
 <!-- ═══ TOAST ═══ -->
-<div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true" data-type="success"><span class="toast-icon">✓</span><span class="toast-msg"></span></div>
+<div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true" data-type="success"><span class="toast-icon"></span><span class="toast-msg"></span></div>
 <div class="offline-banner" id="offlineBanner" role="alert"><span class="offline-dot"></span> You're offline — booking will resume when connected</div>
 
 <!-- ═══ SUPABASE ═══ -->
@@ -4406,16 +4248,16 @@ body.dark-mode .scenario-pick:hover, body.dark-mode .scenario-pick.active { bord
 function initDarkMode() {
   const saved = localStorage.getItem('tt_dark');
   const sysDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-  if (saved === 'true' || (saved === null && sysDark)) {
+  if (false) {
     document.body.classList.add('dark-mode');
     const t = document.getElementById('darkToggle');
-    if (t) t.textContent = '☀️';
+    if (t) t.textContent = '';
   }
 }
 function toggleDarkMode() {
-  const isDark = document.body.classList.toggle('dark-mode');
+  const isDark = false; document.body.classList.remove('dark-mode');
   const t = document.getElementById('darkToggle');
-  if (t) t.textContent = isDark ? '☀️' : '🌙';
+  if (t) t.textContent = isDark ? '' : '';
   localStorage.setItem('tt_dark', isDark);
   if (isDark) document.body.classList.remove('light-mode');
   else document.body.classList.add('light-mode');
@@ -4426,6 +4268,7 @@ initDarkMode();
 const SUPABASE_URL = 'https://udhgdtiezzzudczckaaw.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVkaGdkdGllenp6dWRjemNrYWF3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA1NDcwNzIsImV4cCI6MjEwNjEyMzA3Mn0.sg5CssfPktk11ytdaPJpWyfQj7JvVdxIKdVvITA_X18';
 const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+function localISODate(d) { d = d || new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
 
 /* ═══ STATE ═══ */
 let currentUser = null;
@@ -4447,31 +4290,31 @@ const sitters = [
 /* ═══ CONTENT FEED (Claude-powered, delivered as Poppy) ═══ */
 const tips = [
   {
-    icon: '🧠', category: 'Behavior', title: 'The 5-Minute Warning',
+    icon: '', category: 'Behavior', title: 'The 5-Minute Warning',
     body: 'Always give kids a 5-minute heads up before any transition — leaving the park, dinner time, bedtime. It cuts meltdowns dramatically because they feel in control.',
   },
   {
-    icon: '🏰', category: 'Activities', title: 'The Ultimate Blanket Fort',
+    icon: '', category: 'Activities', title: 'The Ultimate Blanket Fort',
     body: 'Pro tip: use binder clips on chair backs to hold sheets. Add fairy lights, a stack of books, and declare it a "reading kingdom." Works every single time.',
   },
   {
-    icon: '✨', category: 'Behavior', title: "Say 'Let's' Not 'Don't'",
+    icon: '', category: 'Behavior', title: "Say 'Let's' Not 'Don't'",
     body: '"Don\'t run" becomes "Let\'s walk like astronauts on the moon!" Positive redirects work 3x better because kids hear what TO do instead of what not to.',
   },
   {
-    icon: '📚', category: 'Bedtime', title: 'The 3-Book Rule',
+    icon: '', category: 'Bedtime', title: 'The 3-Book Rule',
     body: 'Let them pick exactly 3 books. They feel in charge of the choice, you control the time. After book 3: lights out, no negotiations. Routine = magic.',
   },
   {
-    icon: '🌿', category: 'Activities', title: 'The Adventure Jar',
+    icon: '', category: 'Activities', title: 'The Adventure Jar',
     body: 'Write 20 activities on paper strips and put them in a jar. When kids say "I\'m bored," they pull one out. They pick their own adventure — and it actually works.',
   },
   {
-    icon: '🆘', category: 'Safety', title: 'The Emergency Card',
+    icon: '', category: 'Safety', title: 'The Emergency Card',
     body: 'Every parent should have a card in their wallet: kid\'s full name, age, allergies, meds, pediatrician number, and one emergency contact. Takes 5 min. Could save a life.',
   },
   {
-    icon: '🎨', category: 'Activities', title: 'Mess-Free Painting',
+    icon: '', category: 'Activities', title: 'Mess-Free Painting',
     body: 'Put paint inside a gallon ziplock bag, tape it to the table. Kids "paint" by pressing the bag — all the fun, zero mess. Especially great for toddlers.',
   }
 ];
@@ -4502,23 +4345,23 @@ function applySmartContext() {
   // Season detection
   const month = new Date().getMonth(); // 0-11
   const season = month >= 2 && month <= 4 ? 'spring' : month >= 5 && month <= 7 ? 'summer' : month >= 8 && month <= 10 ? 'fall' : 'winter';
-  const seasonEmoji = { spring: '🌸', summer: '☀️', fall: '🍂', winter: '❄️' }[season];
+  const seasonEmoji = { spring: '', summer: '', fall: '', winter: '' }[season];
 
   // Time-of-day greeting with seasonal flavor
   if (heroGreeting) {
-    const seasonGreet = { spring: ' 🌷', summer: ' ☀️', fall: ' 🍁', winter: ' ❄️' }[season];
+    const seasonGreet = '';
     if (hour >= 5 && hour < 12) heroGreeting.textContent = 'Good morning' + seasonGreet;
     else if (hour >= 12 && hour < 17) heroGreeting.textContent = 'Good afternoon' + seasonGreet;
     else if (hour >= 17 && hour < 21) heroGreeting.textContent = 'Good evening' + seasonGreet;
-    else heroGreeting.textContent = 'Hey there 🌙';
+    else heroGreeting.textContent = 'Hello';
   }
 
   // Inject seasonal adventure card
   const seasonalActivities = {
-    fall: { emoji: '🎃', name: 'Fall Crafts', desc: 'Leaf art, pumpkin decorating, and apple cider. Poppy brings the autumn vibes indoors.', tag: 'Seasonal' },
-    winter: { emoji: '⛄', name: 'Winter Wonders', desc: 'Hot cocoa, snowflake cutting, and cozy stories by the fire. Winter magic.', tag: 'Seasonal' },
-    spring: { emoji: '🌱', name: 'Spring Garden', desc: 'Planting seeds, nature walks, and flower pressing. Growing things together.', tag: 'Seasonal' },
-    summer: { emoji: '🏊', name: 'Summer Splash', desc: 'Water games, popsicle making, and backyard camping. Sun-soaked adventures.', tag: 'Seasonal' }
+    fall: { emoji: '', name: 'Fall Crafts', desc: 'Leaf art, pumpkin decorating, and apple cider. Poppy brings the autumn vibes indoors.', tag: 'Seasonal' },
+    winter: { emoji: '', name: 'Winter Wonders', desc: 'Hot cocoa, snowflake cutting, and cozy stories by the fire. Winter magic.', tag: 'Seasonal' },
+    spring: { emoji: '', name: 'Spring Garden', desc: 'Planting seeds, nature walks, and flower pressing. Growing things together.', tag: 'Seasonal' },
+    summer: { emoji: '', name: 'Summer Splash', desc: 'Water games, popsicle making, and backyard camping. Sun-soaked adventures.', tag: 'Seasonal' }
   };
   const seasonCard = seasonalActivities[season];
   if (seasonCard) {
@@ -4532,15 +4375,7 @@ function applySmartContext() {
   }
 
   // Time-of-day hero personalization
-  if (hour >= 5 && hour < 12) {
-    heroBio.textContent = "Planning ahead for tonight? Smart parent move. Tap my face — let's chat about it.";
-  } else if (hour >= 12 && hour < 17) {
-    heroBio.textContent = "Need a sitter for this evening? I've got you covered. Tap my face — let's talk.";
-  } else if (hour >= 17 && hour < 21) {
-    heroBio.textContent = "Looking for tonight? Let's make it happen. Tap my face to talk, or book below.";
-  } else {
-    heroBio.textContent = "Planning your next night out? I'm just a tap away. Check my schedule below.";
-  }
+  if (heroBio) heroBio.textContent = "Babysitting by a kid who gets kids.";
 
   // Returning visitor recognition
   const savedParent = getSavedParent();
@@ -4551,7 +4386,7 @@ function applySmartContext() {
 
     // 2. Override bio with clear value proposition
     if (heroBio) {
-      heroBio.textContent = "Red Cross certified, and your kids will ask for her by name.";
+      heroBio.textContent = "Babysitting by a kid who gets kids.";
     }
 
     // 3. Swap CTA priority — Book is primary for first-timers (they don't know Daisy yet)
@@ -4565,7 +4400,7 @@ function applySmartContext() {
       }
       _bookBtn.classList.remove('secondary');
       _bookBtn.classList.add('primary', 'pulse');
-      _bookBtn.textContent = 'Book Tonight — $12/hr';
+      _bookBtn.textContent = 'Book a day';
       // Move book button first visually
       _heroActions.insertBefore(_bookBtn, _heroActions.firstChild);
     }
@@ -4620,7 +4455,7 @@ function applySmartContext() {
       const kidName = savedParent.kids[savedParent.kids.length - 1];
       heroBio.textContent = `Hey ${firstName}! Ready for another great evening? ${kidName} and I had a blast. Let's book the next one.`;
     } else if (heroBio) {
-      heroBio.textContent = `Hey ${firstName}! Good to see you again. Pick a day below — booking takes 10 seconds when I already know you.`;
+      heroBio.textContent = `Welcome back, ${firstName}. Pick a day and you are booked in a few seconds.`;
     }
 
     // Show quick rebook button
@@ -4707,9 +4542,6 @@ function checkLiveAvailability() {
 function init() {
   checkRoute();
   checkAuth();
-  renderFeed();
-  renderReviews();
-  renderSitters();
   loadAvailability();
   applySmartContext();
   checkLiveAvailability();
@@ -4828,6 +4660,7 @@ function closeAuthModal() {
 /* ═══ RENDER FEED ═══ */
 function renderFeed() {
   const scroll = document.getElementById('feedScroll');
+  if (!scroll) return;
   const today = new Date().getDay();
   // Rotate tips based on day, show 5 cards + "Ask" card
   const ordered = [...tips.slice(today % tips.length), ...tips.slice(0, today % tips.length)].slice(0, 5);
@@ -4844,7 +4677,7 @@ function renderFeed() {
     </div>
   `).join('') + `
     <div class="tip-card ask-card" onclick="toggleVoice()">
-      <div class="tip-icon">🎙</div>
+      <div class="tip-icon"></div>
       <div class="tip-category">Ask Anything</div>
       <div class="tip-title">Got a Kid Question?</div>
       <div class="tip-body">Bedtime struggles? Picky eaters? Activity ideas? Tap here and ask Poppy — she'll talk you through it.</div>
@@ -4865,7 +4698,7 @@ function renderReviews() {
     const [c1, c2] = avatarColors[i % avatarColors.length];
     return `
     <div class="review-card">
-      ${r.verified ? '<div class="review-verified">✓ Verified Parent</div>' : ''}
+      ${r.verified ? '<div class="review-verified">Verified Parent</div>' : ''}
       <div class="review-header">
         <div class="review-avatar" style="background:linear-gradient(135deg,${c1},${c2});color:#fff">${r.parent.charAt(0)}</div>
         <div class="review-meta">
@@ -4874,10 +4707,10 @@ function renderReviews() {
           <div class="review-date">${r.date || ''}</div>
         </div>
       </div>
-      <div class="review-stars">${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}</div>
+      <div class="review-stars">${''.repeat(r.rating)}${''.repeat(5 - r.rating)}</div>
       <div class="review-text">"${r.text}"</div>
-      <div class="review-kids">👶 ${r.kids}</div>
-      ${r.timesBooked > 1 ? `<div class="review-booked-tag">🔄 Booked ${r.timesBooked} times</div>` : ''}
+      <div class="review-kids">${r.kids}</div>
+      ${r.timesBooked > 1 ? `<div class="review-booked-tag">Booked ${r.timesBooked} times</div>` : ''}
     </div>
   `}).join('');
 
@@ -4954,6 +4787,7 @@ function initReviewAutoScroll() {
 /* ═══ RENDER SITTERS ═══ */
 function renderSitters() {
   const el = document.getElementById('sittersList');
+  if (!el) return;
   el.innerHTML = sitters.map(s => `
     <div class="sitter-card">
       <img src="${s.photo}" alt="${s.name}"
@@ -4963,7 +4797,7 @@ function renderSitters() {
         <div class="sitter-detail">${s.bio}</div>
         <div class="sitter-badges">
           ${s.certs.map(c => `<span class="sitter-badge">${c}</span>`).join('')}
-          <span class="sitter-badge">${s.stats.rating} ★</span>
+          <span class="sitter-badge">${s.stats.rating} </span>
         </div>
       </div>
       <div class="sitter-rate">$${s.rate}<span>/hr</span></div>
@@ -4996,7 +4830,7 @@ function buildDateStrip() {
   let lastWeekNum = -1;
   for (let i = 0; i < 21; i++) {
     const d = new Date(today); d.setDate(today.getDate() + i);
-    const key = d.toISOString().split('T')[0];
+    const key = localISODate(d);
     const avail = availabilityData[key];
     // Week separator labels
     const weekNum = Math.floor(i / 7);
@@ -5010,12 +4844,12 @@ function buildDateStrip() {
     const pill = document.createElement('div');
     pill.className = 'day-pill' + (avail ? ' available' : '') + (i === 0 ? ' today-pill' : '');
     pill.dataset.date = key;
-    const fmtShort = t => { const [h,m] = t.split(':').map(Number); const ap = h>=12?'p':'a'; return `${h>12?h-12:h||12}${m?':'+String(m).padStart(2,'0'):''}${ap}`; };
+    const fmtShort = t => { const [h,m] = t.split(':').map(Number); return `${h>12?h-12:h||12}${m?':'+String(m).padStart(2,'0'):''}`; };
     pill.innerHTML = `
       ${i === 0 ? '<span class="today-badge">TODAY</span>' : ''}
       <span class="day-name">${dayNames[d.getDay()]}</span>
       <span class="day-num">${d.getDate()}</span>
-      ${avail ? `<span class="pill-time">${fmtShort(avail.start_time)}–${fmtShort(avail.end_time)}</span>` : '<span class="unavail-dot"></span>'}
+      ${avail ? `<span class="pill-time">${fmtShort(avail.start_time)} to ${fmtShort(avail.end_time)}</span>` : '<span class="unavail-dot"></span>'}
     `;
     pill.addEventListener('click', () => {
       if (avail) { selectDay(key, pill); }
@@ -5135,8 +4969,9 @@ function selectDay(key, pill) {
 
   if (avail) {
     document.getElementById('bookDateLabel').innerHTML = label +
-      `<span style="display:block;font-family:var(--font-body);font-size:13px;font-weight:600;color:var(--green);margin-top:4px;">Available ${fmt(avail.start_time)} – ${fmt(avail.end_time)}</span>`;
+      `<span class="book-open">Open ${fmt(avail.start_time)} to ${fmt(avail.end_time)}</span>`;
     srAnnounce(`Selected ${label}. Poppy is available ${fmt(avail.start_time)} to ${fmt(avail.end_time)}.`);
+    document.querySelectorAll('.book-btn .btn-text').forEach(b => { b.textContent = 'Book ' + dayNames[d.getDay()]; });
   } else {
     document.getElementById('bookDateLabel').textContent = label;
     srAnnounce(`Selected ${label}. Not available this day.`);
@@ -5175,7 +5010,7 @@ const _sl = {
 };
 
 function _mLabel(m) {
-  const h = Math.floor(m/60), mm = m%60, ap = h>=12?'p':'a';
+  const h = Math.floor(m/60), mm = m%60, ap = h>=12?' PM':' AM';
   return (h>12?h-12:(h||12)) + (mm?':'+String(mm).padStart(2,'0'):'') + ap;
 }
 function _mVal(m) {
@@ -5222,8 +5057,8 @@ function _renderSlider() {
     note.classList.add('visible');
   } else { se.style.display = 'none'; note.classList.remove('visible'); }
   // Labels
-  tl.textContent = _mLabel(_sl.selStart);
-  tr.textContent = _mLabel(_sl.selEnd);
+  tl.textContent = _mLabel(_sl.selStart) + ' to ' + _mLabel(_sl.selEnd);
+  tr.textContent = '';
   const dm = _sl.selEnd - _sl.selStart, dh = dm/60;
   dl.textContent = dh===Math.floor(dh) ? dh+(dh===1?' hr':' hrs') : dh.toFixed(1)+' hrs';
 }
@@ -5484,25 +5319,25 @@ function updateSessionPlan(startMins, endMins) {
   // Activity library with time-of-day + seasonal awareness
   const activities = {
     earlyAfternoon: [ // 3-5pm
-      { emoji: '🍎', label: 'Snack time & settle in' },
-      { emoji: '📚', label: 'Homework help' },
-      { emoji: sn === 'fall' ? '🍂' : sn === 'winter' ? '⛄' : '🏃', label: sn === 'fall' ? 'Leaf collecting & nature walk' : sn === 'winter' ? 'Snow play & hot cocoa' : 'Outdoor play & games' },
-      { emoji: sn === 'fall' ? '🎃' : '🎨', label: sn === 'fall' ? 'Fall crafts & pumpkin art' : 'Creative time' }
+      { emoji: '', label: 'Snack time & settle in' },
+      { emoji: '', label: 'Homework help' },
+      { emoji: sn === 'fall' ? '' : sn === 'winter' ? '' : '', label: sn === 'fall' ? 'Leaf collecting & nature walk' : sn === 'winter' ? 'Snow play & hot cocoa' : 'Outdoor play & games' },
+      { emoji: sn === 'fall' ? '' : '', label: sn === 'fall' ? 'Fall crafts & pumpkin art' : 'Creative time' }
     ],
     lateAfternoon: [ // 5-7pm
-      { emoji: '🍳', label: 'Dinner prep together' },
-      { emoji: '🎲', label: 'Games & activities' },
-      { emoji: '📖', label: 'Story time wind-down' }
+      { emoji: '', label: 'Dinner prep together' },
+      { emoji: '', label: 'Games & activities' },
+      { emoji: '', label: 'Story time wind-down' }
     ],
     evening: [ // 7-9pm
-      { emoji: '🎬', label: 'Movie or show pick' },
-      { emoji: '🧸', label: 'Cozy play time' },
-      { emoji: '🪥', label: 'Pajama & bedtime routine' },
-      { emoji: '🌙', label: 'Tucked in & lights out' }
+      { emoji: '', label: 'Movie or show pick' },
+      { emoji: '', label: 'Cozy play time' },
+      { emoji: '', label: 'Pajama & bedtime routine' },
+      { emoji: '', label: 'Tucked in & lights out' }
     ],
     lateEvening: [ // 9-11pm
-      { emoji: '😴', label: 'Sleeping soundly' },
-      { emoji: '📱', label: 'Poppy sends photo update' }
+      { emoji: '', label: 'Sleeping soundly' },
+      { emoji: '', label: 'Poppy sends photo update' }
     ]
   };
 
@@ -5518,7 +5353,7 @@ function updateSessionPlan(startMins, endMins) {
   const blockLen = Math.max(30, Math.floor(durationMins / 4));
 
   // Arrival
-  steps.push({ time: fmtTime(cursor), emoji: '👋', label: 'Poppy arrives & gets settled' });
+  steps.push({ time: fmtTime(cursor), emoji: '', label: 'Poppy arrives & gets settled' });
   cursor += 15;
 
   // Fill middle activities based on time of day
@@ -5550,8 +5385,8 @@ function updateSessionPlan(startMins, endMins) {
   });
 
   // Wrap-up
-  steps.push({ time: fmtTime(endMins - 10), emoji: '📱', label: 'Text update — on your way!' });
-  steps.push({ time: fmtTime(endMins), emoji: '✅', label: 'Smooth handoff & recap' });
+  steps.push({ time: fmtTime(endMins - 10), emoji: '', label: 'Text update — on your way!' });
+  steps.push({ time: fmtTime(endMins), emoji: '', label: 'Smooth handoff & recap' });
 
   // Render
   timeline.innerHTML = steps.map(s =>
@@ -5575,20 +5410,20 @@ function buildScenarioPicks(startTime, endTime) {
   // After School: if window starts before 5pm
   if (sh < 17 && totalHrs >= 2) {
     const scEnd = Math.min(startMins + 150, endMins); // ~2.5 hrs
-    scenarios.push({ emoji: '🎒', label: 'After school', startM: startMins, endM: scEnd });
+    scenarios.push({ emoji: '', label: 'After school', startM: startMins, endM: scEnd });
   }
   // Dinner & Play: if window spans 5-7pm
   if (startMins <= 17 * 60 && endMins >= 19 * 60) {
-    scenarios.push({ emoji: '🍽️', label: 'Dinner & play', startM: 17 * 60, endM: 19 * 60 });
+    scenarios.push({ emoji: '', label: 'Dinner & play', startM: 17 * 60, endM: 19 * 60 });
   }
   // Date Night: if window goes past 8pm and is 3+ hours
   if (endMins >= 20 * 60 && totalHrs >= 3) {
     const dnStart = Math.max(startMins, 18 * 60);
-    scenarios.push({ emoji: '💃', label: 'Date night', startM: dnStart, endM: Math.min(dnStart + 240, endMins) });
+    scenarios.push({ emoji: '', label: 'Date night', startM: dnStart, endM: Math.min(dnStart + 240, endMins) });
   }
   // Bedtime included: if window goes past 8pm
   if (endMins >= 20 * 60 && startMins < 20 * 60) {
-    scenarios.push({ emoji: '🌙', label: 'Incl. bedtime', startM: startMins, endM: endMins });
+    scenarios.push({ emoji: '', label: 'Incl. bedtime', startM: startMins, endM: endMins });
   }
 
   container.innerHTML = '';
@@ -5612,7 +5447,7 @@ function applyDefaultAvailability() {
   const today = new Date();
   for (let i = 0; i < 21; i++) {
     const d = new Date(today); d.setDate(today.getDate() + i);
-    const key = d.toISOString().split('T')[0];
+    const key = localISODate(d);
     if (!availabilityData[key] && defaultSchedule[d.getDay()]) {
       availabilityData[key] = { ...defaultSchedule[d.getDay()], recurring: true };
     }
@@ -5621,7 +5456,7 @@ function applyDefaultAvailability() {
 
 async function loadAvailability(retries = 2) {
   showDateStripSkeleton();
-  const today = new Date().toISOString().split('T')[0];
+  const today = localISODate();
   let data, error;
   for (let attempt = 0; attempt <= retries; attempt++) {
     try {
@@ -5660,7 +5495,7 @@ function buildAvailInsights() {
   const availDays = [];
   for (let i = 0; i < 14; i++) {
     const d = new Date(today); d.setDate(today.getDate() + i);
-    const key = d.toISOString().split('T')[0];
+    const key = localISODate(d);
     if (availabilityData[key]) {
       totalAvail++;
       if (i < 7) thisWeekAvail++; else nextWeekAvail++;
@@ -5670,19 +5505,19 @@ function buildAvailInsights() {
   }
   // Chip 1: This week summary
   if (thisWeekAvail > 0 && thisWeekAvail <= 3) {
-    chips.push({ icon: '⚡', text: `Only ${thisWeekAvail} spot${thisWeekAvail > 1 ? 's' : ''} this week`, cls: 'urgent' });
+    chips.push({ icon: '', text: `Only ${thisWeekAvail} spot${thisWeekAvail > 1 ? 's' : ''} this week`, cls: 'urgent' });
   } else if (thisWeekAvail > 3) {
-    chips.push({ icon: '📅', text: `${thisWeekAvail} days open this week`, cls: '' });
+    chips.push({ icon: '', text: `${thisWeekAvail} days open this week`, cls: '' });
   }
   // Chip 2: Weekend availability
   if (weekendAvail > 0) {
-    chips.push({ icon: '🌙', text: `${weekendAvail} weekend evening${weekendAvail > 1 ? 's' : ''} open`, cls: 'popular' });
+    chips.push({ icon: '', text: `${weekendAvail} weekend evening${weekendAvail > 1 ? 's' : ''} open`, cls: 'popular' });
   } else {
-    chips.push({ icon: '📌', text: 'Weekends fully booked', cls: 'urgent' });
+    chips.push({ icon: '', text: 'Weekends fully booked', cls: 'urgent' });
   }
   // Chip 3: Most popular day (Saturdays are always hot)
   if (availDays.some(d => d.day === 'Sat')) {
-    chips.push({ icon: '🔥', text: 'Saturday is most popular', cls: 'popular' });
+    chips.push({ icon: '', text: 'Saturday is most popular', cls: 'popular' });
   }
   // Chip 4: Next week preview
   if (nextWeekAvail > 0) {
@@ -5703,7 +5538,7 @@ function buildWeekGlance() {
   const thisWeek = [];
   for (let i = 0; i < 7; i++) {
     const d = new Date(today); d.setDate(today.getDate() + i);
-    const key = d.toISOString().split('T')[0];
+    const key = localISODate(d);
     if (availabilityData[key]) {
       const a = availabilityData[key];
       const isToday = i === 0;
@@ -5728,7 +5563,7 @@ function buildQuickSlots() {
   const slots = [];
   for (let i = 0; i < 21 && slots.length < 3; i++) {
     const d = new Date(today); d.setDate(today.getDate() + i);
-    const key = d.toISOString().split('T')[0];
+    const key = localISODate(d);
     if (availabilityData[key]) {
       const avail = availabilityData[key];
       const isToday = d.toDateString() === today.toDateString();
@@ -5777,17 +5612,20 @@ function showNextAvailable() {
   let nextKey = null, nextDate = null;
   for (let i = 0; i < 21; i++) {
     const d = new Date(today); d.setDate(today.getDate() + i);
-    const key = d.toISOString().split('T')[0];
+    const key = localISODate(d);
     if (availabilityData[key]) { nextKey = key; nextDate = d; break; }
   }
   if (nextKey && nextDate) {
     const avail = availabilityData[nextKey];
-    const fmt = t => { const [h,m] = t.split(':').map(Number); const ap = h>=12?'p':'a'; return `${h>12?h-12:h||12}${m?':'+String(m).padStart(2,'0'):''}${ap}`; };
+    const _ap = h => h >= 12 ? 'PM' : 'AM';
+    const fmt = (t, withAp) => { const [h,m] = t.split(':').map(Number); return `${h%12||12}${m?':'+String(m).padStart(2,'0'):''}${withAp ? ' ' + _ap(h) : ''}`; };
+    const _sh = Number(avail.start_time.split(':')[0]), _eh = Number(avail.end_time.split(':')[0]);
     const isToday = nextDate.toDateString() === today.toDateString();
     const tomorrow = new Date(today); tomorrow.setDate(today.getDate() + 1);
     const isTomorrow = nextDate.toDateString() === tomorrow.toDateString();
     const dayLabel = isToday ? 'Today' : isTomorrow ? 'Tomorrow' : dayNamesShort[nextDate.getDay()];
-    const detail = `${dayLabel} ${monthNamesShort[nextDate.getMonth()]} ${nextDate.getDate()}, ${fmt(avail.start_time)}–${fmt(avail.end_time)}`;
+    const dayLabelFull = isToday ? 'today' : isTomorrow ? 'tomorrow' : ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][nextDate.getDay()];
+    const detail = `${dayLabel}, ${monthNamesShort[nextDate.getMonth()]} ${nextDate.getDate()} · ${fmt(avail.start_time, _ap(_sh) !== _ap(_eh))} to ${fmt(avail.end_time, true)}`;
     document.getElementById('nextAvailDetail').textContent = detail;
     document.getElementById('nextAvailCard').style.display = 'block';
     // Contextual hero book button
@@ -5795,20 +5633,20 @@ function showNextAvailable() {
     if (heroBtn) {
       const hour = today.getHours();
       let _btnLabel;
-      if (isToday && hour >= 14) _btnLabel = 'Book Tonight';
-      else if (isToday) _btnLabel = 'Book Today';
-      else if (isTomorrow) _btnLabel = 'Book Tomorrow';
-      else _btnLabel = 'Book ' + dayLabel;
+      if (isToday && hour >= 14) _btnLabel = 'Book tonight';
+      else if (isToday) _btnLabel = 'Book today';
+      else if (isTomorrow) _btnLabel = 'Book tomorrow';
+      else _btnLabel = 'Book ' + dayLabelFull;
       // Append price for first-time visitors (no saved parent)
       const _sp = getSavedParent();
-      if (!_sp || !_sp.name) _btnLabel += ' — $12/hr';
+
       heroBtn.textContent = _btnLabel;
     }
     // Update availability count badge
     let availCount = 0;
     for (let i = 0; i < 14; i++) {
       const d = new Date(today); d.setDate(today.getDate() + i);
-      if (availabilityData[d.toISOString().split('T')[0]]) availCount++;
+      if (availabilityData[localISODate(d)]) availCount++;
     }
     const badge = document.getElementById('availCountBadge');
     if (badge) badge.textContent = availCount + ' days open this week';
@@ -5850,7 +5688,7 @@ function bookNextAvailable() {
   const today = new Date();
   for (let i = 0; i < 21; i++) {
     const d = new Date(today); d.setDate(today.getDate() + i);
-    const key = d.toISOString().split('T')[0];
+    const key = localISODate(d);
     if (availabilityData[key]) {
       const pill = document.querySelector(`.day-pill[data-date="${key}"]`);
       if (pill) {
@@ -5871,7 +5709,7 @@ function quickRebook() {
   const today = new Date();
   for (let i = 0; i < 21; i++) {
     const d = new Date(today); d.setDate(today.getDate() + i);
-    const key = d.toISOString().split('T')[0];
+    const key = localISODate(d);
     if (availabilityData[key]) {
       const pill = document.querySelector(`.day-pill[data-date="${key}"]`);
       if (pill) {
@@ -5925,7 +5763,7 @@ async function loadMySessions() {
 
   container.style.display = 'block';
   const now = new Date();
-  const today = now.toISOString().split('T')[0];
+  const today = localISODate(now);
   const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
   const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
@@ -5968,8 +5806,8 @@ function updateBookProgress(step) {
   });
   // Update step icons
   const icons = [
-    {done:'✓', num:'1'}, {done:'✓', num:'2'},
-    {done:'✓', num:'3'}, {done:'✓', num:'✓'}
+    {done:'', num:'1'}, {done:'', num:'2'},
+    {done:'', num:'3'}, {done:'', num:''}
   ];
   steps.forEach((id, i) => {
     const icon = document.getElementById(id)?.querySelector('.step-icon');
@@ -6073,7 +5911,7 @@ async function submitBooking() {
     const bDate = new Date(selectedDate + 'T12:00:00');
     const fmt12 = t => { const [h,m] = t.split(':').map(Number); const ap = h>=12?'PM':'AM'; return `${h>12?h-12:h||12}:${String(m).padStart(2,'0')} ${ap}`; };
     document.getElementById('confirmDate').textContent = `${dayNames[bDate.getDay()]}, ${monthNames[bDate.getMonth()]} ${bDate.getDate()}`;
-    document.getElementById('confirmTime').textContent = `${fmt12(startTime)} – ${fmt12(endTime)}`;
+    document.getElementById('confirmTime').textContent = `${fmt12(startTime)} to ${fmt12(endTime)}`;
     document.getElementById('confirmKid').textContent = kidName;
     document.getElementById('confirmTotal').textContent = `$${priceCents/100}`;
     // Delay overlay to let checkmark animation play
@@ -6151,7 +5989,7 @@ async function retryBooking(btn) {
 function shareBooking() {
   const b = window._lastBooking;
   if (!b) return;
-  const text = `Babysitter booked! 🎉\n${b.dateLabel}\n${b.timeLabel}\nSitter: Poppy W.\nChild: ${b.kidName}\nTotal: $${b.priceCents/100}\n\ntinytots-v2.netlify.app`;
+  const text = `Babysitter booked! \n${b.dateLabel}\n${b.timeLabel}\nSitter: Poppy W.\nChild: ${b.kidName}\nTotal: $${b.priceCents/100}\n\ntinytots-v2.netlify.app`;
   if (navigator.share) {
     navigator.share({ title: 'Tiny Tots Booking', text }).catch(() => {});
   } else {
@@ -6400,7 +6238,7 @@ function getInviteUrl() {
 
 function shareViaText() {
   const url = getInviteUrl();
-  const text = `Hey! My babysitter Poppy is amazing — the kids BEG for her to come back 😂 She's $12/hr and super responsible. Check her out: ${url}`;
+  const text = `Our babysitter Poppy is great with the kids. Red Cross certified, $12 an hour, and you can book her online: ${url}`;
   if (navigator.share) {
     navigator.share({ title: 'Book Poppy — Tiny Tots Babysitting', text, url }).catch(() => {});
   } else {
@@ -6424,13 +6262,13 @@ function copyInviteLink() {
 function emailInvite() {
   const url = getInviteUrl();
   const subject = encodeURIComponent('Check out this amazing babysitter!');
-  const body = encodeURIComponent(`Hey!\n\nI found the best babysitter — my kids ask for her by name! She's $12/hr, Red Cross certified, and she even has an AI voice assistant.\n\nCheck her out: ${url}\n\nTrust me, your kids will love her! 😊`);
+  const body = encodeURIComponent(`Hey!\n\nI found the best babysitter — my kids ask for her by name! She's $12/hr, Red Cross certified, and she even has an AI voice assistant.\n\nCheck her out: ${url}\n\nTrust me, your kids will love her! `);
   window.open(`mailto:?subject=${subject}&body=${body}`);
   if (navigator.vibrate) navigator.vibrate(5);
 }
 
 function shareTip(title, body) {
-  const text = `💡 Poppy's Tip: ${title}\n\n${body}\n\nMore tips at `;
+  const text = `Poppy's Tip: ${title}\n\n${body}\n\nMore tips at `;
   const url = window.location.origin;
   if (navigator.share) {
     navigator.share({ title: `Poppy's Tip: ${title}`, text, url });
@@ -6444,7 +6282,7 @@ function sendParentInvite() {
   const name = document.getElementById('inviteParentName').value.trim();
   if (!phone) return;
   const url = getInviteUrl() + '&name=' + encodeURIComponent(name);
-  const msg = `Hi${name ? ' ' + name : ''}! Poppy Wilbert here 👋 I babysit on weekday evenings and Saturdays. Check out my page: ${url}`;
+  const msg = `Hi${name ? ' ' + name : ''}! Poppy Wilbert here I babysit on weekday evenings and Saturdays. Check out my page: ${url}`;
 
   // Try to send via Twilio edge function (if configured)
   fetch(SUPABASE_URL + '/functions/v1/send-booking-sms', {
@@ -6500,10 +6338,10 @@ function srAnnounce(msg) {
 /* ═══ TOAST ═══ */
 function showToast(msg, type) {
   const t = document.getElementById('toast');
-  const icons = { success: '✓', warn: '!', error: '✕' };
+  const icons = { success: '', warn: '!', error: '' };
   const tp = type || 'success';
   t.setAttribute('data-type', tp);
-  t.querySelector('.toast-icon').textContent = icons[tp] || '✓';
+  t.querySelector('.toast-icon').textContent = icons[tp] || '';
   t.querySelector('.toast-msg').textContent = msg;
   t.classList.add('show');
   clearTimeout(t._tid);
@@ -7410,7 +7248,7 @@ function initRotatingProof() {
     '5 families booked this week',
     '0 cancellations — ever',
     'Trusted by families in Tahoe Donner & Truckee',
-    '50 sessions completed with 4.9★ rating',
+    '50 sessions completed with 4.9rating',
     'Red Cross certified & parent-approved',
     '3 families rebooked this week'
   ];
@@ -7430,11 +7268,11 @@ function initSocialProofNotifs() {
   const notif = document.getElementById('socialProofNotif');
   if (!notif) return;
   const proofs = [
-    { icon: '👋', name: 'The Millers', action: 'just booked a Saturday session', time: '2 minutes ago' },
-    { icon: '⭐', name: 'Sarah M.', action: 'left a 5-star review', time: '15 minutes ago' },
-    { icon: '📅', name: 'The Chen Family', action: 'rebooked for next Thursday', time: '1 hour ago' },
-    { icon: '💛', name: 'Jessica R.', action: 'shared Poppy with a neighbor', time: '3 hours ago' },
-    { icon: '🎉', name: 'The Petersons', action: 'booked their 5th session', time: 'earlier today' },
+    { icon: '', name: 'The Millers', action: 'just booked a Saturday session', time: '2 minutes ago' },
+    { icon: '', name: 'Sarah M.', action: 'left a 5-star review', time: '15 minutes ago' },
+    { icon: '', name: 'The Chen Family', action: 'rebooked for next Thursday', time: '1 hour ago' },
+    { icon: '', name: 'Jessica R.', action: 'shared Poppy with a neighbor', time: '3 hours ago' },
+    { icon: '', name: 'The Petersons', action: 'booked their 5th session', time: 'earlier today' },
   ];
   let idx = 0;
   function showProof() {
@@ -7473,7 +7311,7 @@ function animateHeroEntrance() {
 }
 
 /* ═══ ACTIVITY TICKER (social proof) ═══ */
-const activityMessages = [
+const activityMessages = []; const _retiredActivityMessages = [
   { name: 'Sarah M.', action: 'just booked Poppy for Saturday' },
   { name: 'The Rodriguez Family', action: 'left a 5-star review' },
   { name: 'Jennifer K.', action: 'shared Poppy with 3 friends' },
@@ -7566,7 +7404,7 @@ function launchConfetti() {
 /* ═══ BIO TYPING ANIMATION ═══ */
 function animateBioTyping() {
   const bio = document.getElementById('heroBio');
-  if (!bio) return;
+  if (!bio || true) return;
   const text = bio.textContent;
   bio.textContent = '';
   bio.classList.add('bio-typing');
@@ -7640,7 +7478,6 @@ requestAnimationFrame(() => {
     initRipples();
     initParallax();
     initScrollMotion();
-    initRotatingProof();
     initReviewAutoScroll();
   }, { timeout: 2000 });
   // Register service worker for PWA install
