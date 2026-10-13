@@ -3665,6 +3665,28 @@ body, body.dark-mode { background: var(--warm); color: var(--charcoal); font-fam
 .v3-price-alt .alt-label { font-size: 14px; font-weight: 700; color: var(--gray); margin-top: 4px; }
 .v3-price-alt .v3-btn { height: 46px; font-size: 16px; padding: 0 20px; }
 
+/* ─── Daisy's live face ─── */
+.daisy-live {
+  position: absolute; left: 0; bottom: calc(100% + 10px); width: 128px; height: 160px; padding: 0;
+  border-radius: 22px; overflow: hidden; border: 3px solid rgba(255,255,255,0.92); background: #C8CDD3;
+  box-shadow: 0 16px 40px rgba(47,42,51,0.32); cursor: pointer;
+  transform-origin: 26px 100%; transform: translateY(24px) scale(0.42); opacity: 0; visibility: hidden; pointer-events: none;
+  transition: transform 0.38s cubic-bezier(.22,1,.36,1), opacity 0.25s ease, visibility 0.25s, border-color 0.2s;
+}
+.daisy-live canvas { width: 100%; height: 100%; display: block; }
+.daisy-dock.show.face-on.face-ready .daisy-live { transform: none; opacity: 1; visibility: visible; pointer-events: auto; }
+.daisy-dock.speaking .daisy-live { border-color: var(--bubble); }
+.daisy-dock.listening .daisy-live { border-color: var(--mint); }
+.daisy-dock.muted .daisy-live { border-color: var(--gray); }
+.daisy-dock.face-on.face-ready .daisy-dock-face { display: none; }
+.daisy-dock-face { cursor: pointer; }
+.daisy-dock-img { box-shadow: 0 0 0 3px var(--bubble); }
+.daisy-dock.listening .daisy-dock-img { box-shadow: 0 0 0 3px var(--mint); }
+.daisy-dock.muted .daisy-dock-img { box-shadow: 0 0 0 3px var(--gray); }
+body.daisy-open.daisy-face-on { padding-bottom: calc(var(--bottom-h) + var(--safe-bottom) + 96px + 176px); }
+@media (min-width: 720px) { .daisy-live { width: 168px; height: 210px; border-radius: 26px; } }
+@media (prefers-reduced-motion: reduce) { .daisy-live { transition: opacity 0.2s ease, visibility 0.2s; transform: none; } }
+
 /* ─── Fit and finish ─── */
 .book-guest .form-row { flex-direction: column; gap: 10px; }
 @media (min-width: 480px) { .book-guest .form-row { flex-direction: row; } }
@@ -6091,6 +6113,319 @@ function toggleFaq(btn) {
 const DAISY_AGENT_ID = 'agent_9201m47wf1t0e7wt6djfassmqy6t';
 const DAISY_SDK_URL = 'https://cdn.jsdelivr.net/npm/@elevenlabs/client@1.27.0/+esm';
 let daisyConv = null, daisySdk = null, daisyMuted = false, daisyStarting = false;
+/* ═══ DAISY LIVE FACE: her photo, animated from her own voice ═══
+   One WebGL pass warps daisy-face.jpg: the jaw opens and closes, the lips
+   widen or round, the eyes blink and the head sways a little. The mouth
+   follows the agent's audio, read from the ElevenLabs SDK's output analyser. */
+const DaisyFace = (() => {
+  const P = {"size":[480,600],"mouth":[240.47,48.32,17.1],"up":[393.0,1.07,-2.86,-0.5,3.76],"lo":[410.1,0.21,-14.33,0.33,-2.0],"chin":[242.09,487.28],"pivot":[242.09,532.28],"eyeR":[181.47,26.44,262.44,266.82,253.61,272.14],"eyeL":[295.91,26.04,269.93,266.75,257.79,275.21],"nose":[239.59,347.66]};
+
+  const VS = 'attribute vec2 a;void main(){gl_Position=vec4(a,0.0,1.0);}';
+  const FS = [
+    'precision highp float;',
+    'uniform sampler2D uTex; uniform vec2 uTexSize; uniform vec2 uView; uniform vec4 uCrop;',
+    'uniform float uOpen; uniform float uWide; uniform float uBlink;',
+    'uniform vec4 uHead; uniform vec2 uPivot;',
+    'uniform vec3 uMouth; uniform vec4 uUpA; uniform float uUpB; uniform vec4 uLoA; uniform float uLoB;',
+    'uniform vec2 uChin; uniform vec4 uEyeR; uniform vec2 uEyeR2; uniform vec4 uEyeL; uniform vec2 uEyeL2;',
+    'float poly(vec4 a, float b, float t){ return a.x + t*(a.y + t*(a.z + t*(a.w + t*b))); }',
+    'vec2 eyeWarp(vec2 p, vec4 e, vec2 e2, float k){',
+    '  float t = (p.x - e.x) / e.y;',
+    '  if (k < 0.001 || abs(t) >= 1.0) return p;',
+    '  float corner = mix(e.z, e.w, (t + 1.0) * 0.5);',
+    '  float q = 1.0 - t*t;',
+    '  float yUp = corner - (corner - e2.x) * q;',
+    '  float yLo = corner + (e2.y - corner) * q;',
+    '  float open = max(yLo - yUp, 0.001);',
+    '  float lash = 0.36 * open;',
+    '  float crease = yUp - 1.0 * open;',
+    '  float lid = mix(yUp, yLo, k);',
+    '  if (p.y < crease || p.y > lid) return p;',
+    '  if (p.y > lid - lash) return vec2(p.x, yUp - (lid - p.y));',
+    '  float r = ((yUp - lash) - crease) / max((lid - lash) - crease, 0.001);',
+    '  return vec2(p.x, crease + (p.y - crease) * r);',
+    '}',
+    'void main(){',
+    '  vec2 pc = vec2(gl_FragCoord.x, uView.y - gl_FragCoord.y);',
+    '  vec2 p = uCrop.xy + pc / uView * uCrop.zw;',
+    // head sway, applied in reverse to find where each pixel comes from
+    '  vec2 q = p - uPivot - uHead.yz;',
+    '  float ca = cos(uHead.x), sa = sin(uHead.x);',
+    '  q = vec2(ca*q.x + sa*q.y, -sa*q.x + ca*q.y) / uHead.w;',
+    '  p = uPivot + q;',
+    // mouth width: pull the lips out (wide) or in (round)
+    '  float cx = uMouth.x, hw = uMouth.y, gapC = uMouth.z;',
+    '  float yMid = poly(uUpA, uUpB, 0.0) + gapC * 0.5;',
+    '  float dyM = (p.y - yMid) / (gapC * 1.6 + 18.0);',
+    '  float tx = (p.x - cx) / hw;',
+    '  float hmask = exp(-dyM*dyM*1.4) * (1.0 - smoothstep(1.05, 1.9, abs(tx)));',
+    '  p.x = cx + (p.x - cx) / (1.0 + 0.10 * uWide * hmask);',
+    '  tx = (p.x - cx) / hw;',
+    // jaw and lips
+    '  float tc = clamp(tx, -1.0, 1.0);',
+    '  float yu = poly(uUpA, uUpB, tc);',
+    '  float yl = poly(uLoA, uLoB, tc);',
+    '  float inside = 1.0 - smoothstep(0.96, 1.0, abs(tx));',
+    '  float gap = max(yl - yu, 0.0) * inside;',
+    '  float m = uOpen;',
+    '  vec2 src = p; float fill = 0.0; float fillS = 0.0;',
+    '  if (p.y > yu) {',
+    '    float jawW = 1.0 - smoothstep(1.0, 2.2, abs(tx));',
+    '    float a = 1.0 - smoothstep(yl, uChin.y, p.y);',
+    '    float fade = 1.0 - smoothstep(uChin.y, uChin.y + (uChin.y - yu) * 0.85, p.y);',
+    '    float d = (m - 1.0) * (gap * a + gapC * jawW * (1.0 - a)) * fade;',
+    '    float cavEnd = yu + m * gap;',
+    '    if (gap > 0.01 && p.y < cavEnd) {',
+    '      float s = (p.y - yu) / gap;',
+    '      if (s < 0.5) src.y = yu + s * gap;',
+    '      else if (s >= m - 0.5) src.y = yu + (s - (m - 1.0)) * gap;',
+    '      else { fill = 1.0; fillS = (s - 0.5) / max(m - 1.0, 0.001); src.y = yu + 0.5 * gap; }',
+    '    } else {',
+    '      src.y = p.y - d;',
+    '    }',
+    '  }',
+    '  src = eyeWarp(src, uEyeR, uEyeR2, uBlink);',
+    '  src = eyeWarp(src, uEyeL, uEyeL2, uBlink);',
+    '  vec4 c = texture2D(uTex, src / uTexSize);',
+    '  if (fill > 0.5) {',
+    '    vec3 dark = vec3(0.30, 0.17, 0.15);',
+    '    float edge = 1.0 - abs(tc);',
+    '    vec3 tongue = vec3(0.58, 0.30, 0.30);',
+    '    float tg = smoothstep(0.45, 1.0, fillS) * smoothstep(0.0, 0.6, edge) * 0.55;',
+    '    vec3 col = mix(dark * (0.75 + 0.35 * edge), tongue, tg);',
+    '    c = vec4(mix(c.rgb, col, smoothstep(0.0, 1.5, min(fillS, 1.0 - fillS) * (m - 1.0) * gap)), 1.0);',
+    '  }',
+    // lash line darkens a touch as the lids close
+    '  gl_FragColor = vec4(c.rgb, 1.0);',
+    '}'
+  ].join('\n');
+
+  function compile(gl, type, src) {
+    const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s);
+    if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(s) || 'shader');
+    return s;
+  }
+
+  function create(canvas, opts) {
+    opts = opts || {};
+    const gl = canvas.getContext('webgl', { alpha: false, antialias: false, premultipliedAlpha: false, preserveDrawingBuffer: !!opts.preserve });
+    if (!gl) return null;
+    let prog;
+    try {
+      prog = gl.createProgram();
+      gl.attachShader(prog, compile(gl, gl.VERTEX_SHADER, VS));
+      gl.attachShader(prog, compile(gl, gl.FRAGMENT_SHADER, FS));
+      gl.linkProgram(prog);
+      if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(prog) || 'link');
+    } catch (e) { console.warn('[DaisyFace]', e); return null; }
+    gl.useProgram(prog);
+    const buf = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
+    const loc = gl.getAttribLocation(prog, 'a');
+    gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+    const U = {};
+    ['uTex','uTexSize','uView','uCrop','uOpen','uWide','uBlink','uHead','uPivot','uMouth','uUpA','uUpB','uLoA','uLoB','uChin','uEyeR','uEyeR2','uEyeL','uEyeL2']
+      .forEach(n => { U[n] = gl.getUniformLocation(prog, n); });
+    gl.uniform2f(U.uTexSize, P.size[0], P.size[1]);
+    gl.uniform2f(U.uPivot, P.pivot[0], P.pivot[1]);
+    gl.uniform3f(U.uMouth, P.mouth[0], P.mouth[1], P.mouth[2]);
+    gl.uniform4f(U.uUpA, P.up[0], P.up[1], P.up[2], P.up[3]); gl.uniform1f(U.uUpB, P.up[4]);
+    gl.uniform4f(U.uLoA, P.lo[0], P.lo[1], P.lo[2], P.lo[3]); gl.uniform1f(U.uLoB, P.lo[4]);
+    gl.uniform2f(U.uChin, P.chin[0], P.chin[1]);
+    gl.uniform4f(U.uEyeR, P.eyeR[0], P.eyeR[1], P.eyeR[2], P.eyeR[3]); gl.uniform2f(U.uEyeR2, P.eyeR[4], P.eyeR[5]);
+    gl.uniform4f(U.uEyeL, P.eyeL[0], P.eyeL[1], P.eyeL[2], P.eyeL[3]); gl.uniform2f(U.uEyeL2, P.eyeL[4], P.eyeL[5]);
+    gl.uniform1i(U.uTex, 0);
+
+    const tex = gl.createTexture();
+    let ready = false;
+    const img = new Image();
+    img.decoding = 'async';
+    img.onload = () => {
+      gl.bindTexture(gl.TEXTURE_2D, tex);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, img);
+      ready = true; draw();
+      if (opts.onReady) opts.onReady();
+    };
+    img.onerror = () => { if (opts.onError) opts.onError(); };
+    img.src = opts.src || 'daisy-face.jpg';
+
+    const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const S = { open: 0.02, wide: 0, blink: 0, loud: 0, t: 0, nextBlink: 1.5 + Math.random() * 2, blinkT: -1, dbl: false };
+    let driver = null, raf = 0, last = 0, running = false;
+    let framing = opts.framing || 'card';
+    let manual = null;
+
+    function crop(aw, ah) {
+      // Portrait card: head and shoulders. Circle: face only.
+      const fc = framing === 'circle' ? [240, 300, 380] : [240, 300, 500];
+      let h = fc[2], w = h * aw / ah;
+      if (w > P.size[0] - 16) { w = P.size[0] - 16; h = w * ah / aw; }
+      let x = fc[0] - w / 2, y = fc[1] - h / 2;
+      x = Math.max(8, Math.min(P.size[0] - 8 - w, x)); y = Math.max(8, Math.min(P.size[1] - 8 - h, y));
+      return [x, y, w, h];
+    }
+
+    function draw() {
+      if (!ready) return;
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const cw = Math.max(1, Math.round(canvas.clientWidth * dpr)), ch = Math.max(1, Math.round(canvas.clientHeight * dpr));
+      if (canvas.width !== cw || canvas.height !== ch) { canvas.width = cw; canvas.height = ch; }
+      gl.viewport(0, 0, cw, ch);
+      gl.uniform2f(U.uView, cw, ch);
+      const c = crop(cw, ch); gl.uniform4f(U.uCrop, c[0], c[1], c[2], c[3]);
+      const st = manual || S;
+      gl.uniform1f(U.uOpen, st.open); gl.uniform1f(U.uWide, st.wide); gl.uniform1f(U.uBlink, st.blink);
+      const t = S.t, k = reduce ? 0.25 : 1;
+      const ang = manual ? (manual.ang || 0) : k * (0.010 * Math.sin(0.37 * t) + 0.006 * Math.sin(0.83 * t + 1.3) + 0.004 * S.loud * Math.sin(2.1 * t));
+      const tx = manual ? 0 : k * (1.6 * Math.sin(0.29 * t + 0.5) + 0.7 * Math.sin(0.71 * t));
+      const ty = manual ? 0 : k * (1.1 * Math.sin(0.41 * t + 2.0) + 1.4 * S.loud);
+      const sc = manual ? 1 : 1 + k * 0.004 * Math.sin(0.23 * t + 0.7);
+      gl.uniform4f(U.uHead, ang, tx, ty, sc);
+      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    }
+
+    function approach(cur, target, dt, up, down) {
+      const tau = target > cur ? up : down;
+      return cur + (target - cur) * (1 - Math.exp(-dt / tau));
+    }
+
+    function advance(dt) {
+      S.t += dt;
+      const g = driver ? driver(dt, S.t) : null;
+      const openT = g ? g.open : 0.02, wideT = g ? g.wide : 0, loudT = g ? g.loud : 0;
+      S.open = approach(S.open, openT, dt, 0.035, 0.055);
+      S.wide = approach(S.wide, wideT, dt, 0.12, 0.15);
+      S.loud = approach(S.loud, loudT, dt, 0.12, 0.30);
+      // blinks: every 2 to 6 seconds, sometimes twice
+      if (S.blinkT < 0 && S.t > S.nextBlink) { S.blinkT = 0; S.dbl = Math.random() < 0.15; }
+      if (S.blinkT >= 0) {
+        S.blinkT += dt;
+        const bt = S.blinkT, d = 0.16;
+        S.blink = bt < d ? 0.94 * Math.sin(Math.PI * bt / d) : 0;
+        if (bt >= d) {
+          if (S.dbl) { S.dbl = false; S.blinkT = -1; S.nextBlink = S.t + 0.12; }
+          else { S.blinkT = -1; S.nextBlink = S.t + 2 + Math.random() * 4; }
+        }
+      }
+    }
+
+    function tick(now) {
+      if (!running) return;
+      const dt = Math.min(0.05, last ? (now - last) / 1000 : 0.016);
+      last = now;
+      advance(dt);
+      if (!document.hidden) draw();
+      raf = requestAnimationFrame(tick);
+    }
+
+    return {
+      start() { if (running) return; running = true; last = 0; raf = requestAnimationFrame(tick); },
+      stop() { running = false; cancelAnimationFrame(raf); },
+      setDriver(fn) { driver = fn; },
+      setFraming(f) { framing = f; draw(); },
+      render(state) { manual = state; draw(); manual = null; },
+      step(dt) { advance(dt); draw(); },
+      get ready() { return ready; }
+    };
+  }
+
+  /* Reads Daisy's voice from the SDK and turns it into a mouth shape.
+     open: 0 closed, 1 as photographed, up to about 1.5 wide open.
+     wide: -1 rounded (oo), +1 spread (ee). */
+  function audioDriver(getConversation, getMode) {
+    let conv = null, an = null, td = null, fd = null, binHz = 23.4, peak = -30, silentFor = 0, synthT = 0;
+    const band = (lo, hi) => {
+      let e = 0; const a = Math.max(1, Math.floor(lo / binHz)), b = Math.min(fd.length, Math.ceil(hi / binHz));
+      for (let i = a; i < b; i++) e += Math.pow(10, fd[i] / 10);
+      return e;
+    };
+    return (dt, t) => {
+      const c = getConversation();
+      if (c !== conv) { conv = c; an = null; }
+      if (!c) return { open: 0.02, wide: 0, loud: 0 };
+      if (!an) {
+        try { an = c.output && c.output.getAnalyser ? c.output.getAnalyser() : null; } catch (e) { an = null; }
+        if (an) {
+          try { an.smoothingTimeConstant = 0.45; } catch (e) {}
+          const ac = an.context;
+          if (ac && ac.state === 'suspended') {
+            ac.resume().catch(() => {});
+            const wake = () => { ac.resume().catch(() => {}); };
+            window.addEventListener('pointerdown', wake, { once: true, capture: true });
+          }
+          td = new Float32Array(an.fftSize); fd = new Float32Array(an.frequencyBinCount);
+          binHz = an.context.sampleRate / an.fftSize;
+        }
+      }
+      let rmsDb = -100, E1 = 0, E2 = 0, E3 = 0, EH = 0;
+      if (an) {
+        an.getFloatTimeDomainData(td);
+        let sum = 0; const n = Math.min(1024, td.length);
+        for (let i = td.length - n; i < td.length; i++) sum += td[i] * td[i];
+        rmsDb = 20 * Math.log10(Math.sqrt(sum / n) + 1e-9);
+        an.getFloatFrequencyData(fd);
+        E1 = band(250, 900); E2 = band(900, 1800); E3 = band(1800, 3400); EH = band(3600, 8000);
+      } else if (c.getOutputVolume) {
+        const v = c.getOutputVolume();
+        rmsDb = v > 0 ? 20 * Math.log10(v) - 6 : -100;
+      }
+      const speaking = getMode ? getMode() === 'speaking' : false;
+      // Some browsers start the analyser late or silent: keep her talking anyway.
+      if (rmsDb < -70 && speaking) {
+        silentFor += dt;
+        if (silentFor > 0.6) {
+          synthT += dt;
+          const s = Math.max(0, Math.sin(2 * Math.PI * 4.1 * synthT + Math.sin(synthT * 1.7) * 1.5));
+          return { open: 0.12 + 0.75 * Math.pow(s, 0.7), wide: 0.25 * Math.sin(synthT * 2.3), loud: 0.5 };
+        }
+      } else silentFor = 0;
+      peak = Math.max(rmsDb, peak - 8 * dt, -42);
+      let L = (rmsDb - (peak - 32)) / 32;
+      L = rmsDb < -58 ? 0 : Math.max(0, Math.min(1, L));
+      if (!an) return { open: L * 1.0, wide: 0, loud: L };
+      const openness = E1 / (E1 + E3 + EH * 0.6 + 1e-12);
+      const front = (E3 - E2 * 0.6) / (E3 + E2 * 0.6 + 1e-12);
+      const fric = EH / (E1 + E2 + E3 + EH + 1e-12);
+      let open = Math.pow(L, 1.15) * (0.28 + 0.9 * openness);
+      if (fric > 0.55) open = Math.min(open, 0.3);
+      open = Math.min(1.35, open);
+      const wide = Math.max(-0.5, Math.min(0.6, front * 0.6)) * Math.min(1, L * 1.4);
+      return { open, wide, loud: L };
+    };
+  }
+
+  return { create, audioDriver, P };
+})();
+
+let daisyMode = 'listening', daisyFace = null, daisyFaceWanted = true;
+try { daisyFaceWanted = localStorage.getItem('tt_daisy_face') !== 'small'; } catch (e) {}
+function daisyFaceShow() {
+  const dock = daisyEl('daisyDock');
+  if (!daisyEl('daisyLive')) return;
+  if (!daisyFace) {
+    daisyFace = DaisyFace.create(daisyEl('daisyLiveCanvas'), { onReady: () => dock.classList.add('face-ready') });
+    if (!daisyFace) return; // no WebGL: the round photo in the dock stays
+    daisyFace.setDriver(DaisyFace.audioDriver(() => daisyConv, () => daisyMode));
+  }
+  dock.classList.toggle('face-on', daisyFaceWanted);
+  document.body.classList.toggle('daisy-face-on', daisyFaceWanted);
+  if (daisyFaceWanted) daisyFace.start(); else daisyFace.stop();
+}
+function daisyFaceHide() {
+  daisyEl('daisyDock').classList.remove('face-on');
+  document.body.classList.remove('daisy-face-on');
+  if (daisyFace) daisyFace.stop();
+}
+function daisyFaceToggle(on) {
+  daisyFaceWanted = on;
+  try { localStorage.setItem('tt_daisy_face', on ? 'big' : 'small'); } catch (e) {}
+  if (daisyConv) daisyFaceShow();
+}
 
 function daisyEl(id) { return document.getElementById(id); }
 function daisySetState(state, label) {
@@ -6146,9 +6481,10 @@ async function daisyStart() {
         parent_phone: saved.phone || '',
         kid_name: (saved.kids && saved.kids[0]) || ''
       },
-      onConnect: () => { daisySetState('listening', 'Listening'); daisyLogStart(); },
+      onConnect: () => { daisyMode = 'listening'; daisySetState('listening', 'Listening'); daisyLogStart(); daisyFaceShow(); },
       onDisconnect: () => { daisyCleanup(); },
       onModeChange: ({ mode }) => {
+        daisyMode = mode;
         if (mode === 'speaking') daisySetState('speaking', 'Daisy is talking');
         else daisySetState('listening', daisyMuted ? 'Muted' : 'Listening');
       },
@@ -6183,6 +6519,7 @@ function daisyEnd() {
 
 function daisyCleanup() {
   daisyConv = null; daisyStarting = false;
+  daisyFaceHide(); daisyEl('daisyDock').classList.remove('muted');
   voiceActive = false; updateVoiceUI();
   daisyShowDock(false);
   daisyLogEnd();
@@ -6195,6 +6532,7 @@ function daisyToggleMute() {
   daisyMuted = !daisyMuted;
   try { daisyConv.setMicMuted(daisyMuted); } catch {}
   daisyUpdateMuteBtn();
+  daisyEl('daisyDock').classList.toggle('muted', daisyMuted);
   if (!daisyEl('daisyDock').classList.contains('speaking')) daisySetState('listening', daisyMuted ? 'Muted' : 'Listening');
 }
 function daisyUpdateMuteBtn() {
@@ -7536,7 +7874,10 @@ requestAnimationFrame(() => {
 
 <!-- ═══ DAISY DOCK: talk to Daisy while the page keeps scrolling ═══ -->
 <div class="daisy-dock" id="daisyDock" role="region" aria-label="Daisy, Poppy's AI assistant" aria-hidden="true">
-  <div class="daisy-dock-face" id="daisyDockFace">
+  <button class="daisy-live" id="daisyLive" type="button" onclick="daisyFaceToggle(false)" aria-label="Make Daisy's picture small">
+    <canvas id="daisyLiveCanvas" role="img" aria-label="Daisy, talking"></canvas>
+  </button>
+  <div class="daisy-dock-face" id="daisyDockFace" role="button" tabindex="0" onclick="daisyFaceToggle(true)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();daisyFaceToggle(true);}" aria-label="Show Daisy's picture">
     <img src="daisy-still.jpg" alt="" class="daisy-dock-img" width="52" height="52">
     <span class="daisy-dock-ring"></span><span class="daisy-dock-ring"></span>
   </div>
